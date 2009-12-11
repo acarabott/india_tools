@@ -135,7 +135,8 @@ a.drone
 
 s.boot;
 a = PatternPlayer.new
-a.play
+a.playa
+a.stop
 a.tempo = 120
 a.pattern = "xooo"
 a.stop

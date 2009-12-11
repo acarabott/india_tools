@@ -13,14 +13,15 @@ Tala {
 	var <s;					//	Server
 	var <>amp;				//	Amplification multiplier
 	var <laya;				//	Tempo
-	var <wait;				//	Wait time
+	var <wait_time;			//	Wait time
 	var <>kallai;
 	var <gati;
 	var <eduppu;
 	
 	var <parts;			
-	var routine;			//	The playback routine
+	var <routine;			//	The playback routine
 	var <routine_duration;	//	The duration (in seconds) of the routine
+	var <no_play;			//	If true, the routine can't yet be played
 	
 	var <drone_note;		//	Drone Note
 	var <drone_amp;			//	Drone Volume
@@ -40,27 +41,28 @@ Tala {
 	}
 
 	init {
-		amp 	= 1;
-		laya 	= 60;
-		gati	= 4;
-		kallai	= 1;
-		eduppu	= 0;
-		wait	= 60/laya;
+		amp 		= 1;
+		laya 		= 60;
+		gati		= 4;
+		kallai		= 1;
+		eduppu		= 0;
+		wait_time	= 60/laya;
 		
-		parts	= adi;
+		parts		= adi;
 		
-		routine_duration = 0;
-		routine = this.create_routine;
-
-		drone_note = 63;
-		drone_amp = 1;
+		routine_duration 	= 0;
+		no_play 			= true;
+		this.create_routine;
+		
+		drone_note 	= 63;
+		drone_amp 	= 1;
 		this.create_drone_routine;
 		
 		s = Server.default;
 		s.waitForBoot {
 			this.load_synth_defs;		
 			drone_synth = Synth(\drone, [\rootNote, drone_note, \amp, 0]);
-			
+			no_play = false;
 		}
 		
 		
@@ -108,8 +110,8 @@ Tala {
 	}
 	
 	laya_ {|new_value|
-		laya = new_value;
-		wait = 60/laya;
+		laya 		= new_value;
+		wait_time 	= 60/laya;
 	}
 	
 	
@@ -119,28 +121,37 @@ Tala {
 	}
 	
 	create_routine {
-		var new_routine = Routine {};
+		routine = Routine {};
 		parts.do { |item, i|
 			switch (item[0].asSymbol)
-				{'I'}	{ new_routine = new_routine ++ this.laghu(item[1].digit) }
-				{'O'}	{ new_routine = new_routine ++ this.drutam()}
-				{'U'}	{ new_routine = new_routine ++ this.anudrutam}
-				{'K'}	{ new_routine = new_routine ++ this.capu("clap")}
-				{'M'}	{ new_routine = new_routine ++ this.capu("clap_b")};
+				{'I'}	{ routine = routine ++ this.laghu(item[1].digit) }
+				{'O'}	{ routine = routine ++ this.drutam()}
+				{'U'}	{ routine = routine ++ this.anudrutam}
+				{'K'}	{ routine = routine ++ this.capu("clap")}
+				{'M'}	{ routine = routine ++ this.capu("clap_b")};
 			
 		};
 		
-		^new_routine.loop;
-/*		routine = routine.loop;*/
+		routine = routine.loop;
 	}
 	
 	play {
-		routine.reset;
-		routine.play;
+		{
+			while({no_play}, {
+				0.1.wait;
+			});
+			routine.play;
+		}.fork
 	}
 	
 	stop {
-		routine.stop;
+		{
+			no_play = true;
+			routine.stop;
+			(wait_time)*1.5.wait;
+			routine.reset;
+			no_play = false;
+		}.fork;
 	}
 	
 	add_rout_time {|time|
@@ -150,32 +161,32 @@ Tala {
 	//	Angas
 	
 	laghu {|number|
-		this.add_rout_time(number*wait);
+		this.add_rout_time(number*wait_time);
 		^Routine {
 			this.clap();
-			wait.wait;
+			wait_time.wait;
 			(number-1).do { |i|
 				this.finger(i);
-				wait.wait;
+				wait_time.wait;
 			};
 		};
 	}
 	
 	drutam {
-		this.add_rout_time(2*wait);
+		this.add_rout_time(2*wait_time);
 		^Routine {
 			this.clap();
-			wait.wait;
+			wait_time.wait;
 			this.clap_b();
-			wait.wait;
+			wait_time.wait;
 		};
 	}
 	
 	anudrutam {
-		this.add_rout_time(wait);
+		this.add_rout_time(wait_time);
 		^Routine {
 			this.clap();
-			wait.wait;
+			wait_time.wait;
 		};
 	}
 	
@@ -189,16 +200,13 @@ Tala {
 				this.clap_b();
 			};
 		};
-		
-		type.postln;
-		type.asSymbol.postln;
-		this.add_rout_time(wait*1.5);
-		
+
+		this.add_rout_time(wait_time*1.5);		
 		^Routine {
 			which_clap.();
-			(wait/2).wait;
+			(wait_time/2).wait;
 			which_clap.();
-			wait.wait;
+			wait_time.wait;
 		};
 	}
 	
