@@ -1,12 +1,17 @@
+/*
+	TODO Improve Drone functionality
+*/
+
 Tala {
 	
 	classvar <adi;			//	Adi Tala Preset
 	classvar <rupaka;		//	Rupaka Tala Preset
 	classvar <kCapu;		//	Khanda Capu Preset
 	classvar <mCapu;		//	Misra Capu Preset
+	classvar <sankeerna;	//	Sankeerna Capu Preset
 	
 	var <s;					//	Server
-	
+	var <>amp;				//	Amplification multiplier
 	var <laya;				//	Tempo
 	var <wait;				//	Wait time
 	var <>kallai;
@@ -14,14 +19,20 @@ Tala {
 	var <eduppu;
 	
 	var <parts;			
-	var <routine;			//	The playback routine
+	var routine;			//	The playback routine
 	var <routine_duration;	//	The duration (in seconds) of the routine
 	
+	var <drone_note;		//	Drone Note
+	var <drone_amp;			//	Drone Volume
+	var drone_synth;		//	Drone Synth
+	var drone_routine;		//	Drone Routine
+	
 	*initClass {
-		adi 	= ["I4", "O", "O"];
-		rupaka 	= ["U", "O"];
-		kCapu 	= ["U", "K"];
-		mCapu	= ["M", "U", "U"];
+		adi 		= ["I4", "O", "O"];
+		rupaka 		= ["U", "O"];
+		kCapu 		= ["U", "K"];
+		mCapu		= ["M", "U", "U"];
+		sankeerna 	= ["U", "U", "U", "K"]
 	}
 	
 	*new {
@@ -29,9 +40,7 @@ Tala {
 	}
 
 	init {
-		s = Server.default;
-		s.waitForBoot;
-		
+		amp 	= 1;
 		laya 	= 60;
 		gati	= 4;
 		kallai	= 1;
@@ -41,8 +50,19 @@ Tala {
 		parts	= adi;
 		
 		routine_duration = 0;
-		this.create_routine;
-		this.load_synth_defs;
+		routine = this.create_routine;
+
+		drone_note = 63;
+		drone_amp = 1;
+		this.create_drone_routine;
+		
+		s = Server.default;
+		s.waitForBoot {
+			this.load_synth_defs;		
+			drone_synth = Synth(\drone, [\rootNote, drone_note, \amp, 0]);
+			
+		}
+		
 		
 	}
 	
@@ -55,12 +75,36 @@ Tala {
 			hpf2 = RHPF.ar(noise, filterfreq/2, rq/4);
 			env = EnvGen.kr(Env.perc(0.003, 0.00035));
 			signal = (hpf1+hpf2) * env;
-			signal = CombC.ar(signal, 0.5, 0.03, 0.031)+CombC.ar(signal, 0.5, 0.03016, 0.06);
+/*			signal = CombC.ar(signal, 0.5, 0.03, 0.031)+CombC.ar(signal, 0.5, 0.03016, 0.06);*/
 			//signal = FreeVerb.ar(signal, 0.23, 0.15, 0.2);
-			signal = Limiter.ar(signal, 0.7, 0.01);
+/*			signal = Limiter.ar(signal, 0.7, 0.01);*/
 			Out.ar(0, Pan2.ar(signal*amp, 0));
 			DetectSilence.ar(signal, doneAction:2);
+		}).load(s);
+		
+		SynthDef(\drone, {|rootNote=59, amp=1|
+
+		var signal1, signal2, root, fifth, octaveA, octaveB, env;
+		root = rootNote.midicps;
+		fifth = (rootNote+7).midicps;
+		octaveA = (rootNote+12).midicps;
+		octaveB = (rootNote-12).midicps;
+
+		env = {EnvGen.kr(Env.new(
+						 					Array.rand(16, 0, 0.2),  //Random drones
+											Array.rand(15, 1, 5),
+											'exponential',
+											0,
+											1))};
+		signal1 = Mix(SinOsc.ar([root, fifth, [octaveA, octaveB].choose], 0, 0.3*[env, env, env]));
+		signal2 = Mix(LFSaw.ar([root, fifth, [octaveA, octaveB].choose], 0, 0.4*[env, env, env]));							
+
+		Out.ar(	0,
+		 		Pan2.ar(signal1)*amp,
+		 		Pan2.ar(signal2, FSinOsc.kr(0.05))*amp
+		 		);
 		}).load(s)
+		
 	}
 	
 	laya_ {|new_value|
@@ -75,18 +119,19 @@ Tala {
 	}
 	
 	create_routine {
-		routine = Routine {};
+		var new_routine = Routine {};
 		parts.do { |item, i|
 			switch (item[0].asSymbol)
-				{'I'}	{ this.add_routine(this.laghu(item[1].digit)) }
-				{'O'}	{ this.add_routine(this.drutam())}
-				{'U'}	{ this.add_routine(this.anudrutam)}
-				{'K'}	{ this.add_routine(this.capu("clap"))}
-				{'M'}	{ this.add_routine(this.capu("clap_b"))};
+				{'I'}	{ new_routine = new_routine ++ this.laghu(item[1].digit) }
+				{'O'}	{ new_routine = new_routine ++ this.drutam()}
+				{'U'}	{ new_routine = new_routine ++ this.anudrutam}
+				{'K'}	{ new_routine = new_routine ++ this.capu("clap")}
+				{'M'}	{ new_routine = new_routine ++ this.capu("clap_b")};
 			
 		};
 		
-		routine = routine.loop;
+		^new_routine.loop;
+/*		routine = routine.loop;*/
 	}
 	
 	play {
@@ -160,26 +205,52 @@ Tala {
 	//	Gestures
 	clap {
 		"clap!".postln;
-		this.generic_clap(0.4, 0.5, 2000, 2500, 0.9);
+		this.generic_clap(0.7, 0.8, 2000, 2500, 0.9);
+		this.generic_clap(0.7, 0.8, 700, 1200, 0.9);
 		
 	}
 			
 	clap_b {
 		"back clap!".postln;
-		this.generic_clap(0.3, 0.35, 400, 600, 0.9);
+		this.generic_clap(0.1, 0.2, 400, 600, 0.9);
 	}
 
 	finger {|number|
 		("Finger - " ++ (number+1)).postln;
-		this.generic_clap(0.01, 0.05, 6000, 7000, 0.9);
+		this.generic_clap(0.2, 0.3, 6000, 7000, 0.9);
 		
 	}
-		
+	
 	//	Synth methods
 	generic_clap {|amp1, amp2, freq1, freq2, rq|
-		s.bind {
-			Synth(\clapping, [\amp, rrand(amp1, amp2), \filterfreq, rrand(freq1, freq2), \rq, rq.rand]) 
-		}
+/*		s.bind {*/
+			Synth(\clapping, [\amp, rrand(amp1, amp2)*amp, \filterfreq, rrand(freq1, freq2), \rq, rq.rand]) 
+/*		}*/
+	}
+	
+	drone_amp_ {|new_amp|
+		drone_amp = new_amp;
+		drone_synth.set(\amp, drone_amp);
+	}
+	
+	drone_note_ {|new_note|
+		drone_note = new_note;
+		drone_synth.set(\rootNote, drone_note);
+	}
+	
+	create_drone_routine {
+		drone_routine = Routine {
+			inf.do { |i|
+				drone_synth.set(\amp, drone_amp);				
+				0.yield;
+				drone_synth.set(\amp, 0);								
+				0.yield
+			};
+		};
+	}
+	
+	drone {
+		drone_routine.();
 	}
 	
 	//	Preset loading methods
@@ -202,6 +273,5 @@ Tala {
 		parts = mCapu;
 		this.create_routine;
 	}
-	
 	
 }
