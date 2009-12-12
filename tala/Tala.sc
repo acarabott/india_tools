@@ -18,7 +18,7 @@ Tala {
 	var <gati;
 	var <eduppu;
 	
-	var <parts;			
+	var <>parts;			
 	var <routine;			//	The playback routine
 	var <routine_duration;	//	The duration (in seconds) of the routine
 	var <no_play;			//	If true, the routine can't yet be played
