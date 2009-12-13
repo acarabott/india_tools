@@ -142,7 +142,9 @@ PatternPlayer {
 	}
 	
 	create_gui {
-		window = Window.new("Pattern Player", Rect(500,500,500,500)).front;
+		window = Window.new("Pattern Player", Rect(500,500,500,500))
+			.userCanClose_(false)
+			.front;
 		pattern_field = TextField(window, Rect(100,100,150,20))
 			.string_(pattern)
 			.action_({|field| 
@@ -189,6 +191,7 @@ PatternPlayer {
 			}.fork(AppClock)
 		};
 	}
+	
 	
 }
 		

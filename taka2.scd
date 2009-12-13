@@ -1,99 +1,45 @@
-a = Tala.new
-a.drone_synth
-a.play
-a.drone_amp = 3
-a.drone_note = 63
-a.laya = 60
-a.khanda
-a.play
-a.stop
-a.amp = 4
-x = KonaTani.new
-
-y = KonaWord.new(4,4,1,x);
-
-SynthDef(\drone, {|rootNote=59, amp=1|
-
-var signal1, signal2, root, fifth, octaveA, octaveB, env;
-root = rootNote.midicps;
-fifth = (rootNote+7).midicps;
-octaveA = (rootNote+12).midicps;
-octaveB = (rootNote-12).midicps;
-
-env = {EnvGen.kr(Env.new(
-				 					Array.rand(16, 0, 0.2),  //Random drones
-									Array.rand(15, 1, 5),
-									'exponential',
-									0,
-									1))};
-signal1 = Mix(SinOsc.ar([root, fifth, [octaveA, octaveB].choose], 0, 0.3*[env, env, env]));
-signal2 = Mix(LFSaw.ar([root, fifth, [octaveA, octaveB].choose], 0, 0.4*[env, env, env]));							
-
-Out.ar(	0,
- 		Pan2.ar(signal1)*amp,
- 		Pan2.ar(signal2, FSinOsc.kr(0.05))*amp
- 		);
-}).send(s)
-
-x = Synth(\drone, [\rootNote, 63]);
-x.set(\amp, 3);
-x.free
-
-
-a.stop
-
-a = KonaTani.new(60)
-
-b = KonaWord.new(1,4,3,a);
-c = KonaWord.new(1,4,1,a);
-d = KonaWord.new(5,4,1,a);
-
-e = KonaTime.newFrom([b,c],a);
-f = KonaTime.newFrom([c,b],a);
-g = KonaTime.newFrom([f,e,f,e,f,e,f,d],a);
-h = KonaTime.newFrom([f,e,f,e,f,e,d],a);
-
-3.do { |i|
-	a.add(e)
+~window.close;
+~pattern = "xxxx";
+~routine = Routine {
+	
+	1.wait;
 };
-a.add(d);
-a.add()
+w = 400;
+h = 100;
+~window = Window.new("Pattern Player", Rect((Window.screenBounds.width/2)-(w/2),(Window.screenBounds.height/2)-(h/2),w,h), false)
+	.userCanClose_(true)
+	.front;
+~pattern_field = TextField(~window, Rect(10,10,w-20,20))
+	.string_(~pattern)
+	.action_({|field| 
+/*		this.set_pattern(field.value);*/
+/*		this.confirm_set(pattern_set);*/
+	});
+~pattern_set = StaticText(~window, Rect(70,70,70, 20)).background_(Color.white).align_(\center);
+~play_stop_button = Button(~window, Rect(10,40,50,50))
+	.states_([
+		["Play", Color.black, Color.green],
+		["Stop", Color.white, Color.red]
+	])
+	.action_({|button|
+		if(~routine.isPlaying) {
+/*			this.stop;*/
+			"stop!".postln;
+		} {
+/*			this.play;*/
+			"play!".postln;
+		};
+	});
+~routine_set = StaticText(~window, Rect(70,40,70,20)).background_(Color.white).align_(\center);
+~sounds = EZPopUpMenu(
+	~window, 
+	Rect(w-210,40,200,20), 
+	"Sound",
+	[
+		\Kanjira 	->{|a| 1.postln;},
+		\Konakkol 	->{|a| 2.postln;},
+		\Custom 	->{|a| 3.postln;}
+	]
+);
 
-a.add(g);
-a.add(h);
-
-
-t = Tala.new(60);
-t.stop
-t.play
-t.drone_note = t.drone_note -1
-t.drone_amp = 2
-t.amp = 5
-a.clear
-3.do { |i|
-	7.do { |i|
-		a.add(e);
-	};
-	a.add(d);	
-};
-6.do { |i|
-	a.add(e);
-};
-a.add(d);
-
-z = a.talaRout.loop
-y = a.rout.loop
-a.tala_vol = 10
-
-z.play;
-y.play;
-
-z.stop;
-y.stop;
-a.play
-t.laya = 80
-t.play
-z.reset;
-y.reset;
-
-SynthDef
+	
