@@ -12,6 +12,12 @@ PatternPlayer {
 	var <clock;
 	var <no_play;
 	
+	var <window;
+	var <pattern_field;
+	var <pattern_set;
+	var <play_stop_button;
+	var <routine_set;
+	
 	*new { 
 		^super.new.init;
 	}
@@ -27,30 +33,43 @@ PatternPlayer {
 		tala 			= Tala.new(tempo);
 		no_play 		= true;
 		
-		s.waitForBoot {
-			this.load_synth_def;
+		{
 			this.load_buffers;
-			this.set_routine;
-			no_play = false;
-		};
+			this.load_synth_def;
+			s.sync;
+			this.set_routine;			
+		}.fork;
+		this.create_gui;
+		no_play = false;
 	}
 	
 	set_routine {
 		var index;
+		var item_c;
 		routine = Routine {
 			pattern.do { |item, i|
+				item_c = item.toLower.asSymbol;
 				if(sounds.size==2) {
 					if(i%pattern.size!=0) {
-						index = 1;
+						if(['x','o'].includes(pattern[i-1].toLower.asSymbol).not) {
+							index = 0;
+						} {
+							index = 1;
+						};
 					} {
-						index = i%pattern.size;
+						index = 0;
+						
 					};
 				};
-				switch (item.asSymbol)
-					{'x'}	{ Synth(\simple_play, [\bufnum, buffers[index]]) }					
-					{'o'}	{};
+				
+				if((item_c=='x') || (item_c=='o')) {
+					if(item_c=='x') {
+						Synth(\simple_play, [\bufnum, buffers[index]]);
+					};
+					(wait_time/gati).wait;
+				};
+				
 
-				(wait_time/gati).wait;
 			};
 		};
 		
@@ -73,24 +92,32 @@ PatternPlayer {
 	}
 	
 	play {
+		var i = 0;
 		{
 			while({no_play}, {
+				this.update_routine_set(i%3);
 				0.1.wait;
+				i = i +1;
 			});
+			this.update_routine_set(-1);
 			routine.play;
 			tala.play;	
 		}.fork		
 	}
 	
 	stop {
+		no_play = true;
+		routine.stop;
+		tala.stop;
+		this.reset;
+	}
+	
+	reset {
 		{
-			routine.stop;
-			tala.stop;
-			no_play = true;
 			(wait_time*1.5).wait;
 			routine.reset;
 			no_play = false;
-		}.fork
+		}.fork;
 	}
 	
 	restart {
@@ -105,9 +132,63 @@ PatternPlayer {
 		this.restart;		
 	}
 	
-	pattern_ {|new_pattern|
+	set_pattern {|new_pattern|
 		pattern = new_pattern;
-		this.restart;
+		if(routine.isPlaying) {
+			this.restart
+		} {
+			this.reset;
+		};
 	}
+	
+	create_gui {
+		window = Window.new("Pattern Player", Rect(500,500,500,500)).front;
+		pattern_field = TextField(window, Rect(100,100,150,20))
+			.string_(pattern)
+			.action_({|field| 
+				this.set_pattern(field.value);
+				this.confirm_set(pattern_set);
+			});
+		pattern_set = StaticText(window, Rect(185, 130, 40, 20)).background_(Color.white).align_(\center);
+		play_stop_button = Button(window, Rect(50,50,50,50))
+			.states_([
+				["Play", Color.black, Color.green],
+				["Stop", Color.white, Color.red]
+			])
+			.action_({|button|
+				if(routine.isPlaying) {
+					this.stop;
+				} {
+					this.play;
+				};
+			});
+		routine_set = StaticText(window, Rect(150,120,100,20)).background_(Color.white);
 		
+	}
+	
+	confirm_set {|field|
+		Routine {
+			field.string_("Set!")
+				.background_(Color.green);
+			2.wait;
+			field.string_("")
+				.background_(Color.white);
+		}.play(AppClock);
+	}
+	
+	update_routine_set {|i|
+		var dots = "";
+		if(i == -1) {
+			{routine_set.string = "";}.fork(AppClock)
+		} {			
+			{
+				i.do {
+					dots = dots ++ "."
+				};
+				routine_set.string = "Loading " ++ dots;						
+			}.fork(AppClock)
+		};
+	}
+	
 }
+		

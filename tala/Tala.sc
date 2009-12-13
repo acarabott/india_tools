@@ -54,18 +54,18 @@ Tala {
 		no_play 			= true;
 		this.create_routine;
 		
-		drone_note 	= 63;
+		drone_note 	= 64;
 		drone_amp 	= 1;
-		this.create_drone_routine;
 		
 		s = Server.default;
-		s.waitForBoot {
+		{
 			this.load_synth_defs;		
+			s.sync;
+			this.create_drone_routine;
 			drone_synth = Synth(\drone, [\rootNote, drone_note, \amp, 0]);
-			no_play = false;
-		}
-		
-		
+		}.fork;
+		no_play = false;
+				
 	}
 	
 	load_synth_defs {
@@ -84,7 +84,7 @@ Tala {
 			DetectSilence.ar(signal, doneAction:2);
 		}).load(s);
 		
-		SynthDef(\drone, {|rootNote=59, amp=1|
+		SynthDef(\drone, {|rootNote=62, amp=1|
 
 		var signal1, signal2, root, fifth, octaveA, octaveB, env;
 		root = rootNote.midicps;
@@ -145,13 +145,17 @@ Tala {
 	}
 	
 	stop {
+		routine.stop;
+		this.reset;
+	}
+	
+	reset {
 		{
 			no_play = true;
-			routine.stop;
 			(wait_time)*1.5.wait;
-			routine.reset;
+			routine.reset;	
 			no_play = false;
-		}.fork;
+		}.fork
 	}
 	
 	add_rout_time {|time|

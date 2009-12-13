@@ -100,12 +100,20 @@ x = Routine {
 
 y = Routine {
 	inf.do { |i|
-		Synth(\simple_play, [\bufnum, a.buffers[1]]);
+		Synth(\simple_play, [\bufnum, a.buffers[0]]);
+		0.5.wait;
+	};
+};
+z = Routine {
+	inf.do { |i|
+		Synth(\clapping);
 		0.5.wait;
 	};
 };
 
-x.reset
+y.play;z.play;
+z.stop
+`x`.reset
 x.stop;y.stop;
 x.reset;y.reset;
 x.play(~clock, 1);
@@ -133,16 +141,46 @@ a.drone_amp = 3
 a.stop
 a.drone
 
-s.boot;
-a = PatternPlayer.new
-a.playa
-a.stop
-a.tempo = 120
-a.pattern = "xooo"
+a.routine.play;a.tala.routine.play;
 a.stop
 a.play
+a.routine.stop
+
+s.boot;
+a = PatternPlayer.new
+a.tala.amp = 1
+a.play
+a.pattern
+a.stop
+a.no_play
+a.routine.play
+a.play
+a.stop
+a.play
+a.pattern = "xoox"
 a.stop
 a.no_play
 a.play
-a.stop
-a.stop
+a.pattern = "xoo"
+a.restart
+
+s.
+
+"Loading" + "." 
+
+
+
+String
+
+' '.class
+
+['x','o']
+'x'=='X'
+",".toLower
+'x'.toUpper
+
+[1,2,3,4].do { |item, i|
+	
+};
+z = 'x'
+['x','o'].includes(z).not

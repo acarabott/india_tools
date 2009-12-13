@@ -63,8 +63,11 @@ a.add(g);
 a.add(h);
 
 
-t = Tala.new(80);
+t = Tala.new(60);
+t.stop
 t.play
+t.drone_note = t.drone_note -1
+t.drone_amp = 2
 t.amp = 5
 a.clear
 3.do { |i|
@@ -92,3 +95,5 @@ t.laya = 80
 t.play
 z.reset;
 y.reset;
+
+SynthDef
