@@ -28,3 +28,8 @@ a.
 
 x = SCStaticText
 x.getPropertyList
+SCNumberBox
+a.pattern_field
+a.tempo_field.typingColor
+
+SCTextField

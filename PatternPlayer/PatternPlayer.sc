@@ -167,15 +167,11 @@ PatternPlayer {
 			gap:5@5
 		);
 		tempo_text 	= StaticText(window, Rect(70, 40, 45, 20)).string_("Tempo: ");
-		tempo_field = TextField(window, Rect(120,40,30,20))
-			.background_(Color.white)
-			.string_(this.tempo)
-			.action_({|field|
-				this.tempo_(field.value.asInteger);
-			});
-
-
-		
+		tempo_field = NumberBox(window, Rect(120,40,30,20))
+				.value_(this.tempo)
+				.action_({|field|
+					this.tempo_(field.value.asInteger);
+				});		
 	}
 	
 	confirm_set {|field|
