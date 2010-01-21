@@ -1,7 +1,16 @@
+/*
+	TODO create routine, then make duplicates from that, faster?
+	TODO Add gati input
+	TODO Red text for unset values
+	TODO Project pattern onto a graph
+	TODO work with reading arrays instead of routines?
+*/
 PatternPlayer {
 	var <pattern;
 	var <>routine;
-	var <default_sounds;
+	var <konakkol_sounds;
+	var <kanjira_sounds;
+	var <custom_sounds;
 	var <>sounds;
 	var <tempo;
 	var <wait_time;
@@ -17,6 +26,9 @@ PatternPlayer {
 	var <pattern_set;
 	var <play_stop_button;
 	var <routine_set;
+	var <sound_popup;
+	var <tempo_field;
+	var <tempo_text;
 	
 	*new { 
 		^super.new.init;
@@ -24,8 +36,10 @@ PatternPlayer {
 
 	init { 
 		pattern 		= "xxxx";
-		default_sounds 	= ["sounds/DIM.wav", "sounds/BELL.wav"];
-		sounds 			= default_sounds.copy;
+		konakkol_sounds = ["sounds/KKTA.wav", "sounds/KKDIM.wav"];
+		kanjira_sounds 	= ["sounds/KJDIM.wav", "sounds/KJBELL.wav"];
+		custom_sounds	= List[];
+		sounds 			= kanjira_sounds;
 		tempo 			= 60;
 		wait_time		= 60/tempo;
 		gati			= 4;
@@ -37,13 +51,13 @@ PatternPlayer {
 			this.load_buffers;
 			this.load_synth_def;
 			s.sync;
-			this.set_routine;			
+			this.create_routine;			
 		}.fork;
 		this.create_gui;
 		no_play = false;
 	}
 	
-	set_routine {
+	create_routine {
 		var index;
 		var item_c;
 		routine = Routine {
@@ -92,67 +106,41 @@ PatternPlayer {
 	}
 	
 	play {
-		var i = 0;
-		{
-			while({no_play}, {
-				this.update_routine_set(i%3);
-				0.1.wait;
-				i = i +1;
-			});
-			this.update_routine_set(-1);
-			routine.play;
-			tala.play;	
-		}.fork		
+		this.create_routine;
+		routine.play;
+		tala.play;
 	}
 	
 	stop {
-		no_play = true;
 		routine.stop;
 		tala.stop;
-		this.reset;
-	}
-	
-	reset {
-		{
-			(wait_time*1.5).wait;
-			routine.reset;
-			no_play = false;
-		}.fork;
-	}
-	
-	restart {
-		this.stop;
-		this.play;
 	}
 	
 	tempo_ {|new_tempo|
+		this.play_stop_button.valueAction_(0);
 		tempo = new_tempo;
 		wait_time = 60/tempo;
-		tala.laya = new_tempo;
-		this.restart;		
+		tala.tempo = new_tempo;
 	}
 	
 	set_pattern {|new_pattern|
 		pattern = new_pattern;
-		if(routine.isPlaying) {
-			this.restart
-		} {
-			this.reset;
-		};
 	}
-	
+		
 	create_gui {
-		window = Window.new("Pattern Player", Rect(500,500,500,500))
-			.userCanClose_(false)
+		var	w = 400;
+		var h = 100;
+		window = Window.new("Pattern Player", Rect((Window.screenBounds.width/2)-(w/2),(Window.screenBounds.height/2)-(h/2),w,h), false)
+			.userCanClose_(true)
 			.front;
-		pattern_field = TextField(window, Rect(100,100,150,20))
+		pattern_field = TextField(window, Rect(10,10,w-20,20))
 			.string_(pattern)
 			.action_({|field| 
 				this.set_pattern(field.value);
-				this.confirm_set(pattern_set);
+				this.confirm_set(routine_set);
 			});
-		pattern_set = StaticText(window, Rect(185, 130, 40, 20)).background_(Color.white).align_(\center);
-		play_stop_button = Button(window, Rect(50,50,50,50))
+/*		pattern_set = StaticText(window, Rect(70,70,70, 20)).background_(Color.white).align_(\center);*/
+		play_stop_button = Button(window, Rect(10,40,50,50))
 			.states_([
 				["Play", Color.black, Color.green],
 				["Stop", Color.white, Color.red]
@@ -160,11 +148,33 @@ PatternPlayer {
 			.action_({|button|
 				if(routine.isPlaying) {
 					this.stop;
+/*					"stop!".postln;*/
 				} {
 					this.play;
+/*					"play!".postln;*/
 				};
 			});
-		routine_set = StaticText(window, Rect(150,120,100,20)).background_(Color.white);
+		routine_set = StaticText(window, Rect(70,70,80,20)).background_(Color.white);
+		sound_popup = EZPopUpMenu(
+			window, 
+			Rect(w-210,40,200,20), 
+			"Sound",
+			[
+				\Konakkol 	->{|a| sounds = konakkol_sounds;},
+				\Kanjira 	->{|a| sounds = kanjira_sounds},
+				\Custom 	->{|a| sounds = custom_sounds;}
+			],
+			gap:5@5
+		);
+		tempo_text 	= StaticText(window, Rect(70, 40, 45, 20)).string_("Tempo: ");
+		tempo_field = TextField(window, Rect(120,40,30,20))
+			.background_(Color.white)
+			.string_(this.tempo)
+			.action_({|field|
+				this.tempo_(field.value.asInteger);
+			});
+
+
 		
 	}
 	
@@ -187,11 +197,9 @@ PatternPlayer {
 				i.do {
 					dots = dots ++ "."
 				};
-				routine_set.string = "Loading " ++ dots;						
+				routine_set.string = " Resetting " ++ dots;						
 			}.fork(AppClock)
 		};
-	}
-	
-	
+	}	
 }
 		

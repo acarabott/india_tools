@@ -1,5 +1,5 @@
 /*
-	TODO Improve Drone functionality
+	TODO Improve Drone sound
 */
 
 Tala {
@@ -12,7 +12,7 @@ Tala {
 	
 	var <s;					//	Server
 	var <>amp;				//	Amplification multiplier
-	var <laya;				//	Tempo
+	var <tempo;				//	Tempo
 	var <wait_time;			//	Wait time
 	var <>kallai;
 	var <gati;
@@ -40,13 +40,13 @@ Tala {
 		^super.new.init;
 	}
 
-	init {
+	init {|aTempo=60, aNote=62|
 		amp 		= 1;
-		laya 		= 60;
+		tempo 		= aTempo;
 		gati		= 4;
 		kallai		= 1;
 		eduppu		= 0;
-		wait_time	= 60/laya;
+		wait_time	= 60/tempo;
 		
 		parts		= adi;
 		
@@ -54,7 +54,7 @@ Tala {
 		no_play 			= true;
 		this.create_routine;
 		
-		drone_note 	= 64;
+		drone_note 	= aNote;
 		drone_amp 	= 1;
 		
 		s = Server.default;
@@ -109,9 +109,9 @@ Tala {
 		
 	}
 	
-	laya_ {|new_value|
-		laya 		= new_value;
-		wait_time 	= 60/laya;
+	tempo_ {|new_value|
+		tempo 		= new_value;
+		wait_time 	= 60/tempo;
 	}
 	
 	
@@ -136,17 +136,12 @@ Tala {
 	}
 	
 	play {
-		{
-			while({no_play}, {
-				0.1.wait;
-			});
-			routine.play;
-		}.fork
+		this.create_routine;
+		routine.play;
 	}
 	
 	stop {
 		routine.stop;
-		this.reset;
 	}
 	
 	reset {
@@ -285,5 +280,4 @@ Tala {
 		parts = mCapu;
 		this.create_routine;
 	}
-	
 }
