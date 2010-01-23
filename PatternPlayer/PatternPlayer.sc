@@ -1,13 +1,14 @@
 /*
-	TODO create routine, then make duplicates from that, faster?
 	TODO Add gati input
-	TODO Red text for unset values
+	TODO Restrict 
+	TODO Red text for unset pattern?
 	TODO Project pattern onto a graph
 	TODO work with reading arrays instead of routines?
 */
 PatternPlayer {
 	var <pattern;
-	var <>routine;
+	var <stored_routine;
+	var <play_routine;
 	var <konakkol_sounds;
 	var <kanjira_sounds;
 	var <custom_sounds;
@@ -60,7 +61,7 @@ PatternPlayer {
 	create_routine {
 		var index;
 		var item_c;
-		routine = Routine {
+		stored_routine = Routine {
 			pattern.do { |item, i|
 				item_c = item.toLower.asSymbol;
 				if(sounds.size==2) {
@@ -87,7 +88,12 @@ PatternPlayer {
 			};
 		};
 		
-		routine = routine.loop;
+		stored_routine = stored_routine.loop;
+		this.duplicate_routine;
+	}
+	
+	duplicate_routine {
+		play_routine = stored_routine.shallowCopy;
 	}
 	
 	load_synth_def {
@@ -107,12 +113,12 @@ PatternPlayer {
 	
 	play {
 		this.create_routine;
-		routine.play;
+		play_routine.play;
 		tala.play;
 	}
 	
 	stop {
-		routine.stop;
+		play_routine.stop;
 		tala.stop;
 	}
 	
@@ -146,7 +152,7 @@ PatternPlayer {
 				["Stop", Color.white, Color.red]
 			])
 			.action_({|button|
-				if(routine.isPlaying) {
+				if(play_routine.isPlaying) {
 					this.stop;
 /*					"stop!".postln;*/
 				} {
