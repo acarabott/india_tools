@@ -1,5 +1,6 @@
 /*
 	TODO Improve Drone sound
+	TODO Add subdivision playback
 */
 
 Tala {
@@ -8,7 +9,7 @@ Tala {
 	classvar <rupaka;		//	Rupaka Tala Preset
 	classvar <kCapu;		//	Khanda Capu Preset
 	classvar <mCapu;		//	Misra Capu Preset
-	classvar <sankeerna;	//	Sankeerna Capu Preset
+	classvar <sCapu;		//	Sankeerna Capu Preset
 	
 	var <s;					//	Server
 	var <>amp;				//	Amplification multiplier
@@ -33,7 +34,7 @@ Tala {
 		rupaka 		= ["U", "O"];
 		kCapu 		= ["U", "K"];
 		mCapu		= ["M", "U", "U"];
-		sankeerna 	= ["U", "U", "U", "K"]
+		sCapu 		= ["U", "U", "U", "K"];
 	}
 	
 	*new {
@@ -65,7 +66,6 @@ Tala {
 			drone_synth = Synth(\drone, [\rootNote, drone_note, \amp, 0]);
 		}.fork;
 		no_play = false;
-				
 	}
 	
 	load_synth_defs {
@@ -136,12 +136,15 @@ Tala {
 	}
 	
 	play {
-		this.create_routine;
-		routine.play;
+		if(routine.isPlaying.not) {
+			routine.play;
+		};
+		
 	}
 	
 	stop {
 		routine.stop;
+		this.create_routine;
 	}
 	
 	reset {
@@ -157,6 +160,11 @@ Tala {
 		routine_duration = routine_duration + time;
 	}
 	
+	check_stop_tala {|new_tala|
+		if(new_tala!=parts) {
+			this.stop;
+		};
+	}
 	//	Angas
 	
 	laghu {|number|
@@ -262,22 +270,34 @@ Tala {
 	
 	//	Preset loading methods
 	adi {
+		this.check_stop_tala(adi);
 		parts = adi;
 		this.create_routine;
 	}
 	
 	rupaka {
+		this.check_stop_tala(rupaka);		
 		parts = rupaka;
 		this.create_routine;		
 	}
 	
-	khanda {
+	kCapu {
+		this.check_stop_tala(kCapu);
 		parts = kCapu;
 		this.create_routine;
 	}
 	
-	misra {
+	mCapu {
+		this.check_stop_tala(mCapu);
 		parts = mCapu;
 		this.create_routine;
 	}
+
+	sCapu {
+		this.check_stop_tala(sCapu);
+		parts = sCapu;
+		this.create_routine;
+	}
+	
+	
 }

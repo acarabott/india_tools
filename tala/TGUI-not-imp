@@ -1,0 +1,286 @@
+
+/*~custom_tala_field = TextView(~win, Rect(~custom_tala_text.bounds.width + (~margin*2),65,120,20))
+						.font_(~custom_tala_field_font)
+						.usesTabToFocusNextView_(false)
+						.enterInterpretsSelection_(false)
+						.keyUpAction_({|view,char,mod,uni,keycode|
+							~resize.(keycode);
+/*							"view: ".post; view.postln;*/
+/*							"char: ".post; char.postln;*/
+/*							"mod: ".post; mod.postln;*/
+/*							"uni: ".post; uni.postln;*/
+/*							"keycode: ".post; keycode.postln;*/
+						});
+						*/
+
+						~custom_tala_field.bounds.width - (~custom_tala_field.string.size*GUI.stringBounds("a", Font("Monaco",12)).width)
+
+						~one_char = GUI.stringBounds("a", Font("Monaco",12)).width;
+						~num_chars = 10;
+
+						~custom_tala_field.bounds = ~custom_tala_field.bounds.width_((~one_char*10)+10)
+						~custom_tala_field.bounds.width - (~one_char*10)
+
+						(
+							~expand = {~custom_tala_field.bounds = ~custom_tala_field.bounds.height_(~custom_tala_field.bounds.height + 20)};
+							~contract = {~custom_tala_field.bounds = ~custom_tala_field.bounds.height_(~custom_tala_field.bounds.height - 20)};
+							~resize = {|keycode| 
+							var excess 		= 10;
+							var string_w 	= GUI.stringBounds(~custom_tala_field.string).width;
+						/*	"excess: ".post; excess.postln;*/
+						/*	"string_w: ".post; string_w.postln;*/
+							if(keycode==36) {
+								~expand.();
+							};
+							"keycode: ".post; keycode.postln;
+							if(~custom_tala_field.string.size%~num_chars==0) {
+								1.postln;
+								if(keycode==51 && (~custom_tala_field.bounds.height!=20)) {
+									2.postln;
+									"contract".postln;
+									~contract.();
+								} {
+									3.postln;
+									if(~custom_tala_field.string.size!=0) {
+									"expand".postln;
+									~expand.();
+									};
+								};
+							};
+
+							if(~custom_tala_field.string.size%~num_chars==(~num_chars-1) && (keycode==51)) {
+								4.postln;
+								~contract.();
+							};
+
+							~custom_tala_field.focus(false);
+							~custom_tala_field.focus(true);		
+							~win.refresh
+						};
+						)
+
+						(
+
+						~string_width = {|string| GUI.stringBounds(string).width};
+						~expand = {~custom_tala_field.bounds = ~custom_tala_field.bounds.height_(~custom_tala_field.bounds.height + ~one_char.height)};
+						~contract = {~custom_tala_field.bounds = ~custom_tala_field.bounds.height_(~custom_tala_field.bounds.height - ~one_char.height)};
+
+						~custom_tala_text_string = " Custom Tala ";
+
+						~one_char 			= GUI.stringBounds("a", ~custom_tala_field_font);
+						~n_chars			= 10;
+
+						~win 				= Window("Tala", Rect(400,400,400,400)).front;
+						~margin				= 5;
+						~string_width.(~custom_tala_text_string);
+						~custom_tala_text = StaticText(~win, Rect(~margin,65, ~string_width.(~custom_tala_text_string),20))
+												.string_(~custom_tala_text_string)
+												.stringColor_(Color.white)
+												.background_(Color.grey);
+						~custom_tala_field_font = Font("Monaco", 12);
+						~custom_tala_field = TextView(~win, Rect(~custom_tala_text.bounds.width + (~margin*2), 65,~one_char.width*~n_chars+10,20))
+												.font_(~custom_tala_field_font)
+												.usesTabToFocusNextView_(false)
+												.enterInterpretsSelection_(false);
+
+						)
+
+						(
+							//Might be a better way of doing this. calculate how many rows the string takes up, then work out how many lines the box should be...
+						~focus_refresh = {
+							~custom_tala_field.focus(false);
+							~custom_tala_field.focus(true);		
+							~win.refresh
+						};
+						~custom_tala_field.keyDownAction = {|view, char, modifiers, unicode, keycode|
+							var string_size = ~custom_tala_field.string.size;
+							var ss_mod = {|val=0| string_size + val % ~n_chars == 0; };
+						/*	"keycode: ".post; keycode.postln;*/
+						/*	"string_size: ".post; string_size.postln;*/
+							if(string_size>1) {
+								if(ss_mod.() && (keycode!=51)) {
+									~expand.();
+									~focus_refresh.();
+									"expand!".postln;
+								};
+								if(ss_mod.(-1) && (keycode==51)) {
+									~contract.();
+									~focus_refresh.();
+									"contract".postln;
+								};		
+							} {
+								~custom_tala_field.bounds = ~custom_tala_field.bounds.height_(20);
+								~focus_refresh.();
+							};
+						}
+						)
+
+						~custom_tala_field.bounds = ~custom_tala_field.bounds.height_(20)
+
+						//bit to work with returns...
+						~custom_tala_field.string.escapeChar($\n).postln;
+						x = ~custom_tala_field.string.size;
+						r = ~custom_tala_field.string.count({|item,i|item==$\n});
+						if(r>0) {
+							y = (x-r/~num_chars).ceil + r;
+						};
+						y
+						$\n.asString.class
+						(29/10).ceil
+
+						(
+						~focus_refresh = {
+							~custom_tala_field.focus(false);
+							~custom_tala_field.focus(true);		
+							~win.refresh
+						};
+
+						~custom_tala_field.keyUpAction = {|view, char, modifiers, unicode, keycode| 
+							~gui_calc_height = (GUI.stringBounds(~custom_tala_field.string, ~custom_tala_field_font).height);
+							~num_returns = ~custom_tala_field.string.count({|item,i|item==$\n});
+							~size_calc_height = (~custom_tala_field.string.size-~num_returns/~n_chars).ceil+~num_returns;
+							~current_line = ~custom_tala_field.string.size % ~num_chars;
+							"~current_line: ".post; ~current_line.postln;
+							(~custom_tala_field.string.split($\r).last).postln;
+						/*	~actual_height = ~custom_tala_field.string.size - ~num_returns + ()*/
+						/*	~actual_height = [~gui_calc_height, ~size_calc_height].maxItem;*/
+						/*	~size_calc_height.postln;*/
+							~custom_tala_field.bounds = ~custom_tala_field.bounds.height_((~size_calc_height*~one_char.height +5).max(20));
+
+							~focus_refresh.();
+						}
+						)
+
+						x = "hello
+						hi
+						bye";
+
+						x.reverse.select({|item, i| i < x.reverse.ascii.indexOf(10)}).reverse
+
+
+
+
+						(
+							y = ~custom_tala_field.string.ascii.indicesOfEqual(10);
+							z = List[];
+							a = List[];	
+							b = List[];
+							if(y!=nil) {
+								y = y.addFirst(-1);
+								y.do { |item,i|
+									"i: ".post; i.postln;
+									if(y[i+1]!=(item+1)) {
+										if(i!=(y.size-1)) {
+											z.add(~custom_tala_field.string[item+1..y[i+1]-1])
+										} {
+											z.add(~custom_tala_field.string[item+1..~custom_tala_field.string.size-1])
+										};
+									};
+								};
+							} {
+								z.add(~custom_tala_field.string)
+							};
+
+
+							z.do { |item, i|
+								if(item.size>~num_chars) {
+									a.add(item[0..~num_chars-1]);
+									if(item[~num_chars].isSpace) {
+										b.add(item[~num_chars+1..]);
+										"adding...".postln;
+									} {
+										b.add(item[~num_chars..]);	
+										"adding...".postln;
+									};
+									if(b.size>0) {
+										true
+									};
+
+								} {
+									a.add(item);
+								};
+							};
+							a.size
+						)
+
+
+						x = List[];
+						y = List[];
+						~custom_tala_field.string.do { |item, i|
+							var val = i%10;
+							"i: ".post; i.postln;
+							"val: ".post; val.postln;
+							"item: ".post; item.postln;
+							case
+								{val==0}	{
+										if(item.isSpace.not) {
+											y=List[item];
+										} {
+											y=List[];
+										};
+									}
+								{val<10}	{
+									y.add(item);
+									if(val==9 || (i==(~custom_tala_field.string.size-1))) {
+										x.add(y); 
+										3.postln;
+									}
+								};
+							"y: ".post; y.postln;
+							"x: ".post; x.postln;
+							" ".postln;					
+						};
+
+						(~custom_tala_field.string[10].isSpace).not
+
+						x.size
+						x
+						x.size
+
+						(~custom_tala_field.string.size % 10 == 2) && ~custom_tala_field.string.last.isSpace.not
+
+						x = "";
+						y = List[];
+						~last_was_space = false;
+						~custom_tala_field.string.do({|item, i| 
+						/*	~last_was_space.not.postln;*/
+							if(item.ascii!=10) {
+								if( (i%10==0 && item.isSpace).not && (~last_was_space && item.isSpace ).not) {
+									"here".postln;
+									x=x++item; ~last_was_space=false
+								} {
+									"there".postln;
+									if(~last_was_space && (i%10==0)) {
+										x=x++item; 
+										~last_was_space =true;
+										"there one".postln;
+
+									} {
+										~last_was_space = true;	
+										"there two".postln;
+									};
+
+								};
+								if(x.size==10) {
+									y.add(x);
+									x="";
+								};
+							} {
+								if(i%10!=0) {
+									y.add(x);
+								};
+								x="";
+							}
+						});
+
+						y
+						~custom_tala_field.string.reverse.select({|item, i| i < ~custom_tala_field.string.reverse.ascii.indexOf(10)}).reverse
+
+						x.reverse.select({|item, i| i < x.reverse.ascii.indexOf(10)}).reverse
+
+						z = "1 1232 2      23   3"
+						y[0].size
+
+						( 10%10===0 && z[10].isSpace.not ).not && (z[9].isSpace).not
+
+						GUI
