@@ -25,40 +25,48 @@ TalaGUI {
 ~custom_tala_field.bounds.height_(100)
 (
 /*~win.close;*/
-~string_width = {|string| GUI.stringBounds(string).width};
+~string_width = {|string, font| GUI.stringBounds(string, font).width};
+~one_char_bounds = GUI.stringBounds("a",Font("Monaco",12));
+
 ~margin = 5;
-/* 
-	FIXME Stop expanding textfield from changing with a long single line
-	FIXME Stop textfield from shrinking after adding a new line (enter) 
-*/
-~resize = {|keycode| 
-	if(GUI.stringBounds(~custom_tala_field.string,~custom_tala_field_font).width > (~custom_tala_field.bounds.width - 9) || (keycode == 36)) {
-		~custom_tala_field.bounds = ~custom_tala_field.bounds.height_(~custom_tala_field.bounds.height + 20);
-	} {
-		if(~custom_tala_field.bounds.height!=20) {
-			~custom_tala_field.bounds = ~custom_tala_field.bounds.height_(~custom_tala_field.bounds.height - 20);
-		};
-	};
-	~custom_tala_field.focus(false);
-	~custom_tala_field.focus(true);		
-	~win.refresh
-};
-~win 	= Window("Tala", Rect(400,400,400,400)).front;
-~tempo_string = " Tempo ";
+~m_point = ~margin@~margin;
+~win 	= Window("Tala", Rect(25,400,520,300)).front;
+~win_dec = ~win.addFlowLayout.margin_(~m_point).gap_(~m_point);
+~ct_field_bounds = ((~one_char_bounds.width*22)+10)@(~one_char_bounds.height*5);
+~label_bounds = 120@20;
+~field_width = ~ct_field_bounds.x;
+~total_width = ~label_bounds.x + ~field_width + ~margin;
 ~tempo 	= EZNumber(	~win, 
-					Rect(~margin,5,75,20),
-					~tempo_string,
+					~label_bounds.x+(~num_width=30)@~label_bounds.y,
+					~tempo_string = " Tempo ",
 					ControlSpec(1,999,\lin,1,120,"bpm"),
-					{|ezn| ("Tempo is now: " ++ ezn.value).postln},
-					120,
-					labelWidth:~string_width.(~tempo_string),
-					numberWidth:30,
-					gap:~margin@~margin
+					globalAction:{|ezn| ("Tempo is now: " ++ ezn.value).postln},
+					initVal:120,
+					labelWidth:~label_bounds.x,
+					numberWidth:~num_width,
+					gap:~m_point
 		).setColors(Color.grey, Color.white);
-~tala_pop_string = " Tala Presets ";
+~win_dec.nextLine;
+~gati_pop = EZPopUpMenu( ~win,
+						 ~total_width@~label_bounds.y,
+						 ~gati_pop_string = " Gati ",
+						[
+							'3 - Tisra'		->	{|a| "Tisra".postln;},
+							'4 - Caturasra'	->	{|a| "Caturasra".postln;},
+							'5 - Khanda'	->	{|a| "Khanda".postln;},
+							'7 - Misra'		->	{|a| "Misra".postln;},
+							'9 - Sankirna'	->	{|a| "Sankirna".postln;},
+						],
+						globalAction: {|a| "Global Action".postln;},
+						initVal:1,
+						initAction:false,
+						labelWidth:~label_bounds.x,
+						gap:~m_point
+		).setColors(Color.grey, Color.white);
+~win_dec.nextLine;
 ~tala_pop = EZPopUpMenu( ~win,
-						 Rect(~margin,35,200,20),
-						 ~tala_pop_string,
+						 ~total_width@~label_bounds.y,
+						 ~tala_pop_string=" Tala Presets ",
 						[
 							'Adi' -> {|a| "Adi".postln},
 							'Rupaka' -> {|a| "Rupaka".postln},
@@ -70,21 +78,27 @@ TalaGUI {
 						globalAction: {|a| "Global Action".postln},
 						initVal: 0,
 						initAction: false,
-						labelWidth: ~string_width.(~tala_pop_string),
-						gap:~margin@~margin
+						labelWidth: ~label_bounds.x,
+						gap:~m_point
 		).setColors(Color.grey, Color.white);
-~custom_tala_text_string = " Custom Tala ";
-~custom_tala_text = StaticText(~win, Rect(~margin,65, ~string_width.(~custom_tala_text_string),20))
-						.string_(~custom_tala_text_string)
+/*~win_dec.nextLine;*/
+~custom_tala_comp = CompositeView(~win, (~field_width + ~label_bounds.x+12)@~ct_field_bounds.y);
+
+
+~custom_tala_comp.addFlowLayout.margin_(0@0).gap_(~margin@0).left_(~custom_tala_comp.decorator.bounds.width).top_(0);
+~custom_tala_label = StaticText(~custom_tala_comp, ~ct_label_bounds)
+						.string_(~ct_label_string)
 						.stringColor_(Color.white)
-						.background_(Color.grey);
-~custom_tala_field_font = Font("Monaco", 12);
-~custom_tala_field = TextView(~win, Rect(~custom_tala_text.bounds.width + (~margin*2), 65, 120, (4*GUI.stringBounds("a", ~custom_tala_field_font).height)+5))
+						.background_(Color.grey)
+						.align_(\right);
+~custom_tala_field = TextView(~custom_tala_comp, ~ct_field_bounds)
 						.font_(~custom_tala_field_font)
 						.usesTabToFocusNextView_(false)
 						.enterInterpretsSelection_(false)
 						.hasVerticalScroller_(true)
 						.autohidesScrollers_(true);
+~win_dec.nextLine;
+/*~custom_tala_comp.decorator.left=380*/
 ~start_stop_routine = Routine {
 	inf.do {
 		"Started!".postln;
@@ -93,7 +107,8 @@ TalaGUI {
 		0.yield;
 	};
 };
-~start_stop = Button(~win, Rect(~margin,145, 150, 20))
+
+~start_stop = Button(~win, Rect(~margin, 145, 70, 40))
 				.states_([
 					["Start Tala", Color.black, Color.green],
 					["Stop Tala", Color.white, Color.red]
@@ -101,7 +116,7 @@ TalaGUI {
 				.action_({|button|
 					~start_stop_routine.();
 				});
-~start_stop_drone = Routine {
+/*~start_stop_drone = Routine {
 	inf.do {
 		"Drone Started!".postln;
 		0.yield;
@@ -110,6 +125,7 @@ TalaGUI {
 	}
 	
 };
+FlowLayout
 ~drone_on_off = Button(~win, Rect(~margin,175,75,60))
 				.states_([
 					["Start Drone", Color.black, Color.white],
@@ -118,7 +134,8 @@ TalaGUI {
 				.action_({|button|
 					~start_stop_drone.()
 				});
-~drone_pitch_
+*/
+
 )
 
 /*
@@ -126,3 +143,29 @@ TalaGUI {
 	TODO Multislider for sub-divisions
 	TODO Eduppu
 */
+p = PathName.new("/Users/arthurc/Documents/programming/computerMusic/india_tools/tala/images");
+~images = Array.newClear(p.files.size);
+p.filesDo {|aFile, i|
+	~images[i] = SCImage.new(aFile.fullPath);
+};
+p.files.do { |item, i|
+	item.postln;
+};
+
+~images
+PathName.dumpInterface;
+x = CompositeView(~win, 100@109)
+x.backgroundImage_(~images[8..9])
+
+~adi = [~images[8],~images[0..2], ~images[8..9] ! 2].flat;
+{
+	inf.do { |i|
+		x.backgroundImage_(~adi.wrapAt(i));
+		0.5.wait
+	};
+}.fork(AppClock)
+
+[1,2] ! 2
+
+a = [1,2,3,4,5,6,7,8]
+[a[3..4] ! 2].flat
