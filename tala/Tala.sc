@@ -9,7 +9,7 @@ Tala {
 	classvar <rupaka;		//	Rupaka Tala Preset
 	classvar <kCapu;		//	Khanda Capu Preset
 	classvar <mCapu;		//	Misra Capu Preset
-	classvar <sCapu;		//	Sankeerna Capu Preset
+	classvar <sCapu;		//	Sankirna Capu Preset
 	
 	var <s;					//	Server
 	var <>amp;				//	Amplification multiplier
