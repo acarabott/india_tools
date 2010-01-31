@@ -134,7 +134,7 @@ TalaGUI {
 ~right_dec 		= ~right_side.addFlowLayout.margin_(~m_point).gap_(~m_point/2);
 ~paths 			= PathName.new("/Users/arthurc/Documents/programming/computerMusic/india_tools/tala/images");
 ~images 		= Array.newClear(~paths.files.size);
-~paths.filesDo {|aFile, i|
+~paths.files.do {|aFile, i|
 	~images[i] = SCImage.new(aFile.fullPath);
 };
 ~image_holder 	= CompositeView(~right_side, ~right_side.bounds.extent-(~margin*2)).backgroundImage_(~images[8],11);
@@ -144,6 +144,14 @@ TalaGUI {
 ~misra			= (~images[9]!2) ++ (~images[8]!2);
 ~sankirna		= (~images[8]!3) ++ (~images[9]!2);
 
+~text_string	= "CLAP";
+~text_font		= ~regular_font.copy.size_(40);
+~string_bounds	= GUI.stringBounds(~text_string, ~text_font); 
+~text_l			= (~image_holder.bounds.width/2) - (~string_bounds.width/2) + 28;
+~text_t			= ~image_holder.bounds.height * 0.55;
+/*~text_bounds	= Rect(~text_l,~text_t,~text_bounds.width,~text_bounds.height);*/
+~text_bounds	= Rect(~text_l,~text_t,~string_bounds.width,~string_bounds.height);
+~butters = StaticText(~image_holder, ~text_bounds).string_(~text_string).font_(~text_font).stringColor_(Color.white);
 
 
 )
