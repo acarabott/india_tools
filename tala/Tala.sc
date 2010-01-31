@@ -301,3 +301,117 @@ Tala {
 	
 	
 }
+
+TalaImage : Object {
+	classvar <images;
+	classvar <strings;
+	
+	var <comp;
+	var <label;
+	var <parent;
+	
+	var <label_extent;
+	
+	*initClass {
+		images = PathName.new("/Users/arthurc/Documents/programming/computerMusic/india_tools/tala/images").files.collect({|item, i| SCImage.new(item.fullPath) });
+		strings = #["Clap", "Wave", "2", "3", "4", "5", "6", "7", "8", "9"];
+	}
+	
+	*new {|aParent, aBounds|
+		^super.new.init(aParent, aBounds);
+	}
+
+	init {|aParent, aBounds|
+		var parent			= aParent;
+		var font_size		= aBounds.height*0.14;
+		var font			= if(Font.availableFonts.any{|item, i| item.asSymbol=='Cochin'}) {Font.new("Cochin", font_size) } {Font("Times", font_size)};
+		var s_bounds		= {|string| GUI.stringBounds(string, font)};
+		
+		label_extent	= s_bounds.(strings[strings.collect({|item, i| s_bounds.(item).width}).maxIndex]).extent;
+
+		comp 		= CompositeView(aParent, aBounds ?? (aParent.bounds.width@aParent.bounds.height));
+		label 		= StaticText(comp, label_extent).font_(font).stringColor_(Color.yellow);
+		
+		this.clap;
+						
+	}
+	
+	string {
+		^label.string;
+	}
+		
+	font {
+		^label.font;
+	}
+	
+	font_ {|aFont|
+		label.font = aFont;
+	}
+	
+	font_size {
+		^label.font.size
+	}
+	
+	font_size_ {|aSize|
+		label.font = label.font.size = aSize
+	}
+	
+	label_color {
+		^label.stringColor
+	}
+	
+	label_color_ {|aColor|
+		label.stringColor = aColor;
+	}
+	
+	bounds {
+		^comp.bounds;
+	}
+	
+	label_origin {
+		^label.bounds.origin;
+	}
+	
+	label_origin_ {|aPoint|
+		label.bounds = Rect(aPoint.x, aPoint.y,label_extent.x, label_extent.y)
+	}
+	
+	//actions
+	
+	prAction {|index, xMul, yMul|
+		comp.backgroundImage_(images[index], 11);
+		label.string_(strings[index]);
+		this.label_origin_((this.bounds.width*xMul)@(this.bounds.height*yMul))
+		
+	}
+	
+	clap {
+		this.prAction(0, 0.41, 0.45);
+	}
+	
+	wave {
+		this.prAction(1, 0.41, 0.45);
+	}
+	
+	lf {|num|
+		this.prAction(num, 0.6, 0);
+	}
+	
+	rf {|num|
+		this.prAction(num, 0.45, -0.04);
+	}
+	
+	mf {|num|
+		this.prAction(4, 0.35, -0.03);
+	}
+	
+	pf {|num|
+		this.prAction(5, 0.27, 0.09);
+	}
+	
+	tf {|num|
+		this.prAction(6, 0.23, 0.32);
+	}
+	
+}
+

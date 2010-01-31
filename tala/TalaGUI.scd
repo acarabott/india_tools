@@ -135,28 +135,91 @@ TalaGUI {
 ~paths 			= PathName.new("/Users/arthurc/Documents/programming/computerMusic/india_tools/tala/images");
 ~images 		= Array.newClear(~paths.files.size);
 ~paths.files.do {|aFile, i|
-	~images[i] = SCImage.new(aFile.fullPath);
+/*	~images[i] = SCImage.new(aFile.fullPath);*/
+	~images[i] = TalaImage.new(aFile.fullPath)
 };
-~image_holder 	= CompositeView(~right_side, ~right_side.bounds.extent-(~margin*2)).backgroundImage_(~images[8],11);
+
+~image_holder 	= CompositeView(~right_side, ~right_side.bounds.extent-(~margin*2)).backgroundImage_(~images[8].image,11);
+
 ~adi 			= [~images[8],~images[0..2], ~images[8..9] ! 2].flat;
 ~rupaka 		= ~images[8]!2 ++ ~images[9];
 ~khanda 		= ~images[8]!3;
 ~misra			= (~images[9]!2) ++ (~images[8]!2);
 ~sankirna		= (~images[8]!3) ++ (~images[9]!2);
 
-~text_string	= "CLAP";
-~text_font		= ~regular_font.copy.size_(40);
-~string_bounds	= GUI.stringBounds(~text_string, ~text_font); 
-~text_l			= (~image_holder.bounds.width/2) - (~string_bounds.width/2) + 28;
+/*~text_font		= ~regular_font.copy.size_(40);
+~text_strings	= ["Clap", "Wave", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+~string_sizes	= Array.newClear(~text_strings.size); 
+~text_strings.do { |item, i|
+	~string_sizes[i] = GUI.stringBounds(item, ~text_font).bounds;
+};
+*/
+/*~string_bounds	= ~string_sizes.maxItem({|item, a| item.width});*/
+~text_l			= (~image_holder.bounds.width/2) - (~images[8].bounds.width/2) + 28;
 ~text_t			= ~image_holder.bounds.height * 0.55;
-/*~text_bounds	= Rect(~text_l,~text_t,~text_bounds.width,~text_bounds.height);*/
-~text_bounds	= Rect(~text_l,~text_t,~string_bounds.width,~string_bounds.height);
-~butters = StaticText(~image_holder, ~text_bounds).string_(~text_string).font_(~text_font).stringColor_(Color.white);
+~images[8].set_origin(~text_l@~text_t);
+~butters = StaticText(~image_holder, ~images[8].bounds)
+			.string_(~images[8].string)
+			.font_(~images[8].font)
+			.stringColor_(~images[8].label_color);
+
 
 
 )
+~image_holder.backgroundImage_(~images[0].image,11)
+~images[0].string = "1"
+~butters.string = ~images[0].string
+~images[0].set_origin(0@0)
+~butters.bounds = ~images
+~images[0].bounds
+a = TalaImage.new()
+
 /*
 	TODO Gati
 	TODO Multislider for sub-divisions
 	TODO Eduppu
 */
+~images[0].string.class
+GUI.stringBounds("hello")
+~set_origin = {|origin|
+	var l,t;
+	var sPoint = GUI.stringBounds(~images[0].string, ~images[0].font).extent;
+	sPoint.postln;
+	if(origin!=nil) {
+		l = origin.x;
+		t = origin.y;
+	} {
+		l = 0;
+		t = 0;
+	};
+	
+	Rect(l, t, sPoint.x, sPoint.y);
+};
+~set_origin.(0@0)
+
+
+
+x = 1000;
+~win = Window("hi", Rect(100,150,x,x)).front;
+a = TalaImage.new(~win, Rect(0,0,x,x));
+SCVideo
+{
+	a.clap;
+	0.5.wait;
+	a.lf(2);
+	0.5.wait;
+	a.rf(3);
+	0.5.wait;
+	a.mf(4);
+	0.5.wait;
+	a.clap;
+	0.5.wait;
+	a.wave;
+	0.5.wait;
+	a.clap;
+	0.5.wait;
+	a.wave;
+	0.5.wait;
+}.fork(AppClock)
+
+a.prAction(1, 0.41, 0.45)
