@@ -29,6 +29,8 @@ Tala {
 	var drone_synth;		//	Drone Synth
 	var drone_routine;		//	Drone Routine
 	
+	var <tGui;				//	GUI :)
+	
 	*initClass {
 		adi 		= ["I4", "O", "O"];
 		rupaka 		= ["U", "O"];
@@ -66,6 +68,8 @@ Tala {
 			drone_synth = Synth(\drone, [\rootNote, drone_note, \amp, 0]);
 		}.fork;
 		no_play = false;
+		
+		tGui = TalaGUI.new(this);
 	}
 	
 	load_synth_defs {
@@ -147,15 +151,6 @@ Tala {
 		this.create_routine;
 	}
 	
-	reset {
-		{
-			no_play = true;
-			(wait_time)*1.5.wait;
-			routine.reset;	
-			no_play = false;
-		}.fork
-	}
-	
 	add_rout_time {|time|
 		routine_duration = routine_duration + time;
 	}
@@ -163,6 +158,7 @@ Tala {
 	check_stop_tala {|new_tala|
 		if(new_tala!=parts) {
 			this.stop;
+			tGui.start_stop_button.valueAction_(0);
 		};
 	}
 	//	Angas
@@ -173,7 +169,7 @@ Tala {
 			this.clap();
 			wait_time.wait;
 			(number-1).do { |i|
-				this.finger(i);
+				this.finger(i+2);
 				wait_time.wait;
 			};
 		};
@@ -219,19 +215,25 @@ Tala {
 	
 	//	Gestures
 	clap {
-		"clap!".postln;
+		tGui.clap;
 		this.generic_clap(0.7, 0.8, 2000, 2500, 0.9);
 		this.generic_clap(0.7, 0.8, 700, 1200, 0.9);
 		
 	}
 			
 	clap_b {
-		"back clap!".postln;
+		tGui.wave;
 		this.generic_clap(0.1, 0.2, 400, 600, 0.9);
 	}
 
 	finger {|number|
-		("Finger - " ++ (number+1)).postln;
+		var a =	case
+				{[2,7].includes(number)}	{tGui.lf(number)}
+				{[3,8].includes(number)}	{tGui.rf(number)}
+				{[4,9].includes(number)}	{tGui.mf(number)}
+				{number==5}					{tGui.pf(number)}
+				{number==6}					{tGui.tf(number)};
+		
 		this.generic_clap(0.2, 0.3, 6000, 7000, 0.9);
 		
 	}
@@ -297,121 +299,5 @@ Tala {
 		this.check_stop_tala(sCapu);
 		parts = sCapu;
 		this.create_routine;
-	}
-	
-	
+	}	
 }
-
-TalaImage : Object {
-	classvar <images;
-	classvar <strings;
-	
-	var <comp;
-	var <label;
-	var <parent;
-	
-	var <label_extent;
-	
-	*initClass {
-		images = PathName.new("/Users/arthurc/Documents/programming/computerMusic/india_tools/tala/images").files.collect({|item, i| SCImage.new(item.fullPath) });
-		strings = #["Clap", "Wave", "2", "3", "4", "5", "6", "7", "8", "9"];
-	}
-	
-	*new {|aParent, aBounds|
-		^super.new.init(aParent, aBounds);
-	}
-
-	init {|aParent, aBounds|
-		var parent			= aParent;
-		var font_size		= aBounds.height*0.14;
-		var font			= if(Font.availableFonts.any{|item, i| item.asSymbol=='Cochin'}) {Font.new("Cochin", font_size) } {Font("Times", font_size)};
-		var s_bounds		= {|string| GUI.stringBounds(string, font)};
-		
-		label_extent	= s_bounds.(strings[strings.collect({|item, i| s_bounds.(item).width}).maxIndex]).extent;
-
-		comp 		= CompositeView(aParent, aBounds ?? (aParent.bounds.width@aParent.bounds.height));
-		label 		= StaticText(comp, label_extent).font_(font).stringColor_(Color.yellow);
-		
-		this.clap;
-						
-	}
-	
-	string {
-		^label.string;
-	}
-		
-	font {
-		^label.font;
-	}
-	
-	font_ {|aFont|
-		label.font = aFont;
-	}
-	
-	font_size {
-		^label.font.size
-	}
-	
-	font_size_ {|aSize|
-		label.font = label.font.size = aSize
-	}
-	
-	label_color {
-		^label.stringColor
-	}
-	
-	label_color_ {|aColor|
-		label.stringColor = aColor;
-	}
-	
-	bounds {
-		^comp.bounds;
-	}
-	
-	label_origin {
-		^label.bounds.origin;
-	}
-	
-	label_origin_ {|aPoint|
-		label.bounds = Rect(aPoint.x, aPoint.y,label_extent.x, label_extent.y)
-	}
-	
-	//actions
-	
-	prAction {|index, xMul, yMul|
-		comp.backgroundImage_(images[index], 11);
-		label.string_(strings[index]);
-		this.label_origin_((this.bounds.width*xMul)@(this.bounds.height*yMul))
-		
-	}
-	
-	clap {
-		this.prAction(0, 0.41, 0.45);
-	}
-	
-	wave {
-		this.prAction(1, 0.41, 0.45);
-	}
-	
-	lf {|num|
-		this.prAction(num, 0.6, 0);
-	}
-	
-	rf {|num|
-		this.prAction(num, 0.45, -0.04);
-	}
-	
-	mf {|num|
-		this.prAction(4, 0.35, -0.03);
-	}
-	
-	pf {|num|
-		this.prAction(5, 0.27, 0.09);
-	}
-	
-	tf {|num|
-		this.prAction(6, 0.23, 0.32);
-	}
-	
-}
-
