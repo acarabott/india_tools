@@ -24,10 +24,10 @@ Tala {
 	var <routine_duration;	//	The duration (in seconds) of the routine
 	var <no_play;			//	If true, the routine can't yet be played
 	
-	var <drone_note;		//	Drone Note
-	var <drone_amp;			//	Drone Volume
-	var drone_synth;		//	Drone Synth
-	var drone_routine;		//	Drone Routine
+/*	var <drone_note;		//	Drone Note*/
+/*	var <drone_amp;			//	Drone Volume*/
+/*	var drone_synth;		//	Drone Synth*/
+/*	var drone_routine;		//	Drone Routine*/
 	
 	var <tGui;				//	GUI :)
 	
@@ -57,17 +57,17 @@ Tala {
 		no_play 			= true;
 		this.create_routine;
 		
-		drone_note 	= aNote;
-		drone_amp 	= 1;
+/*		drone_note 	= aNote;*/
+/*		drone_amp 	= 1;*/
 		
 		s = Server.default;
-		{
+/*		{
 			this.load_synth_defs;		
 			s.sync;
 			this.create_drone_routine;
 			drone_synth = Synth(\drone, [\rootNote, drone_note, \amp, 0]);
 		}.fork;
-		no_play = false;
+*/		no_play = false;
 		
 		tGui = TalaGUI.new(this);
 	}
@@ -88,28 +88,28 @@ Tala {
 			DetectSilence.ar(signal, doneAction:2);
 		}).load(s);
 		
-		SynthDef(\drone, {|rootNote=62, amp=1|
+		/*SynthDef(\drone, {|rootNote=62, amp=1|
 
-		var signal1, signal2, root, fifth, octaveA, octaveB, env;
-		root = rootNote.midicps;
-		fifth = (rootNote+7).midicps;
-		octaveA = (rootNote+12).midicps;
-		octaveB = (rootNote-12).midicps;
+				var signal1, signal2, root, fifth, octaveA, octaveB, env;
+				root = rootNote.midicps;
+				fifth = (rootNote+7).midicps;
+				octaveA = (rootNote+12).midicps;
+				octaveB = (rootNote-12).midicps;
 
-		env = {EnvGen.kr(Env.new(
-						 					Array.rand(16, 0, 0.2),  //Random drones
-											Array.rand(15, 1, 5),
-											'exponential',
-											0,
-											1))};
-		signal1 = Mix(SinOsc.ar([root, fifth, [octaveA, octaveB].choose], 0, 0.3*[env, env, env]));
-		signal2 = Mix(LFSaw.ar([root, fifth, [octaveA, octaveB].choose], 0, 0.4*[env, env, env]));							
+				env = {EnvGen.kr(Env.new(
+								 					Array.rand(16, 0, 0.2),  //Random drones
+													Array.rand(15, 1, 5),
+													'exponential',
+													0,
+													1))};
+				signal1 = Mix(SinOsc.ar([root, fifth, [octaveA, octaveB].choose], 0, 0.3*[env, env, env]));
+				signal2 = Mix(LFSaw.ar([root, fifth, [octaveA, octaveB].choose], 0, 0.4*[env, env, env]));							
 
-		Out.ar(	0,
-		 		Pan2.ar(signal1)*amp,
-		 		Pan2.ar(signal2, FSinOsc.kr(0.05))*amp
-		 		);
-		}).load(s)
+				Out.ar(	0,
+				 		Pan2.ar(signal1)*amp,
+				 		Pan2.ar(signal2, FSinOsc.kr(0.05))*amp
+				 		);
+				}).load(s)*/
 		
 	}
 	
@@ -245,7 +245,7 @@ Tala {
 /*		}*/
 	}
 	
-	drone_amp_ {|new_amp|
+/*	drone_amp_ {|new_amp|
 		drone_amp = new_amp;
 		drone_synth.set(\amp, drone_amp);
 	}
@@ -269,7 +269,7 @@ Tala {
 	drone {
 		drone_routine.();
 	}
-	
+*/	
 	//	Preset loading methods
 	adi {
 		this.check_stop_tala(adi);

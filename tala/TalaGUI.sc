@@ -17,7 +17,7 @@ TalaGUI {
 	//	In which case they can be method variables.
 	
 	//values
-	var win_bounds;
+	var <win_bounds;
 	var margin;
 	var m_point;
 	var item_bounds;
@@ -256,6 +256,7 @@ TalaImage : Object {
 	var <label_extent;
 	
 	*initClass {
+/*		images = PathName.new(String.scDir+/+"SCClassLibrary/tala/images/").files.collect({|item, i| SCImage.new(item.fullPath) });*/
 		images = PathName.new("/Users/arthurc/Documents/programming/computerMusic/india_tools/tala/images").files.collect({|item, i| SCImage.new(item.fullPath) });
 		images.add(SCImage.color(images[0].bounds.extent, Color.gray));
 		strings = #["Clap", "Wave", "2", "3", "4", "5", "6", "7", "8", "9",""];
