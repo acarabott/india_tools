@@ -1,15 +1,33 @@
+/*
+	Standalone
+	
+	TODO Help File
+	TODO Change name to Carnatic Tala Meter
+	
+*/
+
+/*	
+	1.0
+	
+	TODO Change image size to account for border
+	TODO Try passing in time and greying out
+*/
 
 /*
+	1.1
+	
 	TODO MIDIKeyboard for Sruti, with octave buttons
 	TODO FullScreen image
 	TODO Make this into a view, which can be added to other windows?
 	TODO Custom tala field working
-*/
-
-/*
 	TODO Gati
 	TODO Multislider for sub-divisions
 	TODO Eduppu
+*/
+
+/*
+	2.0
+	TODO Video
 */
 
 TalaGUI {
@@ -76,9 +94,10 @@ TalaGUI {
 							win_w, 
 							win_h
 		);	
-		win = Window("Tala", win_bounds, false).front;
+		win = Window("Tala", win_bounds, false).front.userCanClose_(false);
 
 	}
+	quit
 	
 	create_left_side {
 		left_side 		= CompositeView(win, Rect(0,0,win.bounds.width/2, win.bounds.height));

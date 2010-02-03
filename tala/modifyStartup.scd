@@ -1,3 +1,5 @@
+//		Remember to change to .sc when used in package
+
 + OSXPlatform {
 
 	startupFiles {
@@ -56,6 +58,8 @@
 		
 /*		Server.default.boot;*/
 
+		// close post window if user should not have it
+		Document.listener.close		
 
 		loading_win 	= Window("Loading", Rect(617, 450, 686, 300), border:false).front;
 
@@ -85,42 +89,6 @@
 
 
 
-		// close post window if user should not have it
-		Document.listener.close		
 	}
 	
 }
-/*
-Font.availableFonts.any({|item,i| item.asSymbol=='Monaco'})
-Font.availableFonts.do { |item, i|
-	item.postln;
-};
-(
-if(loading_win.visible) {
-	~loading_win.close;	
-};
-~loading_win 	= Window("Loading", Rect(617, 450, 686, 300)).front;
-
-		~loading_text 	= StaticText(~loading_win, Rect(100,100,~loading_win.bounds.extent.x,~loading_win.bounds.extent.y))
-							.string_("Loading Carnatic Tala Meter")
-							.font_(Font("Geneva", 35))
-							.align_(\left);
-		
-		~loading_image  = CompositeView(~loading_win, Rect(0, 20, ~loading_win.bounds.width,200)).backgroundImage_(SCImage("~/Desktop/mridangam.png"),11);
-
-
-
-		~loading_flag	= true;
-		~loading_rout 	= Routine {
-			var i = 0;
-			while({~loading_flag}, {
-				~loading_text.string_("Loading Carnatic Tala Meter" ++ "..."[0..i%3]);
-				i = i + 1;
-				0.25.wait;
-			});
-		};			
-		~loading_rout.play(AppClock);		
-)
-		~loading_win.close;
-		loading_rout.stop;
-*/
