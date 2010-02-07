@@ -59,7 +59,7 @@
 /*		Server.default.boot;*/
 
 		// close post window if user should not have it
-		Document.listener.close		
+		Document.listener.close;		
 
 		loading_win 	= Window("Loading", Rect(617, 450, 686, 300), border:false).front;
 
@@ -68,7 +68,7 @@
 							.font_(Font("Geneva", 35))
 							.align_(\left);
 
-		loading_image  = CompositeView(loading_win, Rect(0, 20, loading_win.bounds.width,200)).backgroundImage_(SCImage(String.scDir +/+ "SCClassLibrary/tala/images/mridangam.png"),11);
+		loading_image  = CompositeView(loading_win, Rect(0, 20, loading_win.bounds.width,200)).backgroundImage_(SCImage(String.scDir +/+ "SCClassLibrary/tala/images/utility/mridangam.png"),11);
 
 		loading_flag	= true;
 		loading_rout 	= Routine {
@@ -78,7 +78,7 @@
 				i = i + 1;
 				0.25.wait;
 			});
-		};			i
+		};
 		loading_rout.play(AppClock);		
 
 		Server.default.waitForBoot({
@@ -86,9 +86,5 @@
 			loading_win.close;
 			loading_rout.stop;			
 		});
-
-
-
 	}
-	
 }

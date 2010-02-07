@@ -1,16 +1,13 @@
 /*
 	Standalone
 	
-	TODO Help File
-	TODO Change name to Carnatic Tala Meter
-	
 */
 
 /*	
 	1.0
-	
-	TODO Change image size to account for border
 	TODO Try passing in time and greying out
+	TODO Volume slider
+	TODO Change tempo box to calculateable one?
 */
 
 /*
@@ -23,11 +20,14 @@
 	TODO Gati
 	TODO Multislider for sub-divisions
 	TODO Eduppu
+	TODO Store previous boot time as variable (file?) then give a loading bar...
+	TODO Use Task to allow Play/Pause?
 */
 
 /*
 	2.0
 	TODO Video
+	TODO More Talas, ask KSS
 */
 
 TalaGUI {
@@ -94,10 +94,9 @@ TalaGUI {
 							win_w, 
 							win_h
 		);	
-		win = Window("Tala", win_bounds, false).front.userCanClose_(false);
-
+/*		win = Window("Carnatic Tala Meter", win_bounds, false).front.userCanClose_(false);*/
+		win = Window("Carnatic Tala Meter", win_bounds, false).front;
 	}
-	quit
 	
 	create_left_side {
 		left_side 		= CompositeView(win, Rect(0,0,win.bounds.width/2, win.bounds.height));
@@ -161,8 +160,8 @@ TalaGUI {
 				'Rupaka' 			-> {|a| tala.rupaka},
 				'Khanda Chapu' 		-> {|a| tala.kCapu},
 				'Misra Chapu' 		-> {|a| tala.mCapu},
-				'Sankeerna Chapu' 	-> {|a| tala.sCapu},
-				'Custom Tala' 		-> {|a| "Not yet functioning!".postln}
+				'Sankeerna Chapu' 	-> {|a| tala.sCapu}/*,
+								'Custom Tala' 		-> {|a| "Not yet functioning!".postln}*/
 			],
 			initVal: 0,
 			initAction: false,
@@ -220,7 +219,7 @@ TalaGUI {
 		
 		right_side		= CompositeView(win, Rect(win.bounds.width/2,0,win.bounds.width/2, win.bounds.height));
 		right_side.addFlowLayout.margin_(m_point).gap_(m_point/2);
-		tala_image = TalaImage.new(right_side, right_side.bounds.extent-margin);
+		tala_image = TalaImage.new(right_side, right_side.bounds.extent-(margin*2));
 	}
 	
 	//Actions
@@ -295,6 +294,9 @@ TalaImage : Object {
 		label_extent	= s_bounds.(strings[strings.collect({|item, i| s_bounds.(item).width}).maxIndex]).extent;
 
 		comp 		= CompositeView(aParent, bounds ?? (aParent.bounds.width@aParent.bounds.height)).backgroundImage_(images.last,11);
+		
+/*		comp 		= CompositeView(aParent, bounds ?? (10@10)).background_(Color.grey);*/
+
 		label 		= StaticText(comp, label_extent).font_(font).stringColor_(Color.yellow);
 								
 	}

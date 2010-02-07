@@ -1,6 +1,8 @@
 /*
-	TODO Improve Drone sound
 	TODO Add subdivision playback
+	TODO Kalai
+	TODO Eduppu
+	TODO Replace routines with Tasks
 */
 
 Tala {
@@ -24,11 +26,6 @@ Tala {
 	var <routine_duration;	//	The duration (in seconds) of the routine
 	var <no_play;			//	If true, the routine can't yet be played
 	
-/*	var <drone_note;		//	Drone Note*/
-/*	var <drone_amp;			//	Drone Volume*/
-/*	var drone_synth;		//	Drone Synth*/
-/*	var drone_routine;		//	Drone Routine*/
-	
 	var <tGui;				//	GUI :)
 	
 	*initClass {
@@ -39,11 +36,11 @@ Tala {
 		sCapu 		= ["U", "U", "U", "K"];
 	}
 	
-	*new {
-		^super.new.init;
+	*new {|aTempo=60, aGUIbool=true|
+		^super.new.init(aTempo, aGUIbool);
 	}
 
-	init {|aTempo=60, aNote=62|
+	init {|aTempo, aGUIbool|
 		amp 		= 1;
 		tempo 		= aTempo;
 		gati		= 4;
@@ -56,20 +53,18 @@ Tala {
 		routine_duration 	= 0;
 		no_play 			= true;
 		this.create_routine;
-		
-/*		drone_note 	= aNote;*/
-/*		drone_amp 	= 1;*/
-		
+				
 		s = Server.default;
-/*		{
+		{
 			this.load_synth_defs;		
 			s.sync;
-			this.create_drone_routine;
-			drone_synth = Synth(\drone, [\rootNote, drone_note, \amp, 0]);
 		}.fork;
-*/		no_play = false;
+		no_play = false;
 		
-		tGui = TalaGUI.new(this);
+		if(aGUIbool) {
+			tGui = TalaGUI.new(this);
+		};
+		
 	}
 	
 	load_synth_defs {
@@ -87,30 +82,7 @@ Tala {
 			Out.ar(0, Pan2.ar(signal*amp, 0));
 			DetectSilence.ar(signal, doneAction:2);
 		}).load(s);
-		
-		/*SynthDef(\drone, {|rootNote=62, amp=1|
-
-				var signal1, signal2, root, fifth, octaveA, octaveB, env;
-				root = rootNote.midicps;
-				fifth = (rootNote+7).midicps;
-				octaveA = (rootNote+12).midicps;
-				octaveB = (rootNote-12).midicps;
-
-				env = {EnvGen.kr(Env.new(
-								 					Array.rand(16, 0, 0.2),  //Random drones
-													Array.rand(15, 1, 5),
-													'exponential',
-													0,
-													1))};
-				signal1 = Mix(SinOsc.ar([root, fifth, [octaveA, octaveB].choose], 0, 0.3*[env, env, env]));
-				signal2 = Mix(LFSaw.ar([root, fifth, [octaveA, octaveB].choose], 0, 0.4*[env, env, env]));							
-
-				Out.ar(	0,
-				 		Pan2.ar(signal1)*amp,
-				 		Pan2.ar(signal2, FSinOsc.kr(0.05))*amp
-				 		);
-				}).load(s)*/
-		
+				
 	}
 	
 	tempo_ {|new_value|
@@ -240,36 +212,9 @@ Tala {
 	
 	//	Synth methods
 	generic_clap {|amp1, amp2, freq1, freq2, rq|
-/*		s.bind {*/
 			Synth(\clapping, [\amp, rrand(amp1, amp2)*amp, \filterfreq, rrand(freq1, freq2), \rq, rq.rand]) 
-/*		}*/
 	}
 	
-/*	drone_amp_ {|new_amp|
-		drone_amp = new_amp;
-		drone_synth.set(\amp, drone_amp);
-	}
-	
-	drone_note_ {|new_note|
-		drone_note = new_note;
-		drone_synth.set(\rootNote, drone_note);
-	}
-	
-	create_drone_routine {
-		drone_routine = Routine {
-			inf.do { |i|
-				drone_synth.set(\amp, drone_amp);				
-				0.yield;
-				drone_synth.set(\amp, 0);								
-				0.yield
-			};
-		};
-	}
-	
-	drone {
-		drone_routine.();
-	}
-*/	
 	//	Preset loading methods
 	adi {
 		this.check_stop_tala(adi);

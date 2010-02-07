@@ -1,32 +1,38 @@
 s.boot;
 a = PatternPlayer.new
-a.pattern_field.enabled
 
-x = PPTextField.new
-w = Window("hi", Rect(400,400,400,400)).front
-SCTextField(w, Rect(0,0,50,50))
+w = 1;
+g = 4;
+a = Routine {
+	inf.do { |i|
+		Synth(\beep, [\freq, 440]);
+		w.wait;
+	};
 
-TextField
+};
 
-3.asAscii
+b = Routine {
+	inf.do { |i|
+		Synth(\beep, [\freq, 880]);
+		(w/g).wait;
+	};
+};
 
-3.asAscii
+c = TempoClock(1)
+c.tempo=1
+c.stop
 
-PPTextField.dumpAllMethods;
-SCTextField.dumpAllMethods;
+a.play(c);b.play(c);
 
-s.boot
-a = Tala.new
+a.stop
+a.reset
 
-a.drone_note = 64
-a.drone
-a.drone_amp = 2.5
+b.play(c)
+b.stop
+b.reset
+
+[a,b].do { |item, i|
+	item.stop;
+};
+
 a.play
-a.tempo = 120
-a.stop
-s.boot
-s.mute
-s.unmute
-
-a.rupaka
-a.stop

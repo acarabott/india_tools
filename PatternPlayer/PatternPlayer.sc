@@ -8,6 +8,8 @@
 	TODO Extend pattern box when end is reached
 	TODO Draw graph showing pattern against Tala
 	TODO Enter key creates new line, click button to set?
+	
+	TODO Abstract out Tala image so that other controls of tala window aren't available. Or make Tala into a view that is part of this, checking tala values before playing.
 */
 
 
@@ -51,7 +53,7 @@ PatternPlayer {
 		wait_time		= 60/tempo;
 		gati			= 4;
 		s 				= Server.default;
-		tala 			= Tala.new(tempo);
+		tala 			= Tala.new(tempo, false);
 		no_play 		= true;
 		
 		{
@@ -145,14 +147,14 @@ PatternPlayer {
 		window = Window.new("Pattern Player", Rect((Window.screenBounds.width/2)-(w/2),(Window.screenBounds.height/2)-(h/2),w,h), false)
 			.userCanClose_(true)
 			.front;
-		pattern_field = PPTextField(window, Rect(10,10,w-20,20));
-/*			.string_(pattern)*/
-/*			.action_({|field| */
-/*				this.set_pattern(field.value);*/
-/*				this.confirm_set(routine_set);*/
-/*			});*/
+		pattern_field = PPTextField(window, Rect(10,10,w-20,20))
+			.string_(pattern)
+			.action_({|field| 
+				this.set_pattern(field.value);
+				this.confirm_set(routine_set);
+			});
 		
-/*		pattern_set = StaticText(window, Rect(70,70,70, 20)).background_(Color.white).align_(\center);*/
+		pattern_set = StaticText(window, Rect(70,70,70, 20)).background_(Color.white).align_(\center);
 		play_stop_button = Button(window, Rect(10,40,50,50))
 			.states_([
 				["Play", Color.black, Color.green],
@@ -210,8 +212,4 @@ PatternPlayer {
 			}.fork(AppClock)
 		};
 	}	
-}
-
-PPTextField : SCTextField {
-	
 }
