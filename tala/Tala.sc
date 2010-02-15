@@ -1,10 +1,3 @@
-/*
-	TODO Add subdivision playback
-	TODO Kalai
-	TODO Eduppu
-	TODO Replace routines with Tasks
-*/
-
 Tala {
 	
 	classvar <adi;			//	Adi Tala Preset
@@ -17,16 +10,21 @@ Tala {
 	var <>amp;				//	Amplification multiplier
 	var <tempo;				//	Tempo
 	var <wait_time;			//	Wait time
-	var <>kallai;
-	var <gati;
+	
+	var <>gati;				//	Gati (Sub-division)
+	var <>gati_mult;		//	Gati multiplier, e.g. to change from 3 per beat to 6 etc
+
+	var <>kallai;			//
 	var <eduppu;
 	
 	var <>parts;			
-	var <routine;			//	The playback routine
-	var <routine_duration;	//	The duration (in seconds) of the routine
-	var <no_play;			//	If true, the routine can't yet be played
+	var <tala_routine;			//	Tala playback routine
+	var <tala_routine_duration;	//	The duration (in seconds) of the routine
+	var <no_play;				//	If true, the routine can't yet be played
 	
-	var <tGui;				//	GUI :)
+	var <gati_routine;			//	Gati playback routine;
+		
+	var <tGUI;					//	GUI :)
 	
 	*initClass {
 		adi 		= ["I4", "O", "O"];
@@ -36,33 +34,34 @@ Tala {
 		sCapu 		= ["U", "U", "U", "K"];
 	}
 	
-	*new {|aTempo=60, aGUIbool=true|
-		^super.new.init(aTempo, aGUIbool);
+	*new {|aTempo=60, aGati=4, aGUI=true|
+		^super.new.init(aTempo, aGati, aGUI);
 	}
 
-	init {|aTempo, aGUIbool|
+	init {|aTempo, aGati, aGUI|
 		amp 		= 1;
 		tempo 		= aTempo;
-		gati		= 4;
+		gati		= aGati;
+		gati_mult	= 1;
 		kallai		= 1;
 		eduppu		= 0;
 		wait_time	= 60/tempo;
 		
 		parts		= adi;
 		
-		routine_duration 	= 0;
-		no_play 			= true;
-		this.create_routine;
-				
+		tala_routine_duration 	= 0;
+		no_play 				= true;
+		
+		this.create_tala_routine;
+		this.create_gati_routine;
+			
 		s = Server.default;
-		{
-			this.load_synth_defs;		
-			s.sync;
-		}.fork;
+		this.load_synth_defs;		
+		
 		no_play = false;
 		
-		if(aGUIbool) {
-			tGui = TalaGUI.new(this);
+		if(aGUI) {
+			tGUI = TalaGUI.new(this);
 		};
 		
 	}
@@ -92,45 +91,57 @@ Tala {
 	
 	
 	//	Routine methods
-	add_routine {|to_add|
-		routine = routine ++ to_add
+	add_tala_routine {|to_add|
+		tala_routine = tala_routine ++ to_add
 	}
 	
-	create_routine {
-		routine = Routine {};
+	create_tala_routine {
+		tala_routine = Routine {};
 		parts.do { |item, i|
 			switch (item[0].asSymbol)
-				{'I'}	{ routine = routine ++ this.laghu(item[1].digit) }
-				{'O'}	{ routine = routine ++ this.drutam()}
-				{'U'}	{ routine = routine ++ this.anudrutam}
-				{'K'}	{ routine = routine ++ this.capu("clap")}
-				{'M'}	{ routine = routine ++ this.capu("clap_b")};
+				{'I'}	{ tala_routine = tala_routine ++ this.laghu(item[1].digit) }
+				{'O'}	{ tala_routine = tala_routine ++ this.drutam()}
+				{'U'}	{ tala_routine = tala_routine ++ this.anudrutam}
+				{'K'}	{ tala_routine = tala_routine ++ this.capu("clap")}
+				{'M'}	{ tala_routine = tala_routine ++ this.capu("clap_b")};
 			
 		};
 		
-		routine = routine.loop;
+		tala_routine = tala_routine.loop;
+	}
+	
+	create_gati_routine {
+		gati_routine = Routine {
+			inf.do { |item, i|
+				this.generic_clap(0.01, 0.01, 4000, 4000, 1);
+				(wait_time/(gati*gati_mult)).wait;	
+			};
+		};
 	}
 	
 	play {
-		if(routine.isPlaying.not) {
-			routine.play;
+		if(tala_routine.isPlaying.not) {
+			tala_routine.play;
+			gati_routine.play;
 		};
 		
 	}
 	
 	stop {
-		routine.stop;
-		this.create_routine;
+		tala_routine.stop;
+		gati_routine.stop;
+		this.create_tala_routine;
+		this.create_gati_routine;
 	}
 	
 	add_rout_time {|time|
-		routine_duration = routine_duration + time;
+		tala_routine_duration = tala_routine_duration + time;
 	}
 	
 	check_stop_tala {|new_tala|
 		if(new_tala!=parts) {
 			this.stop;
-			tGui.start_stop_button.valueAction_(0);
+			tGUI.start_stop_button.valueAction_(0);
 		};
 	}
 	//	Angas
@@ -187,24 +198,24 @@ Tala {
 	
 	//	Gestures
 	clap {
-		tGui.clap;
-		this.generic_clap(0.7, 0.8, 2000, 2500, 0.9);
+		tGUI !? {tGUI.clap};
+		this.generic_clap(0.8, 0.9, 2000, 2500, 0.9);
 		this.generic_clap(0.7, 0.8, 700, 1200, 0.9);
 		
 	}
 			
 	clap_b {
-		tGui.wave;
+		tGUI !? {tGUI.wave};
 		this.generic_clap(0.1, 0.2, 400, 600, 0.9);
 	}
 
 	finger {|number|
 		var a =	case
-				{[2,7].includes(number)}	{tGui.lf(number)}
-				{[3,8].includes(number)}	{tGui.rf(number)}
-				{[4,9].includes(number)}	{tGui.mf(number)}
-				{number==5}					{tGui.pf(number)}
-				{number==6}					{tGui.tf(number)};
+				{[2,7].includes(number)}	{tGUI !? {tGUI.lf(number)}}
+				{[3,8].includes(number)}	{tGUI !? {tGUI.rf(number)}}
+				{[4,9].includes(number)}	{tGUI !? {tGUI.mf(number)}}
+				{number==5}					{tGUI !? {tGUI.pf(number)}}
+				{number==6}					{tGUI !? {tGUI.tf(number)}};
 		
 		this.generic_clap(0.2, 0.3, 6000, 7000, 0.9);
 		
@@ -219,30 +230,30 @@ Tala {
 	adi {
 		this.check_stop_tala(adi);
 		parts = adi;
-		this.create_routine;
+		this.create_tala_routine;
 	}
 	
 	rupaka {
 		this.check_stop_tala(rupaka);		
 		parts = rupaka;
-		this.create_routine;		
+		this.create_tala_routine;		
 	}
 	
 	kCapu {
 		this.check_stop_tala(kCapu);
 		parts = kCapu;
-		this.create_routine;
+		this.create_tala_routine;
 	}
 	
 	mCapu {
 		this.check_stop_tala(mCapu);
 		parts = mCapu;
-		this.create_routine;
+		this.create_tala_routine;
 	}
 
 	sCapu {
 		this.check_stop_tala(sCapu);
 		parts = sCapu;
-		this.create_routine;
+		this.create_tala_routine;
 	}	
 }

@@ -1,6 +1,6 @@
 s.boot;
 a = PatternPlayer.new
-
+a = Tala.new
 w = 1;
 g = 4;
 a = Routine {
