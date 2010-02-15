@@ -1,35 +1,3 @@
-/*
-	Standalone
-	
-*/
-
-/*	
-	1.0
-	TODO Try passing in time and greying out
-	TODO Volume slider
-	TODO Change tempo box to calculateable one?
-*/
-
-/*
-	1.1
-	
-	TODO MIDIKeyboard for Sruti, with octave buttons
-	TODO FullScreen image
-	TODO Make this into a view, which can be added to other windows?
-	TODO Custom tala field working
-	TODO Gati
-	TODO Multislider for sub-divisions
-	TODO Eduppu
-	TODO Store previous boot time as variable (file?) then give a loading bar...
-	TODO Use Task to allow Play/Pause?
-*/
-
-/*
-	2.0
-	TODO Video
-	TODO More Talas, ask KSS
-*/
-
 TalaGUI {
 	//Could refactor some of these, check if they are actually needed throughout the class or just by one widget
 	//	In which case they can be method variables.

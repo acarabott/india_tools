@@ -1,10 +1,41 @@
 /*
-	TODO Add subdivision playback
-	TODO Kalai
-	TODO Eduppu
-	TODO Replace routines with Tasks
+	Standalone
+
+	TODO Update
 */
 
+/*	
+	1.0
+	
+*/
+
+/*
+	1.1
+	
+	TODO Calculatable Tempo field
+	TODO Gati
+	TODO Try passing in time and greying out
+	TODO Volume slider
+	TODO Change tempo box to calculateable one?
+	TODO If window is closeable, cleanup on closing
+	TODO MIDIKeyboard for Sruti, with octave buttons
+	TODO FullScreen image
+	TODO Make this into a view, which can be added to other windows?
+	TODO Custom tala field working
+	TODO Multislider for sub-divisions
+	TODO Eduppu
+	TODO Store previous boot time as variable (file?) then give a loading bar...
+	TODO Use Task to allow Play/Pause? Can be achieved with Condition class
+	TODO Kallai
+	TODO Spacebar plays or stops regardless of scope
+*/
+
+/*
+	2.0
+	TODO Video
+	TODO Tap Tempo
+	TODO More Talas, ask KSS
+*/
 Tala {
 	
 	classvar <adi;			//	Adi Tala Preset
