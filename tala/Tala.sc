@@ -22,6 +22,7 @@
 	TODO FullScreen image
 	TODO Make this into a view, which can be added to other windows?
 	TODO Custom tala field working
+	TODO Tala semi-presets e.g. Triputa Tala etc
 	TODO Multislider for sub-divisions
 	TODO Eduppu
 	TODO Store previous boot time as variable (file?) then give a loading bar...
@@ -48,9 +49,6 @@ Tala {
 	var <>amp;				//	Amplification multiplier
 	var <tempo;				//	Tempo
 	var <wait_time;			//	Wait time
-	var <>kallai;
-	var <gati;
-	var <eduppu;
 	
 	var <>parts;			
 	var <routine;			//	The playback routine
@@ -74,9 +72,6 @@ Tala {
 	init {|aTempo, aGUIbool|
 		amp 		= 1;
 		tempo 		= aTempo;
-		gati		= 4;
-		kallai		= 1;
-		eduppu		= 0;
 		wait_time	= 60/tempo;
 		
 		parts		= adi;
