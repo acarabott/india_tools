@@ -15,19 +15,15 @@
 
 PatternPlayer {
 	var <pattern;
-	var <stored_routine;
-	var <play_routine;
 	var <konakkol_sounds;
 	var <kanjira_sounds;
 	var <custom_sounds;
 	var <>sounds;
 	var <tempo;
-	var <wait_time;
 	var <>gati;
-	var <>buffers;
 	var <>s;
+	var <>buffers;
 	var <tala;
-	var <clock;
 	
 	var <window;
 	var <pattern_field;
@@ -49,7 +45,6 @@ PatternPlayer {
 		custom_sounds	= List[];
 		sounds 			= kanjira_sounds;
 		tempo 			= 60;
-		wait_time		= 60/tempo;
 		gati			= 4;
 		s 				= Server.default;
 		tala 			= Tala.new(tempo, gati, false);
