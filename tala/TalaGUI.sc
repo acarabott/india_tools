@@ -89,7 +89,7 @@ TalaGUI {
 			" Tempo ",
 			ControlSpec(1,999,\lin,1,120,"bpm"),
 			action:{|ezn| (tala.tempo_(ezn.value)).postln},
-			initVal:120,
+			initVal:60,
 			labelWidth:item_bounds.x,
 			gap:m_point
 		).setColors(label_bg_col, label_s_col);

@@ -1,0 +1,13 @@
+Drawing Gamaka notation, provides playback.
+	Freeform drawing
+		The mouse sucks
+	Anchor point dragging
+		Restricts to certain timings?
+		Easier?
+	Draw points, automatically connects.
+		Create and drag anchor points.
+	
+Needs to be cross platform.
+	Proto in SC? 
+		Waste of time?
+	Processing?

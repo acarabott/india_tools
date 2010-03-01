@@ -9,15 +9,11 @@ Tala {
 	var <s;					//	Server
 	var <>amp;				//	Amplification multiplier
 	var <tempo;				//	Tempo
-	var <wait_time;			//	Wait time
-	
-/*	var <>kallai;			*/
-/*	var <eduppu;*/
-	
+
 	var <>parts;			
-	var <tala_routine;			//	Tala playback routine
-	var <tala_routine_duration;	//	The duration (in seconds) of the routine
-	var <no_play;				//	If true, the routine can't yet be played
+	var <routine;			//	The playback routine
+	var <routine_duration;	//	The duration (in seconds) of the routine
+	var <clock;				//	Clock for playback
 	
 	var <gati;				//	Gati (Sub-division)
 	var <>gati_mult;		//	Gati multiplier, e.g. to change from 3 per beat to 6 etc
@@ -42,28 +38,25 @@ Tala {
 	init {|aTempo, aGati, aGUI|
 		amp 		= 1;
 		tempo 		= aTempo;
+		clock		= TempoClock(tempo/60);
+
 		gati		= aGati;
 		gati_mult	= 1;
 		gati_total	= gati*gati_mult;
 		gati_amps 	= 0 ! gati_total;
-		
-/*		kallai		= 1;*/
-/*		eduppu		= 0;*/
-		wait_time	= 60/tempo;
-		
+				
 		parts		= adi;
 		
 		tala_routine_duration 	= 0;
 		no_play 				= true;
 		
+
 		this.create_tala_routine;
 		this.create_gati_routine;
 			
 		s = Server.default;
 		this.load_synth_defs;		
-		
-		no_play = false;
-		
+								
 		if(aGUI) {
 			tGUI = TalaGUI.new(this);
 		};
@@ -90,7 +83,7 @@ Tala {
 	
 	tempo_ {|new_value|
 		tempo 		= new_value;
-		wait_time 	= 60/tempo;
+		clock.tempo	= tempo/60;
 	}
 	
 	gati_ {|new_gati|
@@ -138,8 +131,8 @@ Tala {
 	
 	play {
 		if(tala_routine.isPlaying.not) {
-			tala_routine.play;
-			gati_routine.play;
+			tala_routine.play(clock);
+			gati_routine.play(clock);
 		};
 		
 	}
@@ -164,32 +157,32 @@ Tala {
 	//	Angas
 	
 	laghu {|number|
-		this.add_rout_time(number*wait_time);
+		this.add_rout_time(number);
 		^Routine {
 			this.clap();
-			wait_time.wait;
+			1.wait;
 			(number-1).do { |i|
 				this.finger(i+2);
-				wait_time.wait;
+				1.wait;
 			};
 		};
 	}
 	
 	drutam {
-		this.add_rout_time(2*wait_time);
+		this.add_rout_time(2);
 		^Routine {
 			this.clap();
-			wait_time.wait;
+			1.wait;
 			this.clap_b();
-			wait_time.wait;
+			1.wait
 		};
 	}
 	
 	anudrutam {
-		this.add_rout_time(wait_time);
+		this.add_rout_time(1);
 		^Routine {
 			this.clap();
-			wait_time.wait;
+			1.wait;
 		};
 	}
 	
@@ -204,12 +197,12 @@ Tala {
 			};
 		};
 
-		this.add_rout_time(wait_time*1.5);		
+		this.add_rout_time(1.5);
 		^Routine {
 			which_clap.();
-			(wait_time/2).wait;
+			0.5.wait;
 			which_clap.();
-			wait_time.wait;
+			0.5.wait;
 		};
 	}
 	
