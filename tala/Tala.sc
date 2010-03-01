@@ -88,9 +88,12 @@ Tala {
 	}
 	
 	gati_ {|new_gati|
-		gati = new_gati;
-		gati_total = gati * gati_mult;
-		gati_amps = gati_amps.extend(gati_total, 0);
+		clock.play({
+			gati = new_gati;
+			gati_total = gati * gati_mult;
+			gati_amps = gati_amps.extend(gati_total, 0);
+			
+		});
 	}
 	
 	set_gati_amp {|index, value|
@@ -125,7 +128,7 @@ Tala {
 		gati_routine = Routine {
 			inf.do { |item, i|
 				this.generic_clap(0.01, 0.01, 4000, 4000, 1);
-				this.gati_func.(i%gati_total);
+				this.gati_func.(i%gati_total, i);
 				(1/(gati_total)).wait;	
 			};
 		};

@@ -1,9 +1,6 @@
 /*
-	TODO Add gati input
 	TODO Restrict 
-	TODO Red text for unset pattern?
 	TODO Project pattern onto a graph
-	TODO work with reading arrays instead of routines?
 	TODO Change Tala
 	TODO Extend pattern box when end is reached
 	TODO Draw graph showing pattern against Tala
@@ -14,7 +11,7 @@
 
 
 PatternPlayer {
-	var <pattern;
+	var <>pattern;
 	var <konakkol_sounds;
 	var <kanjira_sounds;
 	var <custom_sounds;
@@ -49,11 +46,12 @@ PatternPlayer {
 		s 				= Server.default;
 		tala 			= Tala.new(tempo, gati, false);
 		
+		this.set_func;
+		
 		{
 			this.load_buffers;
 			this.load_synth_def;
 			s.sync;
-			this.create_routine;			
 		}.fork;
 /*		this.create_gui;*/
 	}
@@ -72,6 +70,20 @@ PatternPlayer {
 			buffers[i] = Buffer.read(s, item);
 		};
 	}
+	
+	set_func {
+		tala.gati_func = {|i, j|
+			var index;
+			
+			switch (pattern.wrapAt(j%pattern.size).asSymbol)
+				{'x'}	{index = 0}
+				{'o'}	{index = 1};
+				
+			Synth(\simple_play, [\bufnum, buffers[index]]);
+			index.postln;
+		}
+	}
+	
 	
 }
 
