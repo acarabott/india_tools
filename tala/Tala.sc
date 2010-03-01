@@ -11,8 +11,6 @@ Tala {
 	var <tempo;				//	Tempo
 	var <wait_time;			//	Wait time
 	
-	var <>gati;				//	Gati (Sub-division)
-	var <>gati_mult;		//	Gati multiplier, e.g. to change from 3 per beat to 6 etc
 
 	var <>kallai;			//
 	var <eduppu;
@@ -22,7 +20,11 @@ Tala {
 	var <tala_routine_duration;	//	The duration (in seconds) of the routine
 	var <no_play;				//	If true, the routine can't yet be played
 	
-	var <gati_routine;			//	Gati playback routine;
+	var <gati;				//	Gati (Sub-division)
+	var <>gati_mult;		//	Gati multiplier, e.g. to change from 3 per beat to 6 etc
+	var <gati_total;		//	Total sub-divisions (gati * gati_mult)
+	var <gati_routine;		//	Gati playback routine;
+	var <gati_amps;			//	Amplitudes for the sub-divisions
 		
 	var <tGUI;					//	GUI :)
 	
@@ -34,8 +36,8 @@ Tala {
 		sCapu 		= ["U", "U", "U", "K"];
 	}
 	
-	*new {|aTempo=60, aGati=4, aGUI=true|
-		^super.new.init(aTempo, aGati, aGUI);
+	*new {|tempo=60, gati=4, gui=true|
+		^super.new.init(tempo, gati, gui);
 	}
 
 	init {|aTempo, aGati, aGUI|
@@ -43,6 +45,9 @@ Tala {
 		tempo 		= aTempo;
 		gati		= aGati;
 		gati_mult	= 1;
+		gati_total	= gati*gati_mult;
+		gati_amps 	= 0 ! gati_total;
+		
 		kallai		= 1;
 		eduppu		= 0;
 		wait_time	= 60/tempo;
@@ -89,6 +94,19 @@ Tala {
 		wait_time 	= 60/tempo;
 	}
 	
+	gati_ {|new_gati|
+		gati = new_gati;
+		gati_total = gati * gati_mult;
+		gati_amps = gati_amps.extend(gati_total, 0);
+	}
+	
+	set_gati_amp {|index, value|
+		if(index<gati_amps.size) {
+			gati_amps[index] = value;
+		} {
+			"Invalid Index!".postln;
+		};
+	}
 	
 	//	Routine methods
 	add_tala_routine {|to_add|

@@ -53,7 +53,7 @@ PatternPlayer {
 		wait_time		= 60/tempo;
 		gati			= 4;
 		s 				= Server.default;
-		tala 			= Tala.new(tempo, false);
+		tala 			= Tala.new(tempo, gati, false);
 		no_play 		= true;
 		
 		{
