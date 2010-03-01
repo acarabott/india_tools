@@ -28,7 +28,6 @@ PatternPlayer {
 	var <>s;
 	var <tala;
 	var <clock;
-	var <no_play;
 	
 	var <window;
 	var <pattern_field;
@@ -54,7 +53,6 @@ PatternPlayer {
 		gati			= 4;
 		s 				= Server.default;
 		tala 			= Tala.new(tempo, gati, false);
-		no_play 		= true;
 		
 		{
 			this.load_buffers;
@@ -62,8 +60,7 @@ PatternPlayer {
 			s.sync;
 			this.create_routine;			
 		}.fork;
-		this.create_gui;
-		no_play = false;
+/*		this.create_gui;*/
 	}
 	
 	create_routine {

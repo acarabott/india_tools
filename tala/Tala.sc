@@ -11,9 +11,8 @@ Tala {
 	var <tempo;				//	Tempo
 	var <wait_time;			//	Wait time
 	
-
-	var <>kallai;			//
-	var <eduppu;
+/*	var <>kallai;			*/
+/*	var <eduppu;*/
 	
 	var <>parts;			
 	var <tala_routine;			//	Tala playback routine
@@ -48,8 +47,8 @@ Tala {
 		gati_total	= gati*gati_mult;
 		gati_amps 	= 0 ! gati_total;
 		
-		kallai		= 1;
-		eduppu		= 0;
+/*		kallai		= 1;*/
+/*		eduppu		= 0;*/
 		wait_time	= 60/tempo;
 		
 		parts		= adi;
