@@ -46,12 +46,11 @@ Tala {
 	var <s;					//	Server
 	var <>amp;				//	Amplification multiplier
 	var <tempo;				//	Tempo
-	var <wait_time;			//	Wait time
 	
 	var <>parts;			
 	var <routine;			//	The playback routine
 	var <routine_duration;	//	The duration (in seconds) of the routine
-	var <no_play;			//	If true, the routine can't yet be played
+	var <clock;				//	Clock for playback
 	
 	var <tGui;				//	GUI :)
 	
@@ -70,12 +69,10 @@ Tala {
 	init {|aTempo, aGUIbool|
 		amp 		= 1;
 		tempo 		= aTempo;
-		wait_time	= 60/tempo;
-		
+		clock		= TempoClock(tempo/60);
 		parts		= adi;
 		
 		routine_duration 	= 0;
-		no_play 			= true;
 		this.create_routine;
 				
 		s = Server.default;
@@ -83,7 +80,6 @@ Tala {
 			this.load_synth_defs;		
 			s.sync;
 		}.fork;
-		no_play = false;
 		
 		if(aGUIbool) {
 			tGui = TalaGUI.new(this);
@@ -111,7 +107,7 @@ Tala {
 	
 	tempo_ {|new_value|
 		tempo 		= new_value;
-		wait_time 	= 60/tempo;
+		clock.tempo	= tempo/60;
 	}
 	
 	
@@ -137,7 +133,7 @@ Tala {
 	
 	play {
 		if(routine.isPlaying.not) {
-			routine.play;
+			routine.play(clock);
 		};
 		
 	}
@@ -160,32 +156,32 @@ Tala {
 	//	Angas
 	
 	laghu {|number|
-		this.add_rout_time(number*wait_time);
+		this.add_rout_time(number);
 		^Routine {
 			this.clap();
-			wait_time.wait;
+			1.wait;
 			(number-1).do { |i|
 				this.finger(i+2);
-				wait_time.wait;
+				1.wait;
 			};
 		};
 	}
 	
 	drutam {
-		this.add_rout_time(2*wait_time);
+		this.add_rout_time(2);
 		^Routine {
 			this.clap();
-			wait_time.wait;
+			1.wait;
 			this.clap_b();
-			wait_time.wait;
+			1.wait
 		};
 	}
 	
 	anudrutam {
-		this.add_rout_time(wait_time);
+		this.add_rout_time(1);
 		^Routine {
 			this.clap();
-			wait_time.wait;
+			1.wait;
 		};
 	}
 	
@@ -200,12 +196,12 @@ Tala {
 			};
 		};
 
-		this.add_rout_time(wait_time*1.5);		
+		this.add_rout_time(1.5);
 		^Routine {
 			which_clap.();
-			(wait_time/2).wait;
+			0.5.wait;
 			which_clap.();
-			wait_time.wait;
+			0.5.wait;
 		};
 	}
 	
