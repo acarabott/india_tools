@@ -98,19 +98,25 @@ PatternPlayer {
 			.string_(pattern)
 			.action_({|field| 
 				this.pattern_(field.value);
+			})
+			.keyDownAction_({|view, char, mod, uni|
+				a.pattern_field.stringColor = Color.red;
+			})
+			.keyUpAction_({|view, char, mod, uni|
+				if(a.pattern_field.string.asSymbol == a.pattern.asSymbol) {
+					a.pattern_field.stringColor = Color.black;
+				};
 			});
+
+
+
+		
 
 	}
 }
 
 
 /*create_gui {
-	pattern_field = PPTextField(window, Rect(10,10,w-20,20))
-		.string_(pattern)
-		.action_({|field| 
-			this.set_pattern(field.value);
-			this.confirm_set(routine_set);
-		});
 
 	pattern_set = StaticText(window, Rect(70,70,70, 20)).background_(Color.white).align_(\center);
 	play_stop_button = Button(window, Rect(10,40,50,50))
