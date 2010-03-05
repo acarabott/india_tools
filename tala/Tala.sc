@@ -4,16 +4,10 @@
 	TODO Update
 */
 
-/*	
-	1.0
-	
-*/
-
 /*
 	1.1
 	
 	TODO Calculatable Tempo field
-	TODO Gati
 	TODO Try passing in time and greying out
 	TODO Volume slider
 	TODO Change tempo box to calculateable one?
@@ -173,9 +167,6 @@ Tala {
 			inf.do { |i|
 				index = i%gati_total;
 				gati_amp = gati_amps[index];
-				if(index!=0) {
-					this.generic_clap(0.01*gati_amp, 0.01*gati_amp, 4000, 4000, 1);
-				};
 				this.gati_func.(index);
 				(1/(gati_total)).wait;	
 			};
@@ -254,7 +245,7 @@ Tala {
 			which_clap.();
 			0.5.wait;
 			which_clap.();
-			0.5.wait;
+			1.wait;
 		};
 	}
 	

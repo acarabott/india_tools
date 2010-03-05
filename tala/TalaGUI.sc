@@ -73,9 +73,9 @@ TalaGUI {
 		
 		this.create_tempo_box;
 		left_dec.nextLine;
-/*		this.create_gati_pop;
+		this.create_gati_pop;
 		left_dec.nextLine;
-*/		this.create_tala_pop;
+		this.create_tala_pop;
 		left_dec.nextLine;
 /*		this.create_ct;
 		left_dec.nextLine;
@@ -97,19 +97,18 @@ TalaGUI {
 	}
 
 	//Not yet working
-/*	create_gati_pop {
+	create_gati_pop {
 		EZPopUpMenu(
 			left_side,
 			total_bounds,
 			 " Gati ",
 			[
-				'3 - Tisra'		->	{|a| "Tisra".postln;},
-				'4 - Caturasra'	->	{|a| "Caturasra".postln;},
-				'5 - Khanda'	->	{|a| "Khanda".postln;},
-				'7 - Misra'		->	{|a| "Misra".postln;},
-				'9 - Sankirna'	->	{|a| "Sankirna".postln;},
+				'3 - Tisra'		->	{|a| tala.gati_(3)},
+				'4 - Caturasra'	->	{|a| tala.gati_(4)},
+				'5 - Khanda'	->	{|a| tala.gati_(5)},
+				'7 - Misra'		->	{|a| tala.gati_(7)},
+				'9 - Sankirna'	->	{|a| tala.gati_(9)},
 			],
-			globalAction: {|a| "Global Action".postln;},
 			initVal:1,
 			initAction:false,
 			labelWidth:item_bounds.x,
@@ -117,7 +116,7 @@ TalaGUI {
 		).setColors(label_bg_col, label_s_col);
 		
 	}
-*/	
+	
 	create_tala_pop {
 		EZPopUpMenu( 
 			left_side,
