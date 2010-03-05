@@ -11,7 +11,7 @@
 
 
 PatternPlayer {
-	var <>pattern;
+	var <pattern;
 	var <konakkol_sounds;
 	var <kanjira_sounds;
 	var <custom_sounds;
@@ -36,7 +36,6 @@ PatternPlayer {
 	}
 
 	init { 
-		pattern 		= "xxxx";
 		konakkol_sounds = ["sounds/KKTA.wav", "sounds/KKDIM.wav"];
 		kanjira_sounds 	= ["sounds/KJDIM.wav", "sounds/KJBELL.wav"];
 		custom_sounds	= List[];
@@ -46,14 +45,14 @@ PatternPlayer {
 		s 				= Server.default;
 		tala 			= Tala.new(tempo, gati, false);
 		
-		this.set_func;
+		this.pattern_("xxxx");
 		
 		{
 			this.load_buffers;
 			this.load_synth_def;
 			s.sync;
 		}.fork;
-/*		this.create_gui;*/
+		this.create_gui;
 	}
 	
 	load_synth_def {
@@ -71,7 +70,9 @@ PatternPlayer {
 		};
 	}
 	
-	set_func {
+	pattern_ {|new_pattern|
+		pattern = new_pattern.reject({|item, i| ['x','o'].includes(item.asSymbol).not });
+		
 		tala.gati_func = {|i, j|
 			var index;
 			
@@ -86,15 +87,24 @@ PatternPlayer {
 	}
 	
 	
+	create_gui {
+		var h = 100;
+		var	w = 400;
+		window = Window.new("Pattern Player", Rect((Window.screenBounds.width/2)-(w/2),(Window.screenBounds.height/2)-(h/2),w,h), false)
+			.userCanClose_(true)
+			.front;
+
+		pattern_field = TextField(window, Rect(10,10,w-20,20))
+			.string_(pattern)
+			.action_({|field| 
+				this.pattern_(field.value);
+			});
+
+	}
 }
 
 
 /*create_gui {
-	var	w = 400;
-	var h = 100;
-	window = Window.new("Pattern Player", Rect((Window.screenBounds.width/2)-(w/2),(Window.screenBounds.height/2)-(h/2),w,h), false)
-		.userCanClose_(true)
-		.front;
 	pattern_field = PPTextField(window, Rect(10,10,w-20,20))
 		.string_(pattern)
 		.action_({|field| 
