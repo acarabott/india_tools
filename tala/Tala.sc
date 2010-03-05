@@ -1,7 +1,3 @@
-/*
-	FIXME	Changing gati mid play can be upsetting. 
-*/
-
 Tala {
 	
 	classvar <adi;			//	Adi Tala Preset
