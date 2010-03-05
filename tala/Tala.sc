@@ -1,3 +1,42 @@
+/*
+	Standalone
+
+	TODO Update
+*/
+
+/*	
+	1.0
+	
+*/
+
+/*
+	1.1
+	
+	TODO Calculatable Tempo field
+	TODO Gati
+	TODO Try passing in time and greying out
+	TODO Volume slider
+	TODO Change tempo box to calculateable one?
+	TODO If window is closeable, cleanup on closing
+	TODO MIDIKeyboard for Sruti, with octave buttons
+	TODO FullScreen image
+	TODO Make this into a view, which can be added to other windows?
+	TODO Custom tala field working
+	TODO Multislider for sub-divisions
+	TODO Eduppu
+	TODO Store previous boot time as variable (file?) then give a loading bar...
+	TODO Use Task to allow Play/Pause? Can be achieved with Condition class
+	TODO Kallai
+	TODO Spacebar plays or stops regardless of scope
+*/
+
+/*
+	2.0
+	TODO Video
+	TODO Tap Tempo
+	TODO More Talas, ask KSS
+*/
+
 Tala {
 	
 	classvar <adi;			//	Adi Tala Preset
@@ -8,7 +47,6 @@ Tala {
 	
 	var <s;					//	Server
 	var <>amp;				//	Amplification multiplier
-	var <tempo;				//	Tempo
 
 	var <>parts;			
 	var <routine;			//	The playback routine
@@ -39,8 +77,7 @@ Tala {
 
 	init {|aTempo, aGati, aGUI|
 		amp 		= 1;
-		tempo 		= aTempo;
-		clock		= TempoClock(tempo/60);
+		clock		= TempoClock(aTempo/60);
 
 		gati		= aGati;
 		gati_mult	= 1;
@@ -82,18 +119,22 @@ Tala {
 				
 	}
 	
-	tempo_ {|new_value|
-		tempo 		= new_value;
-		clock.tempo	= tempo/60;
+	tempo {
+		^clock.tempo*60
+	}
+	
+	tempo_ {|new_tempo|
+		clock.tempo	= new_tempo/60;
 	}
 	
 	gati_ {|new_gati|
-		clock.play({
-			gati = new_gati;
-			gati_total = gati * gati_mult;
-			gati_amps = gati_amps.extend(gati_total, 0);
-			
-		});
+		clock.clear;
+		gati = new_gati;
+		gati_total = gati * gati_mult;
+		gati_amps = gati_amps.extend(gati_total, 1);
+		this.create_gati_routine;
+		tala_routine.play(clock, 1); 
+		gati_routine.play(clock, 1)
 	}
 	
 	set_gati_amp {|index, value|
@@ -125,10 +166,17 @@ Tala {
 	}
 	
 	create_gati_routine {
+		var gati_amp;
+		var index;
+		
 		gati_routine = Routine {
-			inf.do { |item, i|
-				this.generic_clap(0.01, 0.01, 4000, 4000, 1);
-				this.gati_func.(i%gati_total, i);
+			inf.do { |i|
+				index = i%gati_total;
+				gati_amp = gati_amps[index];
+				if(index!=0) {
+					this.generic_clap(0.01*gati_amp, 0.01*gati_amp, 4000, 4000, 1);
+				};
+				this.gati_func.(index);
 				(1/(gati_total)).wait;	
 			};
 		};
@@ -136,10 +184,9 @@ Tala {
 	
 	play {
 		if(tala_routine.isPlaying.not) {
-			tala_routine.play(clock);
-			gati_routine.play(clock);
-		};
-		
+			tala_routine.play(clock, 1);
+			gati_routine.play(clock, 1);				
+		};	
 	}
 	
 	stop {
