@@ -1,9 +1,4 @@
-<<<<<<< HEAD:PatternPlayer/PatternPlayer.sc
 /*
-=======
- /*
-	TODO Add gati input
->>>>>>> master:PatternPlayer/PatternPlayer.sc
 	TODO Restrict 
 	TODO Project pattern onto a graph
 	TODO Change Tala
