@@ -1,4 +1,4 @@
-/*
+ /*
 	TODO Add gati input
 	TODO Restrict 
 	TODO Red text for unset pattern?

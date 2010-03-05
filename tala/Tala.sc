@@ -1,3 +1,7 @@
+/*
+	FIXME	Changing gati mid play can be upsetting. 
+*/
+
 Tala {
 	
 	classvar <adi;			//	Adi Tala Preset
@@ -8,7 +12,6 @@ Tala {
 	
 	var <s;					//	Server
 	var <>amp;				//	Amplification multiplier
-	var <tempo;				//	Tempo
 
 	var <>parts;			
 	var <routine;			//	The playback routine
@@ -39,8 +42,7 @@ Tala {
 
 	init {|aTempo, aGati, aGUI|
 		amp 		= 1;
-		tempo 		= aTempo;
-		clock		= TempoClock(tempo/60);
+		clock		= TempoClock(aTempo/60);
 
 		gati		= aGati;
 		gati_mult	= 1;
@@ -82,9 +84,11 @@ Tala {
 				
 	}
 	
-	tempo_ {|new_value|
-		tempo 		= new_value;
-		clock.tempo	= tempo/60;
+	tempo {
+		^clock.tempo*60
+	}
+	tempo_ {|new_tempo|
+		clock.tempo	= new_tempo/60;
 	}
 	
 	gati_ {|new_gati|
