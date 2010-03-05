@@ -1,4 +1,5 @@
 /*
+	TODO o SHOULDN'T PLAY!!!ONE1
 	TODO Project pattern onto a graph
 	TODO Change Tala
 	TODO Extend pattern box when end is reached
@@ -108,13 +109,14 @@ PatternPlayer {
 			.string_(pattern)
 			.action_({|field| 
 				this.pattern_(field.value);
+				field.stringColor = Color.black;
 			})
 			.keyDownAction_({|view, char, mod, uni|
-				view.field.value.stringColor = Color.red;
+				view.stringColor = Color.red;
 			})
 			.keyUpAction_({|view, char, mod, uni|
-				if(view.field.value.string.asSymbol == pattern.asSymbol) {
-					view.field.value.stringColor = Color.black;
+				if(view.value.asSymbol == pattern.asSymbol) {
+					view.stringColor = Color.black;
 				};
 			});
 		
@@ -127,7 +129,18 @@ PatternPlayer {
 			.action_({|button|
 				play_stop_rout.();
 			});
-	
+
+		sound_popup = EZPopUpMenu(
+			window, 
+			Rect(w-210,40,200,20), 
+			"Sound",
+			[
+				\Kanjira 	->{|a| sounds = kanjira_sounds; this.load_buffers},
+				\Konakkol 	->{|a| sounds = konakkol_sounds; this.load_buffers}/*,
+								\Custom 	->{|a| sounds = custom_sounds;}*/
+			],
+			gap:5@5
+		);
 
 	}
 	
@@ -146,30 +159,6 @@ PatternPlayer {
 
 /*create_gui {
 
-	play_stop_button = Button(window, Rect(10,40,50,50))
-		.states_([
-			["Play", Color.black, Color.green],
-			["Stop", Color.white, Color.red]
-		])
-		.action_({|button|
-			if(play_routine.isPlaying) {
-				this.stop;
-			} {
-				this.play;
-			};
-		});
-	routine_set = StaticText(window, Rect(70,70,80,20)).background_(Color.white);
-	sound_popup = EZPopUpMenu(
-		window, 
-		Rect(w-210,40,200,20), 
-		"Sound",
-		[
-			\Konakkol 	->{|a| sounds = konakkol_sounds;},
-			\Kanjira 	->{|a| sounds = kanjira_sounds},
-			\Custom 	->{|a| sounds = custom_sounds;}
-		],
-		gap:5@5
-	);
 	tempo_text 	= StaticText(window, Rect(70, 40, 45, 20)).string_("Tempo: ");
 	tempo_field = NumberBox(window, Rect(120,40,30,20))
 			.value_(this.tempo)
