@@ -79,8 +79,9 @@ PatternPlayer {
 				{'x'}	{index = 0}
 				{'o'}	{index = 1};
 				
-			Synth(\simple_play, [\bufnum, buffers[index]]);
-			index.postln;
+			if(index != nil) {
+				Synth(\simple_play, [\bufnum, buffers[index]]);
+			};
 		}
 	}
 	

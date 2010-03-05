@@ -167,7 +167,7 @@ Tala {
 			inf.do { |i|
 				index = i%gati_total;
 				gati_amp = gati_amps[index];
-				this.gati_func.(index);
+				this.gati_func.(index, i);
 				(1/(gati_total)).wait;	
 			};
 		};
