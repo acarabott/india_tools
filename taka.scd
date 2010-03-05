@@ -38,7 +38,6 @@ t.beats.ceil
 t.schedAbs((t.beats.ceil-0.1), Synth(\beep, [\freq, 329]))
 t.tempo = 1
 
-s.boot
-a = Tala.new
-
+s.waitForBoot {a = Tala.new}
+a.set_gati_amp(3,1)
 a.tempo

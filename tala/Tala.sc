@@ -87,6 +87,7 @@ Tala {
 	tempo {
 		^clock.tempo*60
 	}
+	
 	tempo_ {|new_tempo|
 		clock.tempo	= new_tempo/60;
 	}
@@ -126,10 +127,17 @@ Tala {
 	}
 	
 	create_gati_routine {
+		var gati_amp;
+		var index;
+		
 		gati_routine = Routine {
-			inf.do { |item, i|
-				this.generic_clap(0.01, 0.01, 4000, 4000, 1);
-				this.gati_func.(i%gati_total);
+			inf.do { |i|
+				index = i%gati_total;
+				gati_amp = gati_amps[index];
+				if(index!=0) {
+					this.generic_clap(0.01*gati_amp, 0.01*gati_amp, 4000, 4000, 1);
+				};
+				this.gati_func.(index);
 				(1/(gati_total)).wait;	
 			};
 		};
