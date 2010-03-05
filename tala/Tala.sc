@@ -194,7 +194,15 @@ Tala {
 	check_stop_tala {|new_tala|
 		if(new_tala!=parts) {
 			this.stop;
-			tGUI.start_stop_button.valueAction_(0);
+			tGUI.play_stop_button.valueAction_(0);
+		};
+	}
+	
+	is_playing {
+		if(tala_routine.isPlaying) {
+			^true
+		}{
+			^false
 		};
 	}
 	//	Angas

@@ -17,14 +17,14 @@ TalaGUI {
 	var left_dec;
 	var right_dec;
 	var <tala_image;
-	var <start_stop_button;
+	var <play_stop_button;
 	
 	//Other shit
 	var ctf_font;
 	var regular_font;
 	var label_bg_col;
 	var label_s_col;
-	var <start_stop_rout;
+	var <play_stop_rout;
 	
 	var tala;	// Tala instance to control
 	
@@ -79,7 +79,7 @@ TalaGUI {
 		left_dec.nextLine;
 /*		this.create_ct;
 		left_dec.nextLine;
-*/		this.create_start_stop_but;		
+*/		this.create_play_stop_but;		
 	}
 	
 	create_tempo_box {
@@ -160,8 +160,8 @@ TalaGUI {
 			.autohidesScrollers_(true);
 	}
 */	
-	create_start_stop_but {
-		start_stop_rout = Routine {
+	create_play_stop_but {
+		play_stop_rout = Routine {
 			inf.do {
 				tala.play;
 				0.yield;
@@ -170,13 +170,13 @@ TalaGUI {
 			};
 		};
 		
-		start_stop_button = Button(left_side, total_bounds.x@(win.bounds.height-margin/2))
+		play_stop_button = Button(left_side, total_bounds.x@(win.bounds.height-margin/2))
 			.states_([
 				["Start Tala", Color.black, Color.green],
 				["Stop Tala", Color.white, Color.red]
 			])
 			.action_({|button|
-				start_stop_rout.();
+				play_stop_rout.();
 			})
 			.font_(regular_font.copy.size_(60));
 	}

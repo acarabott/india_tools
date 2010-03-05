@@ -1,5 +1,4 @@
 /*
-	TODO Restrict 
 	TODO Project pattern onto a graph
 	TODO Change Tala
 	TODO Extend pattern box when end is reached
@@ -8,7 +7,6 @@
 	
 	TODO Abstract out Tala image so that other controls of tala window aren't available. Or make Tala into a view that is part of this, checking tala values before playing.
 */
-
 
 PatternPlayer {
 	var <pattern;
@@ -30,6 +28,7 @@ PatternPlayer {
 	var <sound_popup;
 	var <tempo_field;
 	var <tempo_text;
+	var play_stop_rout;
 	
 	*new { 
 		^super.new.init;
@@ -86,6 +85,17 @@ PatternPlayer {
 		}
 	}
 	
+	play {
+		tala.play;
+	}
+	
+	stop {
+		tala.stop;
+	}
+	
+	is_playing {
+		^tala.is_playing;
+	}
 	
 	create_gui {
 		var h = 100;
@@ -100,25 +110,42 @@ PatternPlayer {
 				this.pattern_(field.value);
 			})
 			.keyDownAction_({|view, char, mod, uni|
-				a.pattern_field.stringColor = Color.red;
+				view.field.value.stringColor = Color.red;
 			})
 			.keyUpAction_({|view, char, mod, uni|
-				if(a.pattern_field.string.asSymbol == a.pattern.asSymbol) {
-					a.pattern_field.stringColor = Color.black;
+				if(view.field.value.string.asSymbol == pattern.asSymbol) {
+					view.field.value.stringColor = Color.black;
 				};
 			});
-
-
-
 		
+		this.create_play_stop_rout;
+		play_stop_button = Button(window, Rect(10,40,50,50))
+			.states_([
+				["Play", Color.black, Color.green],
+				["Stop", Color.white, Color.red]
+			])
+			.action_({|button|
+				play_stop_rout.();
+			});
+	
 
+	}
+	
+	create_play_stop_rout {
+		play_stop_rout = Routine {
+			inf.do {|i|
+				this.play;
+				0.yield;
+				this.stop;
+				0.yield
+			};
+		};
 	}
 }
 
 
 /*create_gui {
 
-	pattern_set = StaticText(window, Rect(70,70,70, 20)).background_(Color.white).align_(\center);
 	play_stop_button = Button(window, Rect(10,40,50,50))
 		.states_([
 			["Play", Color.black, Color.green],

@@ -29,6 +29,23 @@ a.pattern_field.keyUpAction_({|view, char, mod, uni|
 	
 });
 
-
+a.play
+a.stop
+a.tala.is_playing
 
 a.pattern_field.keyDownAction = nil
+
+b = Tala.new
+
+a.stop;
+a.play;
+
+a.is_playing
+a.tala.is_playing
+
+Routine {
+	inf.do {|i|
+		i.postln;
+		1.wait;
+	};
+}.()
