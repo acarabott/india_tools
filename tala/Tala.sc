@@ -93,9 +93,13 @@ Tala {
 	}
 	
 	gati_ {|new_gati|
+		clock.clear;
 		gati = new_gati;
 		gati_total = gati * gati_mult;
-		gati_amps = gati_amps.extend(gati_total, 0);
+		gati_amps = gati_amps.extend(gati_total, 1);
+		this.create_gati_routine;
+		tala_routine.play(clock, 1); 
+		gati_routine.play(clock, 1)
 	}
 	
 	set_gati_amp {|index, value|
@@ -145,10 +149,9 @@ Tala {
 	
 	play {
 		if(tala_routine.isPlaying.not) {
-			tala_routine.play(clock);
-			gati_routine.play(clock);
-		};
-		
+			tala_routine.play(clock, 1);
+			gati_routine.play(clock, 1);				
+		};	
 	}
 	
 	stop {
