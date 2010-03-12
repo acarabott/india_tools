@@ -12,12 +12,13 @@ a = Tester.new
 a.tGUI.win
 s.boot
 a.pattern_view
-w = Window("test", Rect(0,0,500,500)).front;
+w = Window("test", Rect(0,0,800,400)).front;
 w.view
-
+s.boot
 a.pattern_view.parent
 x = Tala.new(60, 4, false);
-t = TalaGUI.new(x);
+t = TalaGUI.new(x,w);
+x.tGUI = t
 p = PatternPlayer.new
 p.pattern_view
 

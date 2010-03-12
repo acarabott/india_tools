@@ -59,7 +59,7 @@ TalaGUI {
 	
 	initView {|aTala, aParent, aPosition|
 		parent = aParent;
-		position = aPosition;
+		position = aPosition ?? 0@0;
 		this.init(aTala);
 		bounds = view.bounds;
 	}

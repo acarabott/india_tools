@@ -55,7 +55,7 @@ Tala {
 	var <gati_amps;			//	Amplitudes for the sub-divisions
 	var <>gati_func;		//	Function to be called on each sub-division playback
 		
-	var <tGUI;					//	GUI :)
+	var <>tGUI;					//	GUI :)
 	
 	*initClass {
 		adi 		= ["I4", "O", "O"];
