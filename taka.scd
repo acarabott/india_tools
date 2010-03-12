@@ -1,7 +1,14 @@
 s.waitForBoot{a = PatternPlayer.new};
 s.waitForBoot{a = Tala.new};
-CVTest.new
+a.set_gati_amp(2,1)
+a.gati_amps
+a.stop
+a.play
+a = TalaGUI.new
 
+a.gati_func = {Synth(\beep, [\freq, 440]);}
+CVTest.new
+a = Tester.new
 a.tGUI.win
 s.boot
 a.pattern_view
@@ -10,7 +17,7 @@ w.view
 
 a.pattern_view.parent
 x = Tala.new(60, 4, false);
-t = TalaGUI.new(x,w);
+t = TalaGUI.new(x);
 p = PatternPlayer.new
 p.pattern_view
 

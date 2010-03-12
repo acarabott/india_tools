@@ -5,11 +5,12 @@ TalaGUI {
 	classvar <extent;
 	classvar <margin;
 	classvar <m_point;
-	classvar <item_bounds;
-	classvar <total_extent;
+	classvar <item_extent;
+	classvar <item_label_extent;
 	classvar <line_height;
 	
 	//values
+	var <position;
 	var <bounds;
 	var one_char_bounds;
 	var ctf_font;
@@ -34,12 +35,12 @@ TalaGUI {
 	var tala;	// Tala instance to control
 	
 	*initClass {
-		margin 			= 5;
-		m_point 		= margin@margin;
-		line_height		= 20;
-		item_bounds 	= 164 @ line_height;
-		total_extent 	= item_bounds.x*2 + margin @ line_height;
-		extent 			= ( (total_extent.x*2) + ((margin*4)/2) )@300
+		margin 				= 5;
+		m_point 			= margin@margin;
+		line_height			= 20;
+		item_extent 		= 164 @ line_height;
+		item_label_extent 	= item_extent.x*2 + margin @ line_height;
+		extent 				= ( (item_label_extent.x*2) + ((margin*4)/2) )@300
 	}
 	
 	*new {|tala, parent|
@@ -52,12 +53,15 @@ TalaGUI {
 	
 	initWindow {|aTala|
 		this.create_window;
+		position = 0@0;
 		this.init(aTala);
 	}
 	
-	initView {|aTala, aParent|
+	initView {|aTala, aParent, aPosition|
 		parent = aParent;
+		position = aPosition;
 		this.init(aTala);
+		bounds = view.bounds;
 	}
 	
 	init {|aTala|
@@ -68,7 +72,7 @@ TalaGUI {
 		label_s_col		= Color.white;
 
 		tala = aTala;
-		view = CompositeView(parent, total_extent.x@total_extent.y);
+		view = CompositeView(parent, Rect(position.x, position.y, extent.x, extent.y));
 		
 		this.create_left_side;
 		this.create_right_side;		
@@ -104,12 +108,12 @@ TalaGUI {
 	create_tempo_box {
 		EZNumber(
 			left_side, 
-			item_bounds.x + margin + (one_char_bounds.width*3+9) @ line_height,
+			item_extent.x + margin + (one_char_bounds.width*3+9) @ line_height,
 			" Tempo ",
 			ControlSpec(1,999,\lin,1,120,"bpm"),
 			action:{|ezn| (tala.tempo_(ezn.value))},
 			initVal:60,
-			labelWidth:item_bounds.x,
+			labelWidth:item_extent.x,
 			gap:m_point
 		).setColors(label_bg_col, label_s_col);
 		
@@ -119,7 +123,7 @@ TalaGUI {
 	create_gati_pop {
 		EZPopUpMenu(
 			left_side,
-			total_extent,
+			item_label_extent,
 			 " Gati ",
 			[
 				'3 - Tisra'		->	{|a| tala.gati_(3)},
@@ -130,7 +134,7 @@ TalaGUI {
 			],
 			initVal:1,
 			initAction:false,
-			labelWidth:item_bounds.x,
+			labelWidth:item_extent.x,
 			gap:m_point
 		).setColors(label_bg_col, label_s_col);
 		
@@ -139,7 +143,7 @@ TalaGUI {
 	create_tala_pop {
 		EZPopUpMenu( 
 			left_side,
-			total_extent,
+			item_label_extent,
 			 " Tala Presets ",
 			[
 				'Adi' 				-> {|a| tala.adi},
@@ -151,7 +155,7 @@ TalaGUI {
 			],
 			initVal: 0,
 			initAction: false,
-			labelWidth: item_bounds.x,
+			labelWidth: item_extent.x,
 			gap:m_point
 		).setColors(label_bg_col, label_s_col);
 		
@@ -160,12 +164,12 @@ TalaGUI {
 	//Not yet functioning
 /*	create_ct {
 		var ct_comp;
-		var ct_field_bounds = item_bounds.x @ (one_char_bounds.height*5-5);
+		var ct_field_bounds = item_extent.x @ (one_char_bounds.height*5-5);
 		
-		ct_comp = CompositeView( left_side, total_extent.x@ct_field_bounds.y);
+		ct_comp = CompositeView( left_side, item_label_extent.x@ct_field_bounds.y);
 		ct_comp.addFlowLayout.margin_(0@0).gap_(margin@0).left_(ct_comp.decorator.bounds.width).top_(0);
 		
-		StaticText(ct_comp, item_bounds)
+		StaticText(ct_comp, item_extent)
 			.string_(" Custom Tala ")
 			.stringColor_(label_s_col)
 			.background_(label_bg_col)
@@ -189,7 +193,7 @@ TalaGUI {
 			};
 		};
 		
-		play_stop_button = Button(left_side, total_extent.x@(extent.y-margin/2))
+		play_stop_button = Button(left_side, item_label_extent.x@(extent.y-margin/2))
 			.states_([
 				["Start Tala", Color.black, Color.green],
 				["Stop Tala", Color.white, Color.red]
@@ -337,4 +341,27 @@ TalaImage {
 		}
 		
 	}		
+}
+
+
+Tester {
+	var window;
+	var view;
+	var sub_view;
+	var button;
+	
+	*new{
+		^super.new.init
+	}
+	
+	init {
+		window = Window("Tester", Rect(0,0,400,400)).front;
+		view = CompositeView(window, Rect(0,0,400,400)).background_(Color.red);
+		sub_view = CompositeView(view, Rect(0,0,100,100)).background_(Color.green);
+		button = Button(sub_view, Rect(0,0,50,50))
+			.states_([
+				["Start Tala", Color.black, Color.green],
+				["Stop Tala", Color.white, Color.red]
+			])
+	}
 }

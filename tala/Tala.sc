@@ -127,8 +127,10 @@ Tala {
 		gati_total = gati * gati_mult;
 		gati_amps = gati_amps.extend(gati_total, 1);
 		this.create_gati_routine;
-		tala_routine.play(clock, 1); 
-		gati_routine.play(clock, 1)
+		if(this.is_playing) {
+			tala_routine.play(clock, 1); 
+			gati_routine.play(clock, 1);
+		};
 	}
 	
 	set_gati_amp {|index, value|
