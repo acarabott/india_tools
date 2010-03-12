@@ -3,11 +3,11 @@ TalaGUI {
 	//	In which case they can be method variables.
 	
 	classvar <extent;
-	classvar margin;
-	classvar m_point;
-	classvar item_bounds;
-	classvar total_bounds;
-	classvar line_height;
+	classvar <margin;
+	classvar <m_point;
+	classvar <item_bounds;
+	classvar <total_extent;
+	classvar <line_height;
 	
 	//values
 	var <bounds;
@@ -38,51 +38,55 @@ TalaGUI {
 		m_point 		= margin@margin;
 		line_height		= 20;
 		item_bounds 	= 164 @ line_height;
-		total_bounds 	= item_bounds.x*2 + margin @ line_height;
-		extent 			= ( (total_bounds.x*2) + ((margin*4)/2) )@300
+		total_extent 	= item_bounds.x*2 + margin @ line_height;
+		extent 			= ( (total_extent.x*2) + ((margin*4)/2) )@300
 	}
 	
 	*new {|tala, parent|
-		^super.new.init(tala, parent);
+		if(parent==nil) {
+			^super.new.initWindow(tala);
+		} {
+			^super.new.initView(tala, parent)
+		};
 	}
 	
-	init {|aTala, aParent|
-		parent 			= aParent;
+	initWindow {|aTala|
+		this.create_window;
+		this.init(aTala);
+	}
+	
+	initView {|aTala, aParent|
+		parent = aParent;
+		this.init(aTala);
+	}
+	
+	init {|aTala|
 		ctf_font		= Font("Monaco", 12);
 		one_char_bounds = GUI.stringBounds("a", ctf_font);
 		regular_font	= Font("Cochin",12);
 		label_bg_col	= Color.grey;
 		label_s_col		= Color.white;
-		
+
 		tala = aTala;
+		view = CompositeView(parent, total_extent.x@total_extent.y);
 		
-		this.create_window;
 		this.create_left_side;
-		this.create_right_side;
+		this.create_right_side;		
 		
-	
 	}
 	
 	create_window {
 		var s_bounds = Window.screenBounds;
-		"extent.x: ".post; (extent.x).postln;
-		"extent.y: ".post; (extent.y).postln;
-		
 		bounds	= Rect(	s_bounds.width/2 - (extent.x), 
 							s_bounds.height/2 - (extent.y/2), 
 							extent.x, 
 							extent.y
-		);	
-/*		win = Window("Carnatic Tala Meter", bounds, false).front.userCanClose_(false);*/
-		if(parent==nil) {
-			parent = Window("Carnatic Tala Meter", bounds, false).front;
-		};
-
-		view = CompositeView(parent, bounds.width@bounds.height);
+		);		
+		parent = Window("Carnatic Tala Meter", bounds, false).front;
 	}
-	
+		
 	create_left_side {
-		left_side 		= CompositeView(view, Rect(0,0,bounds.width/2, bounds.height));
+		left_side 		= CompositeView(view, Rect(0,0,extent.x/2, extent.y));
 		left_dec 		= left_side.addFlowLayout.margin_(m_point).gap_(m_point/2);
 		left_dec.nextLine;
 		
@@ -103,7 +107,7 @@ TalaGUI {
 			item_bounds.x + margin + (one_char_bounds.width*3+9) @ line_height,
 			" Tempo ",
 			ControlSpec(1,999,\lin,1,120,"bpm"),
-			action:{|ezn| (tala.tempo_(ezn.value)).postln},
+			action:{|ezn| (tala.tempo_(ezn.value))},
 			initVal:60,
 			labelWidth:item_bounds.x,
 			gap:m_point
@@ -115,7 +119,7 @@ TalaGUI {
 	create_gati_pop {
 		EZPopUpMenu(
 			left_side,
-			total_bounds,
+			total_extent,
 			 " Gati ",
 			[
 				'3 - Tisra'		->	{|a| tala.gati_(3)},
@@ -135,7 +139,7 @@ TalaGUI {
 	create_tala_pop {
 		EZPopUpMenu( 
 			left_side,
-			total_bounds,
+			total_extent,
 			 " Tala Presets ",
 			[
 				'Adi' 				-> {|a| tala.adi},
@@ -158,7 +162,7 @@ TalaGUI {
 		var ct_comp;
 		var ct_field_bounds = item_bounds.x @ (one_char_bounds.height*5-5);
 		
-		ct_comp = CompositeView( left_side, total_bounds.x@ct_field_bounds.y);
+		ct_comp = CompositeView( left_side, total_extent.x@ct_field_bounds.y);
 		ct_comp.addFlowLayout.margin_(0@0).gap_(margin@0).left_(ct_comp.decorator.bounds.width).top_(0);
 		
 		StaticText(ct_comp, item_bounds)
@@ -185,7 +189,7 @@ TalaGUI {
 			};
 		};
 		
-		play_stop_button = Button(left_side, total_bounds.x@(bounds.height-margin/2))
+		play_stop_button = Button(left_side, total_extent.x@(extent.y-margin/2))
 			.states_([
 				["Start Tala", Color.black, Color.green],
 				["Stop Tala", Color.white, Color.red]
@@ -199,7 +203,7 @@ TalaGUI {
 	create_right_side {
 		var right_side;
 		
-		right_side		= CompositeView(view, Rect(bounds.width/2,0,bounds.width/2, bounds.height));
+		right_side		= CompositeView(view, Rect(extent.x/2,0,extent.x/2,extent.y));
 		right_side.addFlowLayout.margin_(m_point).gap_(m_point/2);
 		tala_image = TalaImage.new(right_side, right_side.bounds.extent-(margin*2));
 	}
@@ -245,7 +249,7 @@ TalaGUI {
 	
 }
 
-TalaImage : Object {
+TalaImage {
 	classvar <images;
 	classvar <strings;
 	
@@ -332,6 +336,5 @@ TalaImage : Object {
 			this.label_origin_((this.bounds.width*xMul)@(this.bounds.height*yMul))			
 		}
 		
-	}
-		
+	}		
 }

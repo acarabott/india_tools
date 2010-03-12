@@ -1,7 +1,13 @@
 s.waitForBoot{a = PatternPlayer.new};
+s.waitForBoot{a = Tala.new};
+CVTest.new
 
+a.tGUI.win
+s.boot
 a.pattern_view
 w = Window("test", Rect(0,0,500,500)).front;
+w.view
+
 a.pattern_view.parent
 x = Tala.new(60, 4, false);
 t = TalaGUI.new(x,w);
