@@ -167,9 +167,9 @@ PatternPlayerGUI {
 	var <tala_gui;
 	
 	*initClass {
-		p_width = 400;
-		p_height = 100;
-		extent = (TalaGUI.extent.x)@(TalaGUI.extent.y + p_height);
+		p_width = TalaGUI.extent.x;
+		p_height = 50;
+		extent = (p_width)@(TalaGUI.extent.y + p_height);
 	}
 	
 	*new {|player, parent, position|
@@ -234,17 +234,20 @@ PatternPlayerGUI {
 
 		sound_popup = EZPopUpMenu(
 			pattern_view, 
-			Rect(p_width-210,40,200,20), 
-			"Sound",
+			TalaGUI.item_label_extent, 
+			" Sound ",
 			[
 				\Kanjira 	->{|a| player.sounds = player.kanjira_sounds; player.load_buffers},
 				\Konakkol 	->{|a| player.sounds = player.konakkol_sounds; player.load_buffers}/*,
 								\Custom 	->{|a| sounds = custom_sounds;}*/
 			],
-			gap:5@5
-		);
+			initVal: 0,
+			initAction: false,
+			labelWidth: TalaGUI.item_extent.x,
+			gap: TalaGUI.m_point
+		).setColors(Color.grey, Color.white);
 		
-		tala_gui = TalaGUI.new(player.tala, parent, 0@100);	
+		tala_gui = TalaGUI.new(player.tala, parent, 0@p_height+TalaGUI.margin);	
 		
 	}
 }
