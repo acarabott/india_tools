@@ -20,6 +20,7 @@ PatternPlayer {
 	var <tala;
 	
 	var <window;
+	var <pattern_view;
 	var <pattern_field;
 	var <pattern_set;
 	var <play_stop_button;
@@ -28,6 +29,7 @@ PatternPlayer {
 	var <tempo_field;
 	var <tempo_text;
 	var play_stop_rout;
+	var tala_gui;
 	
 	*new { 
 		^super.new.init;
@@ -41,7 +43,7 @@ PatternPlayer {
 		tempo 			= 60;
 		gati			= 4;
 		s 				= Server.default;
-		tala 			= Tala.new(tempo, gati, true);
+		tala 			= Tala.new(tempo, gati, false);
 		
 		this.pattern_("xxxx");
 		
@@ -151,13 +153,31 @@ PatternPlayer {
 	}
 	
 	create_gui {
-		var h = 100;
-		var	w = 400;
-		window = Window.new("Pattern Player", Rect((Window.screenBounds.width/2)-(w/2),(Window.screenBounds.height/2)-(h/2),w,h), false)
+		var	pattern_w = 400;
+		var pattern_h = 100;
+		var tala_extent = TalaGUI.extent;
+		var total_extent = (pattern_w + tala_extent.x)@(pattern_h + tala_extent.y);
+		"tala_extent: ".post; (tala_extent).postln;
+		
+		window = Window.new(
+			"Pattern Player", 
+			Rect(
+				(Window.screenBounds.width/2)-(total_extent.x/2),
+				(Window.screenBounds.height/2)-(total_extent.y/2),
+				total_extent.x,
+				total_extent.y
+			), 
+			false
+			)
 			.userCanClose_(true)
 			.front;
-
-		pattern_field = TextField(window, Rect(10,10,w-20,20))
+		
+		pattern_view = CompositeView(window, Rect(0,0, pattern_w, pattern_h));
+		pattern_view.decorator = FlowLayout(pattern_view.bounds);
+			
+		tala_gui 		= TalaGUI.new(tala, window);	
+		
+		pattern_field = TextField(pattern_view, Rect(10,10,pattern_w-20,20))
 			.string_(pattern)
 			.action_({|field| 
 				this.pattern_(field.value);
@@ -173,7 +193,8 @@ PatternPlayer {
 			});
 		
 		this.create_play_stop_rout;
-		play_stop_button = Button(window, Rect(10,40,50,50))
+		
+		play_stop_button = Button(pattern_view, Rect(10,40,50,50))
 			.states_([
 				["Play", Color.black, Color.green],
 				["Stop", Color.white, Color.red]
@@ -184,7 +205,7 @@ PatternPlayer {
 
 		sound_popup = EZPopUpMenu(
 			window, 
-			Rect(w-210,40,200,20), 
+			Rect(pattern_w-210,40,200,20), 
 			"Sound",
 			[
 				\Kanjira 	->{|a| sounds = kanjira_sounds; this.load_buffers},
@@ -193,7 +214,7 @@ PatternPlayer {
 			],
 			gap:5@5
 		);
-
+		
 	}
 	
 	create_play_stop_rout {

@@ -2,74 +2,87 @@ TalaGUI {
 	//Could refactor some of these, check if they are actually needed throughout the class or just by one widget
 	//	In which case they can be method variables.
 	
+	classvar <extent;
+	classvar margin;
+	classvar m_point;
+	classvar item_bounds;
+	classvar total_bounds;
+	classvar line_height;
+	
 	//values
-	var <win_bounds;
-	var margin;
-	var m_point;
-	var item_bounds;
-	var total_bounds;
+	var <bounds;
 	var one_char_bounds;
-	var line_height;
+	var ctf_font;
+	var regular_font;
+	var label_bg_col;
+	var label_s_col;
 
 	//GUI elements
 	var <win;
+	var <parent;
 	var <view;
 	var left_side;
 	var left_dec;
 	var right_dec;
 	var <tala_image;
 	var <play_stop_button;
+	var visible;
 	
 	//Other shit
-	var ctf_font;
-	var regular_font;
-	var label_bg_col;
-	var label_s_col;
 	var <play_stop_rout;
 	
 	var tala;	// Tala instance to control
 	
-	*new {|aTala|
-		^super.new.init(aTala);
-	}
-	
-	init {|aTala|
+	*initClass {
 		margin 			= 5;
 		m_point 		= margin@margin;
 		line_height		= 20;
-		ctf_font		= Font("Monaco",12);
-		one_char_bounds = GUI.stringBounds("a", ctf_font);
-		item_bounds 	= (one_char_bounds.width*22) + 10 @ line_height;
+		item_bounds 	= 164 @ line_height;
 		total_bounds 	= item_bounds.x*2 + margin @ line_height;
+		extent 			= ( (total_bounds.x*2) + (margin*4) /2 )@300
+	}
+	
+	*new {|tala, parent|
+		^super.new.init(tala, parent);
+	}
+	
+	init {|aTala, aParent|
+		parent 			= aParent;
+		ctf_font		= Font("Monaco", 12);
+		one_char_bounds = GUI.stringBounds("a", ctf_font);
 		regular_font	= Font("Cochin",12);
 		label_bg_col	= Color.grey;
 		label_s_col		= Color.white;
 		
 		tala = aTala;
-
+		
 		this.create_window;
 		this.create_left_side;
 		this.create_right_side;
+		
 	
 	}
 	
 	create_window {
 		var s_bounds = Window.screenBounds;
-		var win_w;
-		var win_h;
+		"extent.x: ".post; (extent.x).postln;
+		"extent.y: ".post; (extent.y).postln;
 		
-		win_bounds	= Rect(	s_bounds.width/2 - ((win_w = (total_bounds.x*2)+(margin*4))/2), 
-							s_bounds.height/2 - ((win_h=300)/2), 
-							win_w, 
-							win_h
+		bounds	= Rect(	s_bounds.width/2 - (extent.x), 
+							s_bounds.height/2 - (extent.y/2), 
+							extent.x, 
+							extent.y
 		);	
-/*		win = Window("Carnatic Tala Meter", win_bounds, false).front.userCanClose_(false);*/
-		win = Window("Carnatic Tala Meter", win_bounds, false).front;
-		view = CompositeView(win, Rect(0,0, win_bounds.width, win.bounds.height));
+/*		win = Window("Carnatic Tala Meter", bounds, false).front.userCanClose_(false);*/
+		if(parent==nil) {
+			parent = Window("Carnatic Tala Meter", bounds, false).front;
+		};
+
+		view = CompositeView(parent, bounds.width@bounds.height);
 	}
 	
 	create_left_side {
-		left_side 		= CompositeView(view, Rect(0,0,win.bounds.width/2, win.bounds.height));
+		left_side 		= CompositeView(view, Rect(0,0,bounds.width/2, bounds.height));
 		left_dec 		= left_side.addFlowLayout.margin_(m_point).gap_(m_point/2);
 		left_dec.nextLine;
 		
@@ -172,7 +185,7 @@ TalaGUI {
 			};
 		};
 		
-		play_stop_button = Button(left_side, total_bounds.x@(win.bounds.height-margin/2))
+		play_stop_button = Button(left_side, total_bounds.x@(bounds.height-margin/2))
 			.states_([
 				["Start Tala", Color.black, Color.green],
 				["Stop Tala", Color.white, Color.red]
@@ -186,7 +199,7 @@ TalaGUI {
 	create_right_side {
 		var right_side;
 		
-		right_side		= CompositeView(view, Rect(win.bounds.width/2,0,win.bounds.width/2, win.bounds.height));
+		right_side		= CompositeView(view, Rect(bounds.width/2,0,bounds.width/2, bounds.height));
 		right_side.addFlowLayout.margin_(m_point).gap_(m_point/2);
 		tala_image = TalaImage.new(right_side, right_side.bounds.extent-(margin*2));
 	}

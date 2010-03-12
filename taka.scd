@@ -1,5 +1,6 @@
 s.waitForBoot{a = PatternPlayer.new};
 
+a.tala.tGUI.win_bounds.extent.x
 a = Tala.new
 x = ['x','x','X','X'].findAll(['x','X'])
 x.removeAllSuchThat({|item, i| item == ' '})
@@ -110,3 +111,24 @@ b = KonaWordView(w, Rect(110,10,200,300));
 init { |aParent, aBounds, aJatis=4, aNumUnderlines=0|
 
 
+
+
+TalaGUI: changed win_bounds to bounds
+
+w = Window("hi", Rect(40,40,400,400)).front
+a = CompositeView(w, Rect(0,0,100,100)).background_(Color.red);
+
+x = Window("hi", Rect(40,40,400,400)).front
+a.parent = x
+SCCompositeView
+
+
+true.not
+
+y = 5
+x = y ?? 4
+
+
+a = b = 4
+
+b
