@@ -39,7 +39,7 @@ TalaGUI {
 		line_height		= 20;
 		item_bounds 	= 164 @ line_height;
 		total_bounds 	= item_bounds.x*2 + margin @ line_height;
-		extent 			= ( (total_bounds.x*2) + (margin*4) /2 )@300
+		extent 			= ( (total_bounds.x*2) + ((margin*4)/2) )@300
 	}
 	
 	*new {|tala, parent|

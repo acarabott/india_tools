@@ -175,7 +175,7 @@ PatternPlayer {
 		pattern_view = CompositeView(window, Rect(0,0, pattern_w, pattern_h));
 		pattern_view.decorator = FlowLayout(pattern_view.bounds);
 			
-		tala_gui 		= TalaGUI.new(tala, window);	
+		tala_gui 		= TalaGUI.new(tala);	
 		
 		pattern_field = TextField(pattern_view, Rect(10,10,pattern_w-20,20))
 			.string_(pattern)
