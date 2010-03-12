@@ -1,5 +1,6 @@
 w = Window("KonaTranscribe", Rect(400,400,600,400)).front;
 SCStaticText
+SCUserView
 x = TextView(w, Rect(5,5,107,25))
 	.string_("Takadimi")
 	.background_(Color.grey(0.6))

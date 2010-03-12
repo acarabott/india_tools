@@ -1,5 +1,4 @@
 /*
-	TODO o SHOULDN'T PLAY!!!ONE1
 	TODO Project pattern onto a graph
 	TODO Change Tala
 	TODO Extend pattern box when end is reached
@@ -43,7 +42,7 @@ PatternPlayer {
 		tempo 			= 60;
 		gati			= 4;
 		s 				= Server.default;
-		tala 			= Tala.new(tempo, gati, false);
+		tala 			= Tala.new(tempo, gati, true);
 		
 		this.pattern_("xxxx");
 		
@@ -71,18 +70,78 @@ PatternPlayer {
 	}
 	
 	pattern_ {|new_pattern|
-		pattern = new_pattern.reject({|item, i| ['x','o'].includes(item.asSymbol).not });
+		var pat_sym;
+		var all_x;
+		var group_starters;
+		
+		pattern = new_pattern;
+		group_starters = List[];
+		all_x = List[];
+		
+		//	Strip all non x, o or space chars from the pattern
+		pat_sym = pattern.collectAs({|item, i| item.asSymbol }, Array).reject({|item, i| ['x','o',' ',',','-'].includes(item.asSymbol).not });
+		
+		//	Find group starters; xs after space	
+		pat_sym.do { |item, i|
+			if(item=='x' && (pat_sym[i-1]==' ')) {
+				pat_sym[i] = 'X'
+			};
+		};
+		//	Remove spaces
+		pat_sym = pat_sym.removeEvery([' ']);
+		
+		//	Store indices of xs
+		pat_sym.do { |item, i|
+			if(item=='x' || (item=='X')) {
+				all_x.add(i);
+			};
+		};
 		
 		tala.gati_func = {|i, j|
+			var sound;
 			var index;
+			var cur, prev, next;
 			
-			switch (pattern.wrapAt(j%pattern.size).asSymbol)
-				{'x'}	{index = 0}
-				{'o'}	{index = 1};
-				
-			if(index != nil) {
-				Synth(\simple_play, [\bufnum, buffers[index]]);
+			//looping index
+			index = (j%pat_sym.size).asInteger;
+
+			if(pat_sym[index] == 'x') {		
+				if(index == all_x[0]) {		//	If this is the first x
+					sound = 0;					//	Make it a Ta!
+					1.postln;
+				} {
+					//store index of current, previous and next 'x's
+					cur = all_x.indexOf(index);
+					prev = all_x[cur-1];
+					next = all_x[cur+1];
+
+					//If the x is not the first or last in the pattern
+					if(next != nil && (prev != nil)) {
+						//If the next x is closer to the current than the previous make it a group starter
+						if((next - index) < (index - prev)) {
+							sound = 0;
+							2.postln;
+						} {
+							//Else it's a group secondary note
+							sound = 1;
+							3.postln;
+						};
+					} {
+						//Else the note is the last note so should be a secondary note
+						sound = 1;
+						4.postln;
+					};
+				};
+			} {
+				if(pat_sym[index] == 'X') {
+					sound = 0;
+					5.postln;
+				};
 			};
+			
+			if(sound!=nil) {
+				Synth(\simple_play, [\bufnum, buffers[sound]]);
+			};			
 		}
 	}
 	
