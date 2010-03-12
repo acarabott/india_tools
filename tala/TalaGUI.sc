@@ -13,6 +13,7 @@ TalaGUI {
 
 	//GUI elements
 	var <win;
+	var <view;
 	var left_side;
 	var left_dec;
 	var right_dec;
@@ -53,7 +54,7 @@ TalaGUI {
 	}
 	
 	create_window {
-		var s_bounds	= Window.screenBounds;
+		var s_bounds = Window.screenBounds;
 		var win_w;
 		var win_h;
 		
@@ -64,10 +65,11 @@ TalaGUI {
 		);	
 /*		win = Window("Carnatic Tala Meter", win_bounds, false).front.userCanClose_(false);*/
 		win = Window("Carnatic Tala Meter", win_bounds, false).front;
+		view = CompositeView(win, Rect(0,0, win_bounds.width, win.bounds.height));
 	}
 	
 	create_left_side {
-		left_side 		= CompositeView(win, Rect(0,0,win.bounds.width/2, win.bounds.height));
+		left_side 		= CompositeView(view, Rect(0,0,win.bounds.width/2, win.bounds.height));
 		left_dec 		= left_side.addFlowLayout.margin_(m_point).gap_(m_point/2);
 		left_dec.nextLine;
 		
@@ -184,7 +186,7 @@ TalaGUI {
 	create_right_side {
 		var right_side;
 		
-		right_side		= CompositeView(win, Rect(win.bounds.width/2,0,win.bounds.width/2, win.bounds.height));
+		right_side		= CompositeView(view, Rect(win.bounds.width/2,0,win.bounds.width/2, win.bounds.height));
 		right_side.addFlowLayout.margin_(m_point).gap_(m_point/2);
 		tala_image = TalaImage.new(right_side, right_side.bounds.extent-(margin*2));
 	}

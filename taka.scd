@@ -1,6 +1,6 @@
 s.waitForBoot{a = PatternPlayer.new};
 
-
+a = Tala.new
 x = ['x','x','X','X'].findAll(['x','X'])
 x.removeAllSuchThat({|item, i| item == ' '})
 
