@@ -43,11 +43,11 @@ TalaGUI {
 		extent 				= ( (item_label_extent.x*2) + ((margin*4)/2) )@300
 	}
 	
-	*new {|tala, parent|
+	*new {|tala, parent, position|
 		if(parent==nil) {
 			^super.new.initWindow(tala);
 		} {
-			^super.new.initView(tala, parent)
+			^super.new.initView(tala, parent, position)
 		};
 	}
 	
@@ -59,7 +59,7 @@ TalaGUI {
 	
 	initView {|aTala, aParent, aPosition|
 		parent = aParent;
-		position = aPosition ?? 0@0;
+		position = aPosition ? (0@0);
 		this.init(aTala);
 		bounds = view.bounds;
 	}

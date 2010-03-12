@@ -6,6 +6,7 @@ a.stop
 a.play
 a = TalaGUI.new
 
+a = PatternPlayerGUI.new
 a.gati_func = {Synth(\beep, [\freq, 440]);}
 CVTest.new
 a = Tester.new
@@ -154,3 +155,9 @@ x = y ?? 4
 a = b = 4
 
 b
+
+(0@100).x
+
+x = nil
+
+y = x ?? 0@0
