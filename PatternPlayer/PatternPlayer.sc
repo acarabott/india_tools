@@ -1,5 +1,5 @@
 /*
-	FIXME GUI IS FUCKEDDSS
+	FIXME Sound EZPopup needs repositioning margin sorting
 
 	TODO Parsing groups of xs to make takadimi takita etc
 	TODO Extend pattern box when end is reached
