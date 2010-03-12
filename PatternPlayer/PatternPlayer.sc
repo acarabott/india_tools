@@ -43,7 +43,8 @@ PatternPlayer {
 			s.sync;
 		}.fork;
 		
-		pGUI = PatternPlayerGUI.new(this);
+		pGUI 		= PatternPlayerGUI.new(this);
+		tala.tGUI	= pGUI.tala_gui;
 	}
 	
 	load_synth_def {
@@ -162,11 +163,8 @@ PatternPlayerGUI {
 	var <window;
 	var <pattern_view;
 	var <pattern_field;
-	var <pattern_set;
 	var <sound_popup;
-	var <tempo_field;
-	var <tempo_text;
-	var tala_gui;
+	var <tala_gui;
 	
 	*initClass {
 		p_width = 400;
