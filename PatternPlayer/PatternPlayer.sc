@@ -1,11 +1,10 @@
 /*
-	TODO Project pattern onto a graph
-	TODO Change Tala
+
+	TODO Parsing groups of xs to make takadimi takita etc
 	TODO Extend pattern box when end is reached
 	TODO Draw graph showing pattern against Tala
 	TODO Enter key creates new line, click button to set?
 	
-	TODO Abstract out Tala image so that other controls of tala window aren't available. Or make Tala into a view that is part of this, checking tala values before playing.
 */
 
 PatternPlayer {
@@ -72,10 +71,8 @@ PatternPlayer {
 	pattern_ {|new_pattern|
 		var pat_sym;
 		var all_x;
-		var group_starters;
 		
 		pattern = new_pattern;
-		group_starters = List[];
 		all_x = List[];
 		
 		//	Strip all non x, o or space chars from the pattern
@@ -108,7 +105,6 @@ PatternPlayer {
 			if(pat_sym[index] == 'x') {		
 				if(index == all_x[0]) {		//	If this is the first x
 					sound = 0;					//	Make it a Ta!
-					1.postln;
 				} {
 					//store index of current, previous and next 'x's
 					cur = all_x.indexOf(index);
@@ -120,22 +116,19 @@ PatternPlayer {
 						//If the next x is closer to the current than the previous make it a group starter
 						if((next - index) < (index - prev)) {
 							sound = 0;
-							2.postln;
 						} {
 							//Else it's a group secondary note
 							sound = 1;
-							3.postln;
 						};
 					} {
 						//Else the note is the last note so should be a secondary note
 						sound = 1;
-						4.postln;
 					};
 				};
 			} {
+				//	if it's a group starter, play the first sound
 				if(pat_sym[index] == 'X') {
 					sound = 0;
-					5.postln;
 				};
 			};
 			
@@ -214,15 +207,3 @@ PatternPlayer {
 		};
 	}
 }
-
-
-/*create_gui {
-
-	tempo_text 	= StaticText(window, Rect(70, 40, 45, 20)).string_("Tempo: ");
-	tempo_field = NumberBox(window, Rect(120,40,30,20))
-			.value_(this.tempo)
-			.action_({|field|
-				this.tempo_(field.value.asInteger);
-			});		
-}
-*/
