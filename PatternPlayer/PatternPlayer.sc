@@ -1,4 +1,4 @@
-/*
+/*/*
 	FIXME GUI IS FUCKEDDSS
 
 	TODO Parsing groups of xs to make takadimi takita etc
@@ -19,19 +19,7 @@ PatternPlayer {
 	var <>s;
 	var <>buffers;
 	var <tala;
-	
-	var <window;
-	var <pattern_view;
-	var <pattern_field;
-	var <pattern_set;
-	var <play_stop_button;
-	var <routine_set;
-	var <sound_popup;
-	var <tempo_field;
-	var <tempo_text;
-	var play_stop_rout;
-	var tala_gui;
-	
+		
 	*new { 
 		^super.new.init;
 	}
@@ -152,81 +140,121 @@ PatternPlayer {
 	is_playing {
 		^tala.is_playing;
 	}
+
+PatternPlayerGUI {
+	
+	classvar <p_width;
+	classvar <p_height;
+	classvar <bounds;
+	
+	var <player;
+	var <parent;
+	
+	var <width;
+	var <height;
+	
+	var <window;
+	var <pattern_view;
+	var <pattern_field;
+	var <pattern_set;
+	var <play_stop_button;
+	var <sound_popup;
+	var <tempo_field;
+	var <tempo_text;
+	var play_stop_rout;
+	var tala_gui;
+	
+	*initClass {
+		p_width = 400;
+		p_height = 100;
+		bounds = (TalaGUI.extent.x + p_width)@(TalaGUI.extent.y + p_height);
+	}
+	
+	*new {|player, parent|
+		super.new.init(player, parent)
+	}
+	
+	init {|aPlayer, aParent|
+		player = aPlayer;
+		parent = aParent;
+		this.create_gui;		
+	}
 	
 	create_gui {
-		var	pattern_w = 400;
-		var pattern_h = 100;
-		var tala_extent = TalaGUI.extent;
-		var total_extent = (pattern_w + tala_extent.x)@(pattern_h + tala_extent.y);
-		"tala_extent: ".post; (tala_extent).postln;
-		
-		window = Window.new(
-			"Pattern Player", 
-			Rect(
-				(Window.screenBounds.width/2)-(total_extent.x/2),
-				(Window.screenBounds.height/2)-(total_extent.y/2),
-				total_extent.x,
-				total_extent.y
-			), 
-			false
-			)
-			.userCanClose_(true)
-			.front;
-		
-		pattern_view = CompositeView(window, Rect(0,0, pattern_w, pattern_h));
-		pattern_view.decorator = FlowLayout(pattern_view.bounds);
-		
-/*		window.addFlowLayout(0,0);*/
-		
-		pattern_field = TextField(pattern_view, Rect(10,10,pattern_w-20,20))
-			.string_(pattern)
-			.action_({|field| 
-				this.pattern_(field.value);
-				field.stringColor = Color.black;
-			})
-			.keyDownAction_({|view, char, mod, uni|
-				view.stringColor = Color.red;
-			})
-			.keyUpAction_({|view, char, mod, uni|
-				if(view.value.asSymbol == pattern.asSymbol) {
-					view.stringColor = Color.black;
-				};
-			});
-		
-		this.create_play_stop_rout;
-		
-		play_stop_button = Button(pattern_view, Rect(10,40,50,50))
-			.states_([
-				["Play", Color.black, Color.green],
-				["Stop", Color.white, Color.red]
-			])
-			.action_({|button|
-				play_stop_rout.();
-			});
-
-		sound_popup = EZPopUpMenu(
-			window, 
-			Rect(pattern_w-210,40,200,20), 
-			"Sound",
-			[
-				\Kanjira 	->{|a| sounds = kanjira_sounds; this.load_buffers},
-				\Konakkol 	->{|a| sounds = konakkol_sounds; this.load_buffers}/*,
-								\Custom 	->{|a| sounds = custom_sounds;}*/
-			],
-			gap:5@5
-		);
-		tala_gui 		= TalaGUI.new(tala, window);	
-		
+		window = Window.new()
 	}
 	
-	create_play_stop_rout {
-		play_stop_rout = Routine {
-			inf.do {|i|
-				this.play;
-				0.yield;
-				this.stop;
-				0.yield
+	
+		create_gui {
+
+			window = Window.new(
+				"Pattern Player", 
+				Rect(
+					(Window.screenBounds.width/2)-(total_extent.x/2),
+					(Window.screenBounds.height/2)-(total_extent.y/2),
+					total_extent.x,
+					total_extent.y
+				), 
+				false
+				)
+				.userCanClose_(true)
+				.front;
+
+			pattern_view = CompositeView(window, Rect(0,0, pattern_w, pattern_h));
+			pattern_view.decorator = FlowLayout(pattern_view.bounds);
+
+	/*		window.addFlowLayout(0,0);*/
+
+			pattern_field = TextField(pattern_view, Rect(10,10,pattern_w-20,20))
+				.string_(pattern)
+				.action_({|field| 
+					this.pattern_(field.value);
+					field.stringColor = Color.black;
+				})
+				.keyDownAction_({|view, char, mod, uni|
+					view.stringColor = Color.red;
+				})
+				.keyUpAction_({|view, char, mod, uni|
+					if(view.value.asSymbol == pattern.asSymbol) {
+						view.stringColor = Color.black;
+					};
+				});
+
+			this.create_play_stop_rout;
+
+			play_stop_button = Button(pattern_view, Rect(10,40,50,50))
+				.states_([
+					["Play", Color.black, Color.green],
+					["Stop", Color.white, Color.red]
+				])
+				.action_({|button|
+					play_stop_rout.();
+				});
+
+			sound_popup = EZPopUpMenu(
+				window, 
+				Rect(pattern_w-210,40,200,20), 
+				"Sound",
+				[
+					\Kanjira 	->{|a| sounds = kanjira_sounds; this.load_buffers},
+					\Konakkol 	->{|a| sounds = konakkol_sounds; this.load_buffers}/*,
+									\Custom 	->{|a| sounds = custom_sounds;}*/
+				],
+				gap:5@5
+			);
+			tala_gui 		= TalaGUI.new(tala, window);	
+
+		}
+
+		create_play_stop_rout {
+			play_stop_rout = Routine {
+				inf.do {|i|
+					this.play;
+					0.yield;
+					this.stop;
+					0.yield
+				};
 			};
-		};
+		}
 	}
-}
+}*/

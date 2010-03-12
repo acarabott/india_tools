@@ -1,5 +1,13 @@
 s.waitForBoot{a = PatternPlayer.new};
 
+a.pattern_view
+w = Window("test", Rect(0,0,500,500)).front;
+a.pattern_view.parent
+x = Tala.new(60, 4, false);
+t = TalaGUI.new(x,w);
+p = PatternPlayer.new
+p.pattern_view
+
 a.tala.tGUI.win_bounds.extent.x
 a = Tala.new
 x = ['x','x','X','X'].findAll(['x','X'])
