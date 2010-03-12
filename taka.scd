@@ -1,4 +1,3 @@
-
 s.waitForBoot{a = PatternPlayer.new};
 
 a.tala.tGUI.win_bounds.extent.x

@@ -1,4 +1,5 @@
 /*
+	FIXME GUI IS FUCKEDDSS
 
 	TODO Parsing groups of xs to make takadimi takita etc
 	TODO Extend pattern box when end is reached
@@ -174,8 +175,8 @@ PatternPlayer {
 		
 		pattern_view = CompositeView(window, Rect(0,0, pattern_w, pattern_h));
 		pattern_view.decorator = FlowLayout(pattern_view.bounds);
-			
-		tala_gui 		= TalaGUI.new(tala);	
+		
+/*		window.addFlowLayout(0,0);*/
 		
 		pattern_field = TextField(pattern_view, Rect(10,10,pattern_w-20,20))
 			.string_(pattern)
@@ -214,6 +215,7 @@ PatternPlayer {
 			],
 			gap:5@5
 		);
+		tala_gui 		= TalaGUI.new(tala, window);	
 		
 	}
 	
