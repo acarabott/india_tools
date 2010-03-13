@@ -9,13 +9,13 @@ TalaGUI {
 	// classvar <m_point;
 	// classvar <item_extent;
 	// classvar <item_and_label_extent;
-	// classvar <volume_width;
 	// classvar <line_height;
 	classvar <extent;
 	classvar <margin;		
 	classvar <side_extent;
 	classvar <label_width;
 	classvar <line_extent;
+	classvar <volume_extent;
 	                     
 	//values
 	var <position;
@@ -33,6 +33,7 @@ TalaGUI {
 	var <view;
 	var left_side;
 	var left_dec;
+	var right_side;
 	var right_dec;
 	var <tala_image;
 	var <play_stop_button;
@@ -44,9 +45,10 @@ TalaGUI {
 	var tala;	// Tala instance to control
 	
 	*initClass {
-		extent = 700@300;
+		side_extent = 350@310;
+		volume_extent = 40@side_extent.y;
+		extent = (side_extent.x*2)+volume_extent.x@side_extent.y;
         margin = 5@5;
-		side_extent = extent.x/2@extent.y;
 		label_width = side_extent.x/2 - (margin.x*2);		
 		line_extent = side_extent.x-(margin.x*2)@20;
 		
@@ -92,12 +94,11 @@ TalaGUI {
 		
 		tala = aTala;
 		view = CompositeView(parent, Rect(position.x, position.y, extent.x, extent.y));
-		view.background_(Color.yellow);
 		view.addFlowLayout(0@0,0@0);
 		
 		this.create_left_side;
-		// this.create_volume;
-		// this.create_right_side;		
+		this.create_volume;
+		this.create_right_side;		
 		
 	}
 	
@@ -114,7 +115,6 @@ TalaGUI {
 	create_left_side {
 		left_side 		= CompositeView(view, side_extent);
 		left_dec 		= left_side.addFlowLayout(margin, margin);
-		left_side.background_(Color.blue);
 		left_dec.nextLine;
 		
 		this.create_tempo_box;
@@ -236,44 +236,43 @@ TalaGUI {
 		);
 	}
 	
-	// create_right_side {
-	// 	var right_side;
-	// 	
-	// 	right_side 		= CompositeView(view, ((side_extent.x)-(margin*2))@side_extent.y);
-	// 	right_side		= CompositeView(view, Rect(extent.x/2,0,extent.x/2,extent.y));
-	// 	right_side		= CompositeView(view, (extent.x/2)@extent.y);
-	// 	right_side.addFlowLayout.margin_(m_point).gap_(m_point/2);
-	// 	tala_image = TalaImage.new(right_side, right_side.bounds.extent-(margin*2));
-	// }
-	// 
-	// create_volume {
-	// 	var vol_view = CompositeView(view, volume_width@extent.y-(margin*2)).background_(Color.red);
-	// 	// x.addFlowLayout.margin_(TalaGUI.m_point).gap_(TalaGUI.m_point/2);
-	// 
-	// 	// 
-	// 	// g=EZSlider(
-	// 	// 	x, 
-	// 	// 	30@265,
-	// 	// 	" Vol  ", 
-	// 	// 	ControlSpec(-inf, 6, 'db', 0.01, -inf, " dB"),
-	// 	// 	{|ez| ez.value.postln},
-	// 	// 	initVal:1,
-	// 	// 	unitWidth:30, 
-	// 	// 	numberWidth:60,
-	// 	// 	layout:\vert
-	// 	// ).setColors(Color.grey,Color.white, Color.grey(0.7),Color.grey, 
-	// 	// 	Color.white, Color.white,nil,nil, Color.grey(0.7))
-	// 	// .font_(Font("Helvetica",10));
-	// 	// 
-	// 	// b = Button(x, 30@25)
-	// 	// 	.states_([
-	// 	// 		["M", Color.black, Color.blue(1.8)],
-	// 	// 		["M", Color.white, Color.blue(0.8)]
-	// 	// 	]);
-	// 
-	// 
-	// 	
-	// }
+	create_right_side {
+		right_side 		= CompositeView(view, side_extent);
+		right_dec 		= right_side.addFlowLayout(margin, margin);
+		
+		tala_image = TalaImage.new(right_side, side_extent-(margin*2));
+	}
+	
+	create_volume {
+		var vol_view = CompositeView(view, volume_extent);
+		var vol_view_dec = vol_view.addFlowLayout(margin, margin);
+		var button_extent = (volume_extent.x-(margin.x*2)).asPoint;
+		var slider_extent = button_extent.x @ (volume_extent.y - (margin.y*2) - button_extent.y - vol_view_dec.gap.x);
+		
+		EZSlider(
+			vol_view, 
+			slider_extent,
+			" Vol  ", 
+			ControlSpec(-inf, 12, 'db', 0.01, -inf, " dB"),
+			{|ez| tala.amp = ez.value.dbamp},
+			initVal:1,
+			unitWidth:30, 
+			numberWidth:60,
+			layout:\vert
+		).setColors(Color.grey,Color.white, Color.grey(0.7),Color.grey, 
+			Color.white, Color.white,nil,nil, Color.grey(0.7))
+		.font_(Font("Helvetica",10));
+		
+		Button(vol_view, button_extent)
+			.states_([
+				["M", Color.white, Color.blue(1.5)],
+				["M", Color.white, Color.blue(0.8)]
+			])
+			.action_({|button|
+				tala.mute = (button.value-1).abs
+			});
+		
+	}
 	//Actions
 	
 	prAction {|index, xMul, yMul|

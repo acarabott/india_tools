@@ -46,7 +46,8 @@ Tala {
 	
 	var <s;					//	Server
 	var <>amp;				//	Amplification multiplier
-
+	var <>mute;				//	Mute multiplier
+	
 	var <>parts;			
 	var <routine;			//	The playback routine
 	var <tala_routine;
@@ -76,6 +77,8 @@ Tala {
 
 	init {|aTempo, aGati, aGUI|
 		amp 		= 1;
+		mute		= 1;
+		
 		clock		= TempoClock(aTempo/60);
 
 		gati		= aGati;
@@ -292,7 +295,7 @@ Tala {
 	
 	//	Synth methods
 	generic_clap {|amp1, amp2, freq1, freq2, rq|
-			Synth(\clapping, [\amp, rrand(amp1, amp2)*amp, \filterfreq, rrand(freq1, freq2), \rq, rq.rand]) 
+			Synth(\clapping, [\amp, rrand(amp1, amp2)*(amp*mute), \filterfreq, rrand(freq1, freq2), \rq, rq.rand]) 
 	}
 	
 	//	Preset loading methods

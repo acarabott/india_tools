@@ -169,9 +169,9 @@ PatternPlayerGUI {
 	var <tala_gui;
 	
 	*initClass {
-		p_width = TalaGUI.extent.x;
+		p_width = 700;
 		p_height = 50;
-		extent = (p_width)@(TalaGUI.extent.y + p_height);
+		extent = (p_width)@(310 + p_height);
 	}
 	
 	*new {|player, parent, position|
