@@ -342,26 +342,3 @@ TalaImage {
 		
 	}		
 }
-
-
-Tester {
-	var window;
-	var view;
-	var sub_view;
-	var button;
-	
-	*new{
-		^super.new.init
-	}
-	
-	init {
-		window = Window("Tester", Rect(0,0,400,400)).front;
-		view = CompositeView(window, Rect(0,0,400,400)).background_(Color.red);
-		sub_view = CompositeView(view, Rect(0,0,100,100)).background_(Color.green);
-		button = Button(sub_view, Rect(0,0,50,50))
-			.states_([
-				["Start Tala", Color.black, Color.green],
-				["Stop Tala", Color.white, Color.red]
-			])
-	}
-}

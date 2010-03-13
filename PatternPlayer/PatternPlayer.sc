@@ -1,11 +1,8 @@
 /*
-	FIXME Sound EZPopup needs repositioning margin sorting
-
 	TODO Parsing groups of xs to make takadimi takita etc
 	TODO Extend pattern box when end is reached
 	TODO Draw graph showing pattern against Tala
-	TODO Enter key creates new line, click button to set?
-	
+	TODO Enter key creates new line, click button to set?	
 */
 
 PatternPlayer {
@@ -200,8 +197,8 @@ PatternPlayerGUI {
 	create_window {
 		var s_bounds = Window.screenBounds;
 		parent = Window.new("Pattern Player",
-			Rect(	(s_bounds.width/2)-(extent.x/2),
-					(s_bounds.height/2)-(extent.y/2),
+			Rect(	((s_bounds.width/2)-(extent.x/2)).floor,
+					((s_bounds.height/2)-(extent.y/2)).floor,
 					extent.x,
 					extent.y
 			),
@@ -212,11 +209,11 @@ PatternPlayerGUI {
 	}
 	
 	create_gui {
-		view = CompositeView(parent, Rect(position.x, position.y, extent.x, extent.y));
-		view.decorator = FlowLayout(view.bounds);
+		view = SCCompositeView(parent, Rect(position.x, position.y, extent.x, extent.y));
+		view.decorator = FlowLayout(view.bounds, 0@0, 0@0);
 		pattern_view = CompositeView(view, Rect(0,0, p_width, p_height));
-		pattern_view.decorator = FlowLayout(pattern_view.bounds);
-		pattern_field = TextField(pattern_view, Rect(10,10,p_width-20,20))
+		pattern_view.decorator = FlowLayout(pattern_view.bounds).margin_(TalaGUI.m_point).gap_(TalaGUI.m_point/2);
+		pattern_field = TextField(pattern_view, Rect(5,5,p_width-20,20))
 			.string_(player.pattern)
 			.action_({|field| 
 				player.pattern_(field.value);
@@ -230,16 +227,16 @@ PatternPlayerGUI {
 					view.stringColor = Color.black;
 				};
 			});
-
-
+		
+		
 		sound_popup = EZPopUpMenu(
 			pattern_view, 
 			TalaGUI.item_label_extent, 
 			" Sound ",
 			[
 				\Kanjira 	->{|a| player.sounds = player.kanjira_sounds; player.load_buffers},
-				\Konakkol 	->{|a| player.sounds = player.konakkol_sounds; player.load_buffers}/*,
-								\Custom 	->{|a| sounds = custom_sounds;}*/
+				\Konakkol 	->{|a| player.sounds = player.konakkol_sounds; player.load_buffers}
+				/*, \Custom 	->{|a| sounds = custom_sounds;}*/
 			],
 			initVal: 0,
 			initAction: false,
@@ -247,7 +244,6 @@ PatternPlayerGUI {
 			gap: TalaGUI.m_point
 		).setColors(Color.grey, Color.white);
 		
-		tala_gui = TalaGUI.new(player.tala, parent, 0@p_height+TalaGUI.margin);	
-		
+		tala_gui = TalaGUI.new(player.tala, view, 0@p_height+10);	
 	}
 }
