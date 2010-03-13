@@ -73,10 +73,10 @@ PatternPlayer {
 		//	Strip all non x, o or space chars from the pattern
 		pat_sym = pattern.collectAs({|item, i| item.asSymbol }, Array).reject({|item, i| ['x','o',' ',',','-'].includes(item.asSymbol).not });
 		
-		//	Find group starters; xs after space	
+		//	If there are spaces, make the next x a group starter (if there is a next x)	
 		pat_sym.do { |item, i|
-			if(item=='x' && (pat_sym[i-1]==' ')) {
-				pat_sym[i] = 'X'
+			if(item==' ' && pat_sym[i..].includes('x')) {
+				pat_sym[i+pat_sym[i..].indexOf('x')] = 'X'
 			};
 		};
 		//	Remove spaces
