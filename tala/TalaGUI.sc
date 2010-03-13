@@ -252,7 +252,7 @@ TalaGUI {
 		EZSlider(
 			vol_view, 
 			slider_extent,
-			" Vol  ", 
+			" Vol", 
 			ControlSpec(-inf, 12, 'db', 0.01, -inf, " dB"),
 			{|ez| tala.amp = ez.value.dbamp},
 			initVal:1,
