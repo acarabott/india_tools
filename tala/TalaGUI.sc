@@ -3,13 +3,6 @@ TalaGUI {
 	//	In which case they can be method variables.
 	
 	
-	// classvar <side_extent;
-	// classvar <extent;
-	// classvar <margin;
-	// classvar <m_point;
-	// classvar <item_extent;
-	// classvar <item_and_label_extent;
-	// classvar <line_height;
 	classvar <extent;
 	classvar <margin;		
 	classvar <side_extent;
@@ -51,16 +44,6 @@ TalaGUI {
         margin = 5@5;
 		label_width = side_extent.x/2 - (margin.x*2);		
 		line_extent = side_extent.x-(margin.x*2)@20;
-		
-		// margin 					= 5;
-		// m_point 				= margin@margin;
-		// line_height				= 20;
-		// item_extent 			= 164 @ line_height;
-		// volume_width			= 40;
-		// item_and_label_extent	= item_extent.x*2@ line_height;
-		// side_extent				= item_and_label_extent.x + (margin*2)@300;
-		// side_extent				= item_and_label_extent.x@300;
-		// extent					= side_extent.x*2@side_extent.y; 
 	}
 	
 	*new {|tala, parent, position|
