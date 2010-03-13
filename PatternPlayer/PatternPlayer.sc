@@ -124,7 +124,12 @@ PatternPlayer {
 			};
 			
 			if(sound!=nil) {
-				Synth(\simple_play, [\bufnum, buffers[sound]]);
+				fork {
+					if(sounds==kanjira_sounds) {
+						0.01.wait
+					};
+					Synth(\simple_play, [\bufnum, buffers[sound]]);
+				}
 			};			
 		}
 	}
