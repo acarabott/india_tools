@@ -1,17 +1,12 @@
 /*
-	TODO Restrict 
-	TODO Project pattern onto a graph
-	TODO Change Tala
+	TODO Parsing groups of xs to make takadimi takita etc
 	TODO Extend pattern box when end is reached
 	TODO Draw graph showing pattern against Tala
-	TODO Enter key creates new line, click button to set?
-	
-	TODO Abstract out Tala image so that other controls of tala window aren't available. Or make Tala into a view that is part of this, checking tala values before playing.
+	TODO Enter key creates new line, click button to set?	
 */
 
-
 PatternPlayer {
-	var <>pattern;
+	var <pattern;
 	var <konakkol_sounds;
 	var <kanjira_sounds;
 	var <custom_sounds;
@@ -21,22 +16,13 @@ PatternPlayer {
 	var <>s;
 	var <>buffers;
 	var <tala;
-	
-	var <window;
-	var <pattern_field;
-	var <pattern_set;
-	var <play_stop_button;
-	var <routine_set;
-	var <sound_popup;
-	var <tempo_field;
-	var <tempo_text;
-	
+	var <>pGUI;
+		
 	*new { 
 		^super.new.init;
 	}
 
 	init { 
-		pattern 		= "xxxx";
 		konakkol_sounds = ["sounds/KKTA.wav", "sounds/KKDIM.wav"];
 		kanjira_sounds 	= ["sounds/KJDIM.wav", "sounds/KJBELL.wav"];
 		custom_sounds	= List[];
@@ -46,14 +32,16 @@ PatternPlayer {
 		s 				= Server.default;
 		tala 			= Tala.new(tempo, gati, false);
 		
-		this.set_func;
+		this.pattern_("xxxx");
 		
 		{
 			this.load_buffers;
 			this.load_synth_def;
 			s.sync;
 		}.fork;
-/*		this.create_gui;*/
+		
+		pGUI 		= PatternPlayerGUI.new(this);
+		tala.tGUI	= pGUI.tala_gui;
 	}
 	
 	load_synth_def {
@@ -71,66 +59,191 @@ PatternPlayer {
 		};
 	}
 	
-	set_func {
+	pattern_ {|new_pattern|
+		var pat_sym;
+		var all_x;
+		
+		pattern = new_pattern;
+		all_x = List[];
+		
+		//	Strip all non x, o or space chars from the pattern
+		pat_sym = pattern.collectAs({|item, i| item.asSymbol }, Array).reject({|item, i| ['x','o',' ',',','-'].includes(item.asSymbol).not });
+		
+		//	Find group starters; xs after space	
+		pat_sym.do { |item, i|
+			if(item=='x' && (pat_sym[i-1]==' ')) {
+				pat_sym[i] = 'X'
+			};
+		};
+		//	Remove spaces
+		pat_sym = pat_sym.removeEvery([' ']);
+		
+		//	Store indices of xs
+		pat_sym.do { |item, i|
+			if(item=='x' || (item=='X')) {
+				all_x.add(i);
+			};
+		};
+		
 		tala.gati_func = {|i, j|
+			var sound;
 			var index;
+			var cur, prev, next;
 			
-			switch (pattern.wrapAt(j%pattern.size).asSymbol)
-				{'x'}	{index = 0}
-				{'o'}	{index = 1};
-				
-			Synth(\simple_play, [\bufnum, buffers[index]]);
-			index.postln;
+			//looping index
+			index = (j%pat_sym.size).asInteger;
+
+			if(pat_sym[index] == 'x') {		
+				if(index == all_x[0]) {		//	If this is the first x
+					sound = 0;					//	Make it a Ta!
+				} {
+					//store index of current, previous and next 'x's
+					cur = all_x.indexOf(index);
+					prev = all_x[cur-1];
+					next = all_x[cur+1];
+
+					//If the x is not the first or last in the pattern
+					if(next != nil && (prev != nil)) {
+						//If the next x is closer to the current than the previous make it a group starter
+						if((next - index) < (index - prev)) {
+							sound = 0;
+						} {
+							//Else it's a group secondary note
+							sound = 1;
+						};
+					} {
+						//Else the note is the last note so should be a secondary note
+						sound = 1;
+					};
+				};
+			} {
+				//	if it's a group starter, play the first sound
+				if(pat_sym[index] == 'X') {
+					sound = 0;
+				};
+			};
+			
+			if(sound!=nil) {
+				Synth(\simple_play, [\bufnum, buffers[sound]]);
+			};			
 		}
 	}
 	
+	play {
+		tala.play;
+	}
 	
+	stop {
+		tala.stop;
+	}
+	
+	is_playing {
+		^tala.is_playing;
+	}
 }
 
-
-/*create_gui {
-	var	w = 400;
-	var h = 100;
-	window = Window.new("Pattern Player", Rect((Window.screenBounds.width/2)-(w/2),(Window.screenBounds.height/2)-(h/2),w,h), false)
-		.userCanClose_(true)
+PatternPlayerGUI {
+	
+	classvar <p_width;
+	classvar <p_height;
+	classvar <extent;
+	
+	var <player;
+	var <parent;
+	var <position;
+	
+	var <view;
+	
+	var <width;
+	var <height;
+	
+	var <window;
+	var <pattern_view;
+	var <pattern_field;
+	var <sound_popup;
+	var <tala_gui;
+	
+	*initClass {
+		p_width = TalaGUI.extent.x;
+		p_height = 50;
+		extent = (p_width)@(TalaGUI.extent.y + p_height);
+	}
+	
+	*new {|player, parent, position|
+		if(parent==nil) {
+			^super.new.initWindow(player);
+		} {
+			^super.new.initView(player, parent, position)
+		};
+	}
+	
+	initWindow {|aPlayer|
+		this.create_window;
+		position=0@0;
+		this.init(aPlayer);
+	}
+	
+	initView {|aPlayer, aParent, aPosition|
+		parent = aParent;
+		position = aPosition ? (0@0);
+		this.init(aPlayer);
+	}
+	
+	init {|aPlayer|
+		player = aPlayer;
+		this.create_gui;				
+	}
+	
+	create_window {
+		var s_bounds = Window.screenBounds;
+		parent = Window.new("Pattern Player",
+			Rect(	((s_bounds.width/2)-(extent.x/2)).floor,
+					((s_bounds.height/2)-(extent.y/2)).floor,
+					extent.x,
+					extent.y
+			),
+			false
+		).userCanClose_(true)
 		.front;
-	pattern_field = PPTextField(window, Rect(10,10,w-20,20))
-		.string_(pattern)
-		.action_({|field| 
-			this.set_pattern(field.value);
-			this.confirm_set(routine_set);
-		});
-
-	pattern_set = StaticText(window, Rect(70,70,70, 20)).background_(Color.white).align_(\center);
-	play_stop_button = Button(window, Rect(10,40,50,50))
-		.states_([
-			["Play", Color.black, Color.green],
-			["Stop", Color.white, Color.red]
-		])
-		.action_({|button|
-			if(play_routine.isPlaying) {
-				this.stop;
-			} {
-				this.play;
-			};
-		});
-	routine_set = StaticText(window, Rect(70,70,80,20)).background_(Color.white);
-	sound_popup = EZPopUpMenu(
-		window, 
-		Rect(w-210,40,200,20), 
-		"Sound",
-		[
-			\Konakkol 	->{|a| sounds = konakkol_sounds;},
-			\Kanjira 	->{|a| sounds = kanjira_sounds},
-			\Custom 	->{|a| sounds = custom_sounds;}
-		],
-		gap:5@5
-	);
-	tempo_text 	= StaticText(window, Rect(70, 40, 45, 20)).string_("Tempo: ");
-	tempo_field = NumberBox(window, Rect(120,40,30,20))
-			.value_(this.tempo)
-			.action_({|field|
-				this.tempo_(field.value.asInteger);
-			});		
+		
+	}
+	
+	create_gui {
+		view = SCCompositeView(parent, Rect(position.x, position.y, extent.x, extent.y));
+		view.decorator = FlowLayout(view.bounds, 0@0, 0@0);
+		pattern_view = CompositeView(view, Rect(0,0, p_width, p_height));
+		pattern_view.decorator = FlowLayout(pattern_view.bounds).margin_(TalaGUI.m_point).gap_(TalaGUI.m_point/2);
+		pattern_field = TextField(pattern_view, Rect(5,5,p_width-20,20))
+			.string_(player.pattern)
+			.action_({|field| 
+				player.pattern_(field.value);
+				field.stringColor = Color.black;
+			})
+			.keyDownAction_({|view, char, mod, uni|
+				view.stringColor = Color.red;
+			})
+			.keyUpAction_({|view, char, mod, uni|
+				if(view.value.asSymbol == player.pattern.asSymbol) {
+					view.stringColor = Color.black;
+				};
+			});
+		
+		
+		sound_popup = EZPopUpMenu(
+			pattern_view, 
+			TalaGUI.item_label_extent, 
+			" Sound ",
+			[
+				\Kanjira 	->{|a| player.sounds = player.kanjira_sounds; player.load_buffers},
+				\Konakkol 	->{|a| player.sounds = player.konakkol_sounds; player.load_buffers}
+				/*, \Custom 	->{|a| sounds = custom_sounds;}*/
+			],
+			initVal: 0,
+			initAction: false,
+			labelWidth: TalaGUI.item_extent.x,
+			gap: TalaGUI.m_point
+		).setColors(Color.grey, Color.white);
+		
+		tala_gui = TalaGUI.new(player.tala, view, 0@p_height+10);	
+	}
 }
-*/

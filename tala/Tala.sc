@@ -60,7 +60,7 @@ Tala {
 	var <gati_amps;			//	Amplitudes for the sub-divisions
 	var <>gati_func;		//	Function to be called on each sub-division playback
 		
-	var <tGUI;					//	GUI :)
+	var <>tGUI;					//	GUI :)
 	
 	*initClass {
 		adi 		= ["I4", "O", "O"];
@@ -132,8 +132,10 @@ Tala {
 		gati_total = gati * gati_mult;
 		gati_amps = gati_amps.extend(gati_total, 1);
 		this.create_gati_routine;
-		tala_routine.play(clock, 1); 
-		gati_routine.play(clock, 1)
+		if(this.is_playing) {
+			tala_routine.play(clock, 1); 
+			gati_routine.play(clock, 1);
+		};
 	}
 	
 	set_gati_amp {|index, value|
@@ -173,7 +175,7 @@ Tala {
 				index = i%gati_total;
 				gati_amp = gati_amps[index];
 				this.generic_clap(0.01*gati_amp, 0.01*gati_amp, 4000, 4000, 1);
-				this.gati_func.(index);
+				this.gati_func.(index, i);
 				(1/(gati_total)).wait;	
 			};
 		};
@@ -200,7 +202,15 @@ Tala {
 	check_stop_tala {|new_tala|
 		if(new_tala!=parts) {
 			this.stop;
-			tGUI.start_stop_button.valueAction_(0);
+			tGUI.play_stop_button.valueAction_(0);
+		};
+	}
+	
+	is_playing {
+		if(tala_routine.isPlaying) {
+			^true
+		}{
+			^false
 		};
 	}
 	//	Angas
