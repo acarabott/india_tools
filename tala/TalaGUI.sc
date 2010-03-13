@@ -2,11 +2,13 @@ TalaGUI {
 	//Could refactor some of these, check if they are actually needed throughout the class or just by one widget
 	//	In which case they can be method variables.
 	
+	classvar <side_extent;
 	classvar <extent;
 	classvar <margin;
 	classvar <m_point;
 	classvar <item_extent;
-	classvar <item_label_extent;
+	classvar <item_and_label_extent;
+	classvar <volume_width;
 	classvar <line_height;
 	
 	//values
@@ -35,12 +37,14 @@ TalaGUI {
 	var tala;	// Tala instance to control
 	
 	*initClass {
-		margin 				= 5;
-		m_point 			= margin@margin;
-		line_height			= 20;
-		item_extent 		= 164 @ line_height;
-		item_label_extent 	= item_extent.x*2 + margin @ line_height;
-		extent 				= ( (item_label_extent.x*2) + ((margin*4)/2) )@300
+		margin 					= 5;
+		m_point 				= margin@margin;
+		line_height				= 20;
+		item_extent 			= 164 @ line_height;
+		volume_width			= 40;
+		item_and_label_extent	= item_extent.x*2@ line_height;
+		side_extent				= item_and_label_extent.x + (margin*2)@300;
+		extent					= side_extent.x*2+(margin*4)@side_extent.y + (margin*2); 
 	}
 	
 	*new {|tala, parent, position|
@@ -73,8 +77,11 @@ TalaGUI {
 
 		tala = aTala;
 		view = CompositeView(parent, Rect(position.x, position.y, extent.x, extent.y));
+		view.background_(Color.yellow);
+		view.addFlowLayout(m_point, m_point);
 		
 		this.create_left_side;
+		this.create_volume;
 		this.create_right_side;		
 		
 	}
@@ -90,8 +97,9 @@ TalaGUI {
 	}
 		
 	create_left_side {
-		left_side 		= CompositeView(view, Rect(0,0,extent.x/2, extent.y));
+		left_side 		= CompositeView(view, ((side_extent.x)-(margin*2))@side_extent.y);
 		left_dec 		= left_side.addFlowLayout.margin_(m_point).gap_(m_point/2);
+		left_side.background_(Color.blue);
 		left_dec.nextLine;
 		
 		this.create_tempo_box;
@@ -100,9 +108,9 @@ TalaGUI {
 		left_dec.nextLine;
 		this.create_tala_pop;
 		left_dec.nextLine;
-/*		this.create_ct;
+		this.create_ct;
 		left_dec.nextLine;
-*/		this.create_play_stop_but;		
+		this.create_play_stop_but;		
 	}
 	
 	create_tempo_box {
@@ -123,7 +131,7 @@ TalaGUI {
 	create_gati_pop {
 		EZPopUpMenu(
 			left_side,
-			item_label_extent,
+			item_and_label_extent,
 			 " Gati ",
 			[
 				'3 - Tisra'		->	{|a| tala.gati_(3)},
@@ -143,7 +151,7 @@ TalaGUI {
 	create_tala_pop {
 		EZPopUpMenu( 
 			left_side,
-			item_label_extent,
+			item_and_label_extent,
 			 " Tala Presets ",
 			[
 				'Adi' 				-> {|a| tala.adi},
@@ -166,7 +174,7 @@ TalaGUI {
 		var ct_comp;
 		var ct_field_bounds = item_extent.x @ (one_char_bounds.height*5-5);
 		
-		ct_comp = CompositeView( left_side, item_label_extent.x@ct_field_bounds.y);
+		ct_comp = CompositeView( left_side, item_and_label_extent.x@ct_field_bounds.y);
 		ct_comp.addFlowLayout.margin_(0@0).gap_(margin@0).left_(ct_comp.decorator.bounds.width).top_(0);
 		
 		StaticText(ct_comp, item_extent)
@@ -193,7 +201,7 @@ TalaGUI {
 			};
 		};
 		
-		play_stop_button = Button(left_side, item_label_extent.x@(extent.y-margin/2))
+		play_stop_button = Button(left_side, item_and_label_extent.x@(extent.y-margin/2))
 			.states_([
 				["Start Tala", Color.black, Color.green],
 				["Stop Tala", Color.white, Color.red]
@@ -207,11 +215,41 @@ TalaGUI {
 	create_right_side {
 		var right_side;
 		
+		right_side 		= CompositeView(view, ((side_extent.x)-(margin*2))@side_extent.y);
 		right_side		= CompositeView(view, Rect(extent.x/2,0,extent.x/2,extent.y));
+		right_side		= CompositeView(view, (extent.x/2)@extent.y);
 		right_side.addFlowLayout.margin_(m_point).gap_(m_point/2);
 		tala_image = TalaImage.new(right_side, right_side.bounds.extent-(margin*2));
 	}
 	
+	create_volume {
+		var vol_view = CompositeView(view, volume_width@extent.y-(margin*2)).background_(Color.red);
+		// x.addFlowLayout.margin_(TalaGUI.m_point).gap_(TalaGUI.m_point/2);
+
+		// 
+		// g=EZSlider(
+		// 	x, 
+		// 	30@265,
+		// 	" Vol  ", 
+		// 	ControlSpec(-inf, 6, 'db', 0.01, -inf, " dB"),
+		// 	{|ez| ez.value.postln},
+		// 	initVal:1,
+		// 	unitWidth:30, 
+		// 	numberWidth:60,
+		// 	layout:\vert
+		// ).setColors(Color.grey,Color.white, Color.grey(0.7),Color.grey, 
+		// 	Color.white, Color.white,nil,nil, Color.grey(0.7))
+		// .font_(Font("Helvetica",10));
+		// 
+		// b = Button(x, 30@25)
+		// 	.states_([
+		// 		["M", Color.black, Color.blue(1.8)],
+		// 		["M", Color.white, Color.blue(0.8)]
+		// 	]);
+
+
+		
+	}
 	//Actions
 	
 	prAction {|index, xMul, yMul|
