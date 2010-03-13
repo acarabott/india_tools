@@ -49,6 +49,8 @@ TalaGUI.item_and_label_extent
 TalaGUI.side_extent.x*2				
 TalaGUI.extent					
 
+TalaGUI.side_extent
+TalaGUI.line_extent
 = 5;
 = margin@margin;
 = 20;
@@ -57,3 +59,57 @@ TalaGUI.extent
 = item_extent.x*2@ line_height;
 = item_and_label_extent.x + (margin*2)@300;
 = (side_extent.x*2)@side_extent.y + (margin*2); 
+
+
+e = 700@300
+m = 5@5;
+~se = e.x/2@e.y;
+
+w = Window("full", Rect(0,0,e.x,e.y)).front;
+w.addFlowLayout(0@0,0@0);
+w.view.background_(Color.blue);
+l = CompositeView(w, ~se).background_(Color.red);
+l.addFlowLayout(m,m);
+r = CompositeView(w, ~se).background_(Color.green);
+r.addFlowLayout(m,m);
+
+~label_width = l.bounds.width/2 - (m.x*2);
+~line_height = 20;
+
+~tempo = EZNumber(
+	l, 
+	~se.x-(m.x*2) @ 20,
+	" Tempo ",
+	ControlSpec(1,999,\lin,1,120,"bpm"),
+	initVal:60,
+	labelWidth:~label_width,
+	gap:m
+).setColors(Color.grey, Color.white);
+
+~pop = EZPopUpMenu(
+	l,
+	~se.x-(m.x*2)@20,
+	 " Gati ",
+	[
+		'3 - Tisra'		->	{|a| },
+		'4 - Caturasra'	->	{|a| },
+		'5 - Khanda'	->	{|a| },
+		'7 - Misra'		->	{|a| },
+		'9 - Sankirna'	->	{|a| },
+	],
+	initVal:1,
+	initAction:false,
+	labelWidth:~label_width,
+	gap:m
+).setColors(Color.grey, Color.white);
+
+
+w.view.decorator.nextLine;
+
+
+5 * (5+2)
+
+TalaGUI.line_extent
+.y - (TalaGUI.margin.x*2) - (3*(TalaGUI.line_extent.y+TalaGUI.margin.x))
+
+b.tGUI.left_side

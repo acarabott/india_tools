@@ -2,15 +2,21 @@ TalaGUI {
 	//Could refactor some of these, check if they are actually needed throughout the class or just by one widget
 	//	In which case they can be method variables.
 	
-	classvar <side_extent;
-	classvar <extent;
-	classvar <margin;
-	classvar <m_point;
-	classvar <item_extent;
-	classvar <item_and_label_extent;
-	classvar <volume_width;
-	classvar <line_height;
 	
+	// classvar <side_extent;
+	// classvar <extent;
+	// classvar <margin;
+	// classvar <m_point;
+	// classvar <item_extent;
+	// classvar <item_and_label_extent;
+	// classvar <volume_width;
+	// classvar <line_height;
+	classvar <extent;
+	classvar <margin;		
+	classvar <side_extent;
+	classvar <label_width;
+	classvar <line_extent;
+	                     
 	//values
 	var <position;
 	var <bounds;
@@ -19,6 +25,7 @@ TalaGUI {
 	var regular_font;
 	var label_bg_col;
 	var label_s_col;
+	var left_num_lines;
 
 	//GUI elements
 	var <win;
@@ -37,14 +44,21 @@ TalaGUI {
 	var tala;	// Tala instance to control
 	
 	*initClass {
-		margin 					= 5;
-		m_point 				= margin@margin;
-		line_height				= 20;
-		item_extent 			= 164 @ line_height;
-		volume_width			= 40;
-		item_and_label_extent	= item_extent.x*2@ line_height;
-		side_extent				= item_and_label_extent.x + (margin*2)@300;
-		extent					= side_extent.x*2+(margin*4)@side_extent.y + (margin*2); 
+		extent = 700@300;
+        margin = 5@5;
+		side_extent = extent.x/2@extent.y;
+		label_width = side_extent.x/2 - (margin.x*2);		
+		line_extent = side_extent.x-(margin.x*2)@20;
+		
+		// margin 					= 5;
+		// m_point 				= margin@margin;
+		// line_height				= 20;
+		// item_extent 			= 164 @ line_height;
+		// volume_width			= 40;
+		// item_and_label_extent	= item_extent.x*2@ line_height;
+		// side_extent				= item_and_label_extent.x + (margin*2)@300;
+		// side_extent				= item_and_label_extent.x@300;
+		// extent					= side_extent.x*2@side_extent.y; 
 	}
 	
 	*new {|tala, parent, position|
@@ -74,15 +88,16 @@ TalaGUI {
 		regular_font	= Font("Cochin",12);
 		label_bg_col	= Color.grey;
 		label_s_col		= Color.white;
-
+		left_num_lines	= 0;
+		
 		tala = aTala;
 		view = CompositeView(parent, Rect(position.x, position.y, extent.x, extent.y));
 		view.background_(Color.yellow);
-		view.addFlowLayout(m_point, m_point);
+		view.addFlowLayout(0@0,0@0);
 		
 		this.create_left_side;
-		this.create_volume;
-		this.create_right_side;		
+		// this.create_volume;
+		// this.create_right_side;		
 		
 	}
 	
@@ -93,45 +108,48 @@ TalaGUI {
 							extent.x, 
 							extent.y
 		);		
-		parent = Window("Carnatic Tala Meter", bounds, false).front;
+		parent = Window("Carnatic Tala Meter", bounds, true).front;
 	}
 		
 	create_left_side {
-		left_side 		= CompositeView(view, ((side_extent.x)-(margin*2))@side_extent.y);
-		left_dec 		= left_side.addFlowLayout.margin_(m_point).gap_(m_point/2);
+		left_side 		= CompositeView(view, side_extent);
+		left_dec 		= left_side.addFlowLayout(margin, margin);
 		left_side.background_(Color.blue);
 		left_dec.nextLine;
 		
 		this.create_tempo_box;
+		left_num_lines = left_num_lines + 1;
 		left_dec.nextLine;
 		this.create_gati_pop;
+		left_num_lines = left_num_lines + 1;
 		left_dec.nextLine;
 		this.create_tala_pop;
+		left_num_lines = left_num_lines + 1;
 		left_dec.nextLine;
-		this.create_ct;
-		left_dec.nextLine;
+		// this.create_ct;
+		// left_dec.nextLine;
+		// left_num_lines = left_num_lines + 1;
 		this.create_play_stop_but;		
 	}
 	
 	create_tempo_box {
 		EZNumber(
 			left_side, 
-			item_extent.x + margin + (one_char_bounds.width*3+9) @ line_height,
+			line_extent,
 			" Tempo ",
 			ControlSpec(1,999,\lin,1,120,"bpm"),
 			action:{|ezn| (tala.tempo_(ezn.value))},
 			initVal:60,
-			labelWidth:item_extent.x,
-			gap:m_point
-		).setColors(label_bg_col, label_s_col);
-		
+			labelWidth:label_width,
+			gap:margin
+		).setColors(label_bg_col, label_s_col);		
 	}
 
 	//Not yet working
 	create_gati_pop {
 		EZPopUpMenu(
 			left_side,
-			item_and_label_extent,
+			line_extent,
 			 " Gati ",
 			[
 				'3 - Tisra'		->	{|a| tala.gati_(3)},
@@ -142,16 +160,15 @@ TalaGUI {
 			],
 			initVal:1,
 			initAction:false,
-			labelWidth:item_extent.x,
-			gap:m_point
+			labelWidth:label_width,
+			gap:margin
 		).setColors(label_bg_col, label_s_col);
-		
 	}
 	
 	create_tala_pop {
 		EZPopUpMenu( 
 			left_side,
-			item_and_label_extent,
+			line_extent,
 			 " Tala Presets ",
 			[
 				'Adi' 				-> {|a| tala.adi},
@@ -163,8 +180,8 @@ TalaGUI {
 			],
 			initVal: 0,
 			initAction: false,
-			labelWidth: item_extent.x,
-			gap:m_point
+			labelWidth: label_width,
+			gap:margin
 		).setColors(label_bg_col, label_s_col);
 		
 	}
@@ -192,6 +209,8 @@ TalaGUI {
 	}
 */	
 	create_play_stop_but {
+		var button_height;
+		
 		play_stop_rout = Routine {
 			inf.do {
 				tala.play;
@@ -200,8 +219,12 @@ TalaGUI {
 				0.yield;
 			};
 		};
-		
-		play_stop_button = Button(left_side, item_and_label_extent.x@(extent.y-margin/2))
+
+		button_height = extent.y;
+		button_height = button_height - (margin.x*4);
+		button_height = button_height - (left_num_lines*(line_extent.y+left_dec.gap.y));
+		// play_stop_button = Button(left_side, 340@ extent.y - (margin.x*2) - (left_num_lines*(line_extent.y+left_dec.gap.y))- (margin.y*2))
+		play_stop_button = Button(left_side, 340@button_height)
 			.states_([
 				["Start Tala", Color.black, Color.green],
 				["Stop Tala", Color.white, Color.red]
@@ -209,47 +232,48 @@ TalaGUI {
 			.action_({|button|
 				play_stop_rout.();
 			})
-			.font_(regular_font.copy.size_(60));
+			.font_(regular_font.copy.size_(60)
+		);
 	}
 	
-	create_right_side {
-		var right_side;
-		
-		right_side 		= CompositeView(view, ((side_extent.x)-(margin*2))@side_extent.y);
-		right_side		= CompositeView(view, Rect(extent.x/2,0,extent.x/2,extent.y));
-		right_side		= CompositeView(view, (extent.x/2)@extent.y);
-		right_side.addFlowLayout.margin_(m_point).gap_(m_point/2);
-		tala_image = TalaImage.new(right_side, right_side.bounds.extent-(margin*2));
-	}
-	
-	create_volume {
-		var vol_view = CompositeView(view, volume_width@extent.y-(margin*2)).background_(Color.red);
-		// x.addFlowLayout.margin_(TalaGUI.m_point).gap_(TalaGUI.m_point/2);
-
-		// 
-		// g=EZSlider(
-		// 	x, 
-		// 	30@265,
-		// 	" Vol  ", 
-		// 	ControlSpec(-inf, 6, 'db', 0.01, -inf, " dB"),
-		// 	{|ez| ez.value.postln},
-		// 	initVal:1,
-		// 	unitWidth:30, 
-		// 	numberWidth:60,
-		// 	layout:\vert
-		// ).setColors(Color.grey,Color.white, Color.grey(0.7),Color.grey, 
-		// 	Color.white, Color.white,nil,nil, Color.grey(0.7))
-		// .font_(Font("Helvetica",10));
-		// 
-		// b = Button(x, 30@25)
-		// 	.states_([
-		// 		["M", Color.black, Color.blue(1.8)],
-		// 		["M", Color.white, Color.blue(0.8)]
-		// 	]);
-
-
-		
-	}
+	// create_right_side {
+	// 	var right_side;
+	// 	
+	// 	right_side 		= CompositeView(view, ((side_extent.x)-(margin*2))@side_extent.y);
+	// 	right_side		= CompositeView(view, Rect(extent.x/2,0,extent.x/2,extent.y));
+	// 	right_side		= CompositeView(view, (extent.x/2)@extent.y);
+	// 	right_side.addFlowLayout.margin_(m_point).gap_(m_point/2);
+	// 	tala_image = TalaImage.new(right_side, right_side.bounds.extent-(margin*2));
+	// }
+	// 
+	// create_volume {
+	// 	var vol_view = CompositeView(view, volume_width@extent.y-(margin*2)).background_(Color.red);
+	// 	// x.addFlowLayout.margin_(TalaGUI.m_point).gap_(TalaGUI.m_point/2);
+	// 
+	// 	// 
+	// 	// g=EZSlider(
+	// 	// 	x, 
+	// 	// 	30@265,
+	// 	// 	" Vol  ", 
+	// 	// 	ControlSpec(-inf, 6, 'db', 0.01, -inf, " dB"),
+	// 	// 	{|ez| ez.value.postln},
+	// 	// 	initVal:1,
+	// 	// 	unitWidth:30, 
+	// 	// 	numberWidth:60,
+	// 	// 	layout:\vert
+	// 	// ).setColors(Color.grey,Color.white, Color.grey(0.7),Color.grey, 
+	// 	// 	Color.white, Color.white,nil,nil, Color.grey(0.7))
+	// 	// .font_(Font("Helvetica",10));
+	// 	// 
+	// 	// b = Button(x, 30@25)
+	// 	// 	.states_([
+	// 	// 		["M", Color.black, Color.blue(1.8)],
+	// 	// 		["M", Color.white, Color.blue(0.8)]
+	// 	// 	]);
+	// 
+	// 
+	// 	
+	// }
 	//Actions
 	
 	prAction {|index, xMul, yMul|
