@@ -235,13 +235,17 @@ PatternPlayerGUI {
 		pattern_view.decorator = FlowLayout(pattern_view.bounds).margin_(margin).gap_(margin/2);
 		pattern_field = TextField(pattern_view, Rect(5,5,p_width-20,20))
 			.string_(player.pattern)
-			.action_({|field| 
+			.action_({|field|
+				//	Set the pattern, unless there is an uneven number of underscores
 				var underscores = field.value.occurrencesOf($_);
-				
+				var mult;
 				if(underscores.even) {
-					if(underscores!=0) {
-						player.tala.gati_mult = underscores						
+					if(underscores==0) {
+						mult = 1;
+					} {
+						mult = underscores
 					};
+					player.tala.gati_mult = mult;
 					player.pattern_(field.value);				
 					field.stringColor = Color.black;
 				} {
