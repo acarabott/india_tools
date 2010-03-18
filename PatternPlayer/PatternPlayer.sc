@@ -1,8 +1,10 @@
 /*
+	TODO x or X
 	TODO Parsing groups of xs to make takadimi takita etc
 	TODO Extend pattern box when end is reached
 	TODO Draw graph showing pattern against Tala
 	TODO Enter key creates new line, click button to set?	
+	TODO _Underline_ for double speed
 */
 
 PatternPlayer {
