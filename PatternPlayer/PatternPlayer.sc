@@ -31,9 +31,8 @@ PatternPlayer {
 		sounds 			= kanjira_sounds;
 		amp				= 1;
 		mute			= 1;
-		gati			= 4;
 		s 				= Server.default;
-		tala 			= Tala.new(60, gati, false);
+		tala 			= Tala.new(60, 4, false);
 		
 		this.pattern_("xxxx");
 		
@@ -63,47 +62,53 @@ PatternPlayer {
 	}
 	
 	pattern_ {|new_pattern|
-		var pat_sym;
+		var pat_strip;
 		var all_x;
-		var is_x  = {|sym| ['x','X'].includes(sym)};
+		var is_x  = {|char| [$x, $X].includes(char)};
 		
 		pattern = new_pattern;
 		all_x = List[];
 		
 		//	Strip all non x, o or space chars from the pattern
-		pat_sym = pattern.collectAs({|item, i| item.asSymbol }, Array).reject({|item, i| ['x','X','o',' ',',','-'].includes(item.asSymbol).not });
-		
+		// pat_strip = pattern.reject({|item, i| ['x','X','o',' ',',','-'].includes(item.asSymbol).not });
+		pat_strip = pattern.reject({|item, i| [$x, $X, $o, 32.asAscii, 44.asAscii, $-, $_].includes(item).not}); //32 is space, 44 is comma
+
 		//	If there are spaces, make the next x a group starter (if there is a next x)	
-		pat_sym.do { |item, i|
-			if(item==' ' && pat_sym[i..].includes('x')) {
-				pat_sym[i+pat_sym[i..].indexOf('x')] = 'X'
+		pat_strip.do { |item, i|
+			if(item==(32.asAscii) && pat_strip[i..].includes($x)) {
+				pat_strip[i+pat_strip[i..].indexOf($x)] = $X
 			};
 		};
 
 		//	Remove spaces
-		pat_sym = pat_sym.removeEvery([' ']);
+		pat_strip = pat_strip.removeEvery([32.asAscii]);
+
+		//	Store indices of _s
+		
+		//	Remove _s
+		pat_strip = pat_strip.removeEvery([$_]);
 
 		//	Store indices of xs
-		pat_sym.do { |item, i|
+		pat_strip.do { |item, i|
 			if(is_x.(item)) {
 				all_x.add(i);
 			};
 		};
-		pat_sym.postln;
+
 		tala.gati_func = {|i, j|
 			var sound;
 			var index;
 			var cur, prev, next;
 			
 			//looping index
-			index = (j%pat_sym.size).asInteger;
+			index = (j%pat_strip.size).asInteger;
 
-			if(is_x.(pat_sym[index])) {		
+			if(is_x.(pat_strip[index])) {		
 				if(index == all_x[0]) {		//	If this is the first x
 					sound = 0;					//	Make it a Ta!
 				} {
 					//	if it's a group starter, play the first sound
-					if(pat_sym[index] == 'X') {
+					if(pat_strip[index] == $X) {
 						sound = 0;
 					} {
 						//store index of current, previous and next 'x's
@@ -134,8 +139,6 @@ PatternPlayer {
 						0.01.wait
 					};
 					Synth(\simple_play, [\bufnum, buffers[sound], \amp, amp*mute]);
-					(60/tala.tempo/tala.gati_total/2).wait;
-					Synth(\simple_play, [\bufnum, buffers[sound], \amp, amp*mute]);					
 				}
 			};			
 		}
@@ -233,8 +236,17 @@ PatternPlayerGUI {
 		pattern_field = TextField(pattern_view, Rect(5,5,p_width-20,20))
 			.string_(player.pattern)
 			.action_({|field| 
-				player.pattern_(field.value);
-				field.stringColor = Color.black;
+				var underscores = field.value.occurrencesOf($_);
+				
+				if(underscores.even) {
+					if(underscores!=0) {
+						player.tala.gati_mult = underscores						
+					};
+					player.pattern_(field.value);				
+					field.stringColor = Color.black;
+				} {
+					field.stringColor = Color.red;					
+				};
 			})
 			.keyDownAction_({|view, char, mod, uni|
 				view.stringColor = Color.red;
