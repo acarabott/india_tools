@@ -1,6 +1,11 @@
 s.waitForBoot{a = PatternPlayer.new};
 s.waitForBoot{b = Tala.new};
+a.tala.gati_mult = 0.5
 
+b.gati_mult = 2
+b.gati_func = {|i,j|
+	Synth(\beep, [\freq, 440]);
+}
 a.pattern = "xxxx"
 
 ['x','x','x','x'].do { |item, i|

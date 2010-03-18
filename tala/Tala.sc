@@ -55,7 +55,7 @@ Tala {
 	var <clock;				//	Clock for playback
 	
 	var <gati;				//	Gati (Sub-division)
-	var <>gati_mult;		//	Gati multiplier, e.g. to change from 3 per beat to 6 etc
+	var <gati_mult;			//	Gati multiplier, e.g. to change from 3 per beat to 6 etc
 	var <gati_total;		//	Total sub-divisions (gati * gati_mult)
 	var <gati_routine;		//	Gati playback routine;
 	var <gati_amps;			//	Amplitudes for the sub-divisions
@@ -129,9 +129,20 @@ Tala {
 		clock.tempo	= new_tempo/60;
 	}
 	
-	gati_ {|new_gati|
-		clock.clear;
+	gati_ {|new_gati, new_mult|
 		gati = new_gati;
+		gati_mult = new_mult ?? gati_mult;
+		this.pr_gati_update;
+	}
+	
+	gati_mult_ {|new_mult|
+		gati_mult = new_mult;
+		this.pr_gati_update;
+	}
+	
+	//Internal method
+	pr_gati_update {
+		clock.clear;
 		gati_total = gati * gati_mult;
 		gati_amps = gati_amps.extend(gati_total, 1);
 		this.create_gati_routine;
@@ -139,8 +150,8 @@ Tala {
 			tala_routine.play(clock, 1); 
 			gati_routine.play(clock, 1);
 		};
+		
 	}
-	
 	set_gati_amp {|index, value|
 		if(index<gati_amps.size) {
 			gati_amps[index] = value;
