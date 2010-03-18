@@ -152,6 +152,7 @@ Tala {
 		};
 		
 	}
+
 	set_gati_amp {|index, value|
 		if(index<gati_amps.size) {
 			gati_amps[index] = value;

@@ -17,3 +17,7 @@ a.pattern = "xxxx"
 
 ['x','X'].includes('X');
 ~is_x.('x');
+
+60/70/4/2
+
+a.tala.tempo = 50

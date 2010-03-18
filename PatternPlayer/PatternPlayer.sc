@@ -13,8 +13,6 @@ PatternPlayer {
 	var <kanjira_sounds;
 	var <custom_sounds;
 	var <>sounds;
-	var <tempo;
-	var <>gati;
 	var <>s;
 	var <>buffers;
 	var <tala;
@@ -33,10 +31,9 @@ PatternPlayer {
 		sounds 			= kanjira_sounds;
 		amp				= 1;
 		mute			= 1;
-		tempo 			= 60;
 		gati			= 4;
 		s 				= Server.default;
-		tala 			= Tala.new(tempo, gati, false);
+		tala 			= Tala.new(60, gati, false);
 		
 		this.pattern_("xxxx");
 		
@@ -137,6 +134,8 @@ PatternPlayer {
 						0.01.wait
 					};
 					Synth(\simple_play, [\bufnum, buffers[sound], \amp, amp*mute]);
+					(60/tala.tempo/tala.gati_total/2).wait;
+					Synth(\simple_play, [\bufnum, buffers[sound], \amp, amp*mute]);					
 				}
 			};			
 		}
