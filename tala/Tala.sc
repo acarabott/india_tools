@@ -53,6 +53,7 @@ Tala {
 	var <tala_routine;
 	var <tala_routine_duration;	//	The duration (in seconds) of the routine
 	var <clock;				//	Clock for playback
+	var <gati_clock;		//	Clock for gati playback
 	
 	var <gati;				//	Gati (Sub-division)
 	var <>gati_mult;		//	Gati multiplier, e.g. to change from 3 per beat to 6 etc
@@ -76,16 +77,23 @@ Tala {
 	}
 
 	init {|aTempo, aGati, aGUI|
-		amp 		= 1;
-		mute		= 1;
-		
-		clock		= TempoClock(aTempo/60);
+		var start_time = Main.elapsedTime.ceil;
+
+		clock		= TempoClock(aTempo/60, 0, start_time);
+		gati_clock	= TempoClock(aTempo/60, 0, start_time);
 
 		gati		= aGati;
 		gati_mult	= 1;
 		gati_total	= gati*gati_mult;
 		gati_amps 	= 0 ! gati_total;
 		gati_func	= {|i| i};
+
+		clock.schedAbs(0, { |beat, sec| gati_clock.tempo = clock.tempo * gati_total; 1 });
+		gati_clock.schedAbs(0, { |beat, sec| Synth(\beep, [\freq, 440]); 1 });
+		
+		amp 		= 1;
+		mute		= 1;
+		
 			
 		parts		= adi;
 		
