@@ -124,6 +124,8 @@ Tala {
 		}).load(s);
 				
 	}
+	
+	//	Clock / Time methods
 	create_clocks {
 		var start_time = Main.elapsedTime.ceil;
 
@@ -176,6 +178,19 @@ Tala {
 		};
 		
 		tala_routine = tala_routine.loop;
+	}
+	
+	make_gatis_clap {
+		4.do { |i|
+			this.set_gati_amp(i, 1);
+		};
+		
+		gati_func = {|i| 
+			var gati_amp = gati_amps[i];
+			if(gati_amp!=0) {
+				this.generic_clap(0.01*gati_amp, 0.01*gati_amp, 4000, 4000, 1);
+			};
+		};
 	}
 		
 	play {

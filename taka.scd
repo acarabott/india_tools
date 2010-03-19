@@ -4,7 +4,8 @@ b.gati_func = {Synth(\beep, [\freq, 440]);}
 
 b.gati_func = {}
 b.
-
+b.make_gatis_clap
+b.set_gati_amp(3,1)
 b.clock.queue
 b.clock.clear
 
@@ -120,3 +121,7 @@ z.reset;
 s.waitForBoot {a = SyncTest.new}
 a.tempo = 60
 a.gati = 
+
+4.do { |i|
+	i.postln;
+};
