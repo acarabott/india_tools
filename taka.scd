@@ -1,6 +1,8 @@
 s.waitForBoot{b = Tala.new};
 s.waitForBoot{a = PatternPlayer.new};
+b.gati_func = {Synth(\beep, [\freq, 440]);}
 
+b.gati_func = {}
 b.
 
 b.clock.queue
@@ -9,7 +11,11 @@ b.clock.clear
 b.clock.schedAbs(0, { |beat, sec| b.gati_clock.tempo = b.clock.tempo * b.gati_total; b.gati_total.postln; 1 });
 b.gati_clock.schedAbs(0, { |beat, sec| b.gati_func = {"yeah".postln}; 1 });
 
-b.gati_func = {Synth(\beep, [\freq, 440]);}
+b.gati_func = {|i| if(i==0) {
+	Synth(\beep, [\freq, 440]);
+};	i.postln;
+}
+
 b.gati_func = {"hi".postln;}
 r = Routine {
 	inf.do {|i|

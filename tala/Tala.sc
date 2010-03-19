@@ -133,7 +133,7 @@ Tala {
 	
 	sched_clocks {
 		clock.schedAbs(0, { |beat, sec| gati_clock.tempo = clock.tempo * gati_total; 1 });
-		gati_clock.schedAbs(0, { |beat, sec| gati_func.(); 1 });
+		gati_clock.schedAbs(0, { |beat, sec| gati_func.(gati_clock.beatInBar); 1 });
 	}
 			
 	tempo_ {|new_tempo|
@@ -146,6 +146,7 @@ Tala {
 	gati_ {|new_gati|
 		gati = new_gati;
 		gati_total = gati * gati_mult;
+		gati_clock.schedAbs(gati_clock.nextBar, {gati_clock.beatsPerBar_(gati_total)});
 		gati_amps = gati_amps.extend(gati_total, 1);
 	}
 	
