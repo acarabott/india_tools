@@ -6,7 +6,8 @@
 
 /*
 	1.1
-
+	TODO GUI for gati claps
+	TODO make_gatis_clap should set values if not playing, then start if played
 	TODO Calculatable Tempo field
 	TODO Try passing in time and greying out
 	TODO Volume slider
@@ -53,12 +54,14 @@ Tala {
 	var <tala_routine;
 	var <tala_routine_duration;	//	The duration (in seconds) of the routine
 	var <clock;				//	Clock for playback
+	var <gati_clock;		//	Clock for gati playback
 	
+	var <tempo;				//	da tempoz
 	var <gati;				//	Gati (Sub-division)
 	var <gati_mult;			//	Gati multiplier, e.g. to change from 3 per beat to 6 etc
 	var <gati_total;		//	Total sub-divisions (gati * gati_mult)
-	var <gati_routine;		//	Gati playback routine;
 	var <gati_amps;			//	Amplitudes for the sub-divisions
+	var <>gatis_muted;		//	Boolean, work it out
 	var <>gati_func;		//	Function to be called on each sub-division playback
 		
 	var <>tGUI;					//	GUI :)
@@ -76,23 +79,26 @@ Tala {
 	}
 
 	init {|aTempo, aGati, aGUI|
-		amp 		= 1;
-		mute		= 1;
-		
-		clock		= TempoClock(aTempo/60);
-
+		tempo = aTempo;		
 		gati		= aGati;
 		gati_mult	= 1;
 		gati_total	= gati*gati_mult;
 		gati_amps 	= 0 ! gati_total;
-		gati_func	= {|i| i};
+		gatis_muted	= true;
+		gati_func = {|val| };
+
+		this.create_clocks;
+		this.sched_clocks;
+		
+		amp 		= 1;
+		mute		= 1;
+		
 			
 		parts		= adi;
 		
 		tala_routine_duration 	= 0;		
 
 		this.create_tala_routine;
-		this.create_gati_routine;
 			
 		s = Server.default;
 		this.load_synth_defs;		
@@ -121,36 +127,41 @@ Tala {
 				
 	}
 	
-	tempo {
-		^clock.tempo*60
+	//	Clock / Time methods
+	create_clocks {
+		var start_time = Main.elapsedTime.ceil;
+
+		clock		= TempoClock(tempo/60, 0, start_time);
+		gati_clock	= TempoClock(tempo/60, 0, start_time);
 	}
 	
+	sched_clocks {
+		clock.schedAbs(0, { |beat, sec| gati_clock.tempo = clock.tempo * gati_total; 1 });
+		gati_clock.schedAbs(0, { |beat, sec| gati_func.(gati_clock.beatInBar); 1 });
+	}
+			
 	tempo_ {|new_tempo|
-		clock.tempo	= new_tempo/60;
+		var for_clock = new_tempo/60;
+		
+		clock.tempo			= for_clock;
+		gati_clock.tempo	= for_clock * gati;
 	}
 	
-	gati_ {|new_gati, new_mult|
+	gati_ {|new_gati|
 		gati = new_gati;
-		gati_mult = new_mult ?? gati_mult;
 		this.pr_gati_update;
+	}
+		
+	//Internal method
+	pr_gati_update {
+		gati_total = gati * gati_mult;
+		gati_clock.schedAbs(gati_clock.nextBar, {gati_clock.beatsPerBar_(gati_total)});
+		gati_amps = gati_amps.extend(gati_total, 1);
 	}
 	
 	gati_mult_ {|new_mult|
 		gati_mult = new_mult;
 		this.pr_gati_update;
-	}
-	
-	//Internal method
-	pr_gati_update {
-		clock.clear;
-		gati_total = gati * gati_mult;
-		gati_amps = gati_amps.extend(gati_total, 1);
-		this.create_gati_routine;
-		if(this.is_playing) {
-			tala_routine.play(clock, 1); 
-			gati_routine.play(clock, 1);
-		};
-		
 	}
 
 	set_gati_amp {|index, value|
@@ -171,7 +182,7 @@ Tala {
 		parts.do { |item, i|
 			switch (item[0].asSymbol)
 				{'I'}	{ tala_routine = tala_routine ++ this.laghu(item[1].digit) }
-				{'O'}	{ tala_routine = tala_routine ++ this.drutam()}
+				{'O'}	{ tala_routine = tala_routine ++ this.drutam}
 				{'U'}	{ tala_routine = tala_routine ++ this.anudrutam}
 				{'K'}	{ tala_routine = tala_routine ++ this.capu("clap")}
 				{'M'}	{ tala_routine = tala_routine ++ this.capu("clap_b")};
@@ -181,17 +192,14 @@ Tala {
 		tala_routine = tala_routine.loop;
 	}
 	
-	create_gati_routine {
-		var gati_amp;
-		var index;
-		
-		gati_routine = Routine {
-			inf.do { |i|
-				index = i%gati_total;
-				gati_amp = gati_amps[index];
-				this.generic_clap(0.01*gati_amp, 0.01*gati_amp, 4000, 4000, 1);
-				this.gati_func.(index, i);
-				(1/(gati_total)).wait;	
+	make_gatis_clap {
+		4.do { |i|
+			this.set_gati_amp(i, 1);
+		};
+		gati_func = {|i| 
+			var gati_amp = gati_amps[i];
+			if(gatis_muted.not) {
+				this.generic_clap(0.05*gati_amp, 0.05*gati_amp, 4000, 4000, 1);
 			};
 		};
 	}
@@ -199,15 +207,12 @@ Tala {
 	play {
 		if(tala_routine.isPlaying.not) {
 			tala_routine.play(clock, 1);
-			gati_routine.play(clock, 1);				
 		};	
 	}
 	
 	stop {
 		tala_routine.stop;
-		gati_routine.stop;
 		this.create_tala_routine;
-		this.create_gati_routine;
 	}
 	
 	add_rout_time {|time|
