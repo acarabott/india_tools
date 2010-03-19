@@ -55,6 +55,7 @@ Tala {
 	var <clock;				//	Clock for playback
 	var <gati_clock;		//	Clock for gati playback
 	
+	var <tempo;				//	da tempoz
 	var <gati;				//	Gati (Sub-division)
 	var <>gati_mult;		//	Gati multiplier, e.g. to change from 3 per beat to 6 etc
 	var <gati_total;		//	Total sub-divisions (gati * gati_mult)
@@ -77,19 +78,16 @@ Tala {
 	}
 
 	init {|aTempo, aGati, aGUI|
-		var start_time = Main.elapsedTime.ceil;
-
-		clock		= TempoClock(aTempo/60, 0, start_time);
-		gati_clock	= TempoClock(aTempo/60, 0, start_time);
-
+		tempo = aTempo;		
 		gati		= aGati;
 		gati_mult	= 1;
 		gati_total	= gati*gati_mult;
 		gati_amps 	= 0 ! gati_total;
-		gati_func	= {|i| i};
+		// gati_func	= {|i| i};
+		gati_func = {|val| val.postln;};
 
-		clock.schedAbs(0, { |beat, sec| gati_clock.tempo = clock.tempo * gati_total; 1 });
-		gati_clock.schedAbs(0, { |beat, sec| Synth(\beep, [\freq, 440]); 1 });
+		this.create_clocks;
+		this.sched_clocks;
 		
 		amp 		= 1;
 		mute		= 1;
@@ -100,7 +98,7 @@ Tala {
 		tala_routine_duration 	= 0;		
 
 		this.create_tala_routine;
-		this.create_gati_routine;
+		// this.create_gati_routine;
 			
 		s = Server.default;
 		this.load_synth_defs;		
@@ -128,11 +126,22 @@ Tala {
 		}).load(s);
 				
 	}
-	
-	tempo {
-		^clock.tempo*60
+	create_clocks {
+		var start_time = Main.elapsedTime.ceil;
+
+		clock		= TempoClock(tempo/60, 0, start_time);
+		gati_clock	= TempoClock(tempo/60, 0, start_time);
 	}
 	
+	sched_clocks {
+		clock.schedAbs(0, { |beat, sec| this.set_tempos; 1 });
+		gati_clock.schedAbs(0, { |beat, sec| gati_func.("hi"); 1 });
+	}
+	
+	set_tempos {
+		gati_clock.tempo = clock.tempo * gati_total
+	}
+		
 	tempo_ {|new_tempo|
 		var for_clock = new_tempo/60;
 		
@@ -141,15 +150,9 @@ Tala {
 	}
 	
 	gati_ {|new_gati|
-		clock.clear;
 		gati = new_gati;
 		gati_total = gati * gati_mult;
 		gati_amps = gati_amps.extend(gati_total, 1);
-		this.create_gati_routine;
-		if(this.is_playing) {
-			tala_routine.play(clock, 1); 
-			gati_routine.play(clock, 1);
-		};
 	}
 	
 	set_gati_amp {|index, value|
@@ -170,7 +173,7 @@ Tala {
 		parts.do { |item, i|
 			switch (item[0].asSymbol)
 				{'I'}	{ tala_routine = tala_routine ++ this.laghu(item[1].digit) }
-				{'O'}	{ tala_routine = tala_routine ++ this.drutam()}
+				{'O'}	{ tala_routine = tala_routine ++ this.drutam}
 				{'U'}	{ tala_routine = tala_routine ++ this.anudrutam}
 				{'K'}	{ tala_routine = tala_routine ++ this.capu("clap")}
 				{'M'}	{ tala_routine = tala_routine ++ this.capu("clap_b")};

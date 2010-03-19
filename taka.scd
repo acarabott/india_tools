@@ -1,6 +1,16 @@
-s.waitForBoot{a = PatternPlayer.new};
 s.waitForBoot{b = Tala.new};
+s.waitForBoot{a = PatternPlayer.new};
 
+b.
+
+b.clock.queue
+b.clock.clear
+
+b.clock.schedAbs(0, { |beat, sec| b.gati_clock.tempo = b.clock.tempo * b.gati_total; b.gati_total.postln; 1 });
+b.gati_clock.schedAbs(0, { |beat, sec| b.gati_func = {"yeah".postln}; 1 });
+
+b.gati_func = {Synth(\beep, [\freq, 440]);}
+b.gati_func = {"hi".postln;}
 r = Routine {
 	inf.do {|i|
 		Synth(\beep, [\freq, 440]);
@@ -54,10 +64,53 @@ t.schedAbs(0, { arg beat, sec; u.tempo = t.tempo * ~gati; Synth(\beep, [\freq, 4
 u.schedAbs(0, { arg beat, sec; Synth(\beep, [\freq, 880]); 1 });
 )
 
-~gati = 6;
+~gati = 5;
 ~tempo = 80;
 
 t.tempo = (~tempo/60);
 u.tempo = (~tempo/60)*~gati;
 
 t.tempo
+
+
+a = KonaWord.new(4,4,1);
+
+
+/*
+	Options...
+	Multiple clocks (for each gati)
+		-Pros
+			-No need to fuddle with getting in sync, all are kept in sync
+		-Cons
+			-To what degree do you need? Gati 
+*/
+
+(r = Routine {
+	inf.do {|i|
+		Synth(\beep, [\freq, 440]);
+		1.wait;
+	};
+};
+q = Routine {
+	inf.do {|i|
+		Synth(\beep, [\freq, 880]);
+		(1/~gati).wait;
+	};
+};
+t = TempoClock(1);
+~gati = 4;
+)
+r.play(t);q.play(t);
+t.schedAbs(t.timeToNextBeat, {Synth(\beep, [\freq, 1320]);},nil)
+z = Routine {
+	(t.timeToNextBeat).wait;
+	~gati = 3;
+};
+z.play(t)
+z.reset;
+
+1/~gati/2
+
+s.waitForBoot {a = SyncTest.new}
+a.tempo = 60
+a.gati = 
