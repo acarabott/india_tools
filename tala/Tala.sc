@@ -132,14 +132,10 @@ Tala {
 	}
 	
 	sched_clocks {
-		clock.schedAbs(0, { |beat, sec| this.set_tempos; 1 });
-		gati_clock.schedAbs(0, { |beat, sec| gati_func.("hi"); 1 });
+		clock.schedAbs(0, { |beat, sec| gati_clock.tempo = clock.tempo * gati_total; 1 });
+		gati_clock.schedAbs(0, { |beat, sec| gati_func.(); 1 });
 	}
-	
-	set_tempos {
-		gati_clock.tempo = clock.tempo * gati_total
-	}
-		
+			
 	tempo_ {|new_tempo|
 		var for_clock = new_tempo/60;
 		
