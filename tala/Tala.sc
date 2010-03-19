@@ -7,6 +7,7 @@
 /*
 	1.1
 	TODO Make gati claps better
+	TODO make_gatis_clap should set values if not playing, then start if played
 	TODO Calculatable Tempo field
 	TODO Try passing in time and greying out
 	TODO Volume slider
