@@ -134,7 +134,10 @@ Tala {
 	}
 	
 	tempo_ {|new_tempo|
-		clock.tempo	= new_tempo/60;
+		var for_clock = new_tempo/60;
+		
+		clock.tempo			= for_clock;
+		gati_clock.tempo	= for_clock * gati;
 	}
 	
 	gati_ {|new_gati|

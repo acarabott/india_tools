@@ -54,16 +54,10 @@ t.schedAbs(0, { arg beat, sec; u.tempo = t.tempo * ~gati; Synth(\beep, [\freq, 4
 u.schedAbs(0, { arg beat, sec; Synth(\beep, [\freq, 880]); 1 });
 )
 
-~gati = 5;
-~tempo = 0.1;
-~tempo = 100;
+~gati = 6;
+~tempo = 80;
 
-((~tempo/60)/t.tempo)
-
-t.tempo
-u.tempo
-
-u.tempo = u.tempo * ((~tempo/60)/t.tempo);
-t.tempo = t.tempo * ((~tempo/60)/t.tempo);
+t.tempo = (~tempo/60);
+u.tempo = (~tempo/60)*~gati;
 
 t.tempo
