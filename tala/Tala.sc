@@ -6,7 +6,7 @@
 
 /*
 	1.1
-
+	TODO Make gati claps better
 	TODO Calculatable Tempo field
 	TODO Try passing in time and greying out
 	TODO Volume slider
@@ -57,7 +57,7 @@ Tala {
 	
 	var <tempo;				//	da tempoz
 	var <gati;				//	Gati (Sub-division)
-	var <>gati_mult;		//	Gati multiplier, e.g. to change from 3 per beat to 6 etc
+	var <gati_mult;		//	Gati multiplier, e.g. to change from 3 per beat to 6 etc
 	var <gati_total;		//	Total sub-divisions (gati * gati_mult)
 	var <gati_amps;			//	Amplitudes for the sub-divisions
 	var <>gati_func;		//	Function to be called on each sub-division playback
@@ -152,6 +152,11 @@ Tala {
 		gati_amps = gati_amps.extend(gati_total, 1);
 	}
 	
+	gati_mult_ {|new_mult|
+		gati_mult = new_mult;
+		this.gati_(gati);
+	}
+	
 	set_gati_amp {|index, value|
 		if(index<gati_amps.size) {
 			gati_amps[index] = value;
@@ -181,14 +186,16 @@ Tala {
 	}
 	
 	make_gatis_clap {
-		4.do { |i|
-			this.set_gati_amp(i, 1);
-		};
+		if(this.is_playing) {
+			4.do { |i|
+				this.set_gati_amp(i, 1);
+			};
 		
-		gati_func = {|i| 
-			var gati_amp = gati_amps[i];
-			if(gati_amp!=0) {
-				this.generic_clap(0.01*gati_amp, 0.01*gati_amp, 4000, 4000, 1);
+			gati_func = {|i| 
+				var gati_amp = gati_amps[i];
+				if(gati_amp!=0) {
+					this.generic_clap(0.01*gati_amp, 0.01*gati_amp, 4000, 4000, 1);
+				};
 			};
 		};
 	}

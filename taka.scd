@@ -2,7 +2,7 @@ s.waitForBoot{b = Tala.new};
 s.waitForBoot{a = PatternPlayer.new};
 b.gati_func = {Synth(\beep, [\freq, 440]);}
 
-b.gati_func = {}
+b.gati_mult = 2
 b.
 b.make_gatis_clap
 b.set_gati_amp(3,1)
