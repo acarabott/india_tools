@@ -6,6 +6,7 @@
 
 /*
 	1.1
+	TODO Make clocks private, but provide setter to set the beats per bar for gati_clock
 	TODO GUI for gati claps
 	TODO make_gatis_clap should set values if not playing, then start if played
 	TODO Calculatable Tempo field
@@ -50,20 +51,21 @@ Tala {
 	var <>mute;				//	Mute multiplier
 	
 	var <>parts;			
-	var <routine;			//	The playback routine
+	var <routine;					//	The playback routine
 	var <tala_routine;
-	var <tala_routine_duration;	//	The duration (in seconds) of the routine
-	var <clock;				//	Clock for playback
-	var <gati_clock;		//	Clock for gati playback
+	var <tala_routine_duration;		//	The duration (in seconds) of the routine
+	var <clock;						//	Clock for playback
+	var <gati_clock;				//	Clock for gati playback
 	
-	var <tempo;				//	da tempoz
-	var <gati;				//	Gati (Sub-division)
-	var <gati_mult;			//	Gati multiplier, e.g. to change from 3 per beat to 6 etc
-	var <gati_total;		//	Total sub-divisions (gati * gati_mult)
-	var <gati_amps;			//	Amplitudes for the sub-divisions
-	var <>gatis_muted;		//	Boolean, work it out
-	var <>gati_func;		//	Function to be called on each sub-division playback
-		
+	var <tempo;						//	da tempoz
+	var <gati;						//	Gati (Sub-division)
+	var <gati_mult;					//	Gati multiplier, e.g. to change from 3 per beat to 6 etc
+	var <gati_total;				//	Total sub-divisions (gati * gati_mult)
+	var <gati_amps;					//	Amplitudes for the sub-divisions
+	var <>gatis_muted;				//	Boolean, work it out
+	var <>gati_func;				//	Function to be called on each sub-division playback
+	var <gati_beats_overridden;	//	The number of beats per 'bar' on the gati clock, default is gati_total but can be overridden	
+	
 	var <>tGUI;					//	GUI :)
 	
 	*initClass {
@@ -151,19 +153,27 @@ Tala {
 		gati = new_gati;
 		this.pr_gati_update;
 	}
-		
-	//Internal method
-	pr_gati_update {
-		gati_total = gati * gati_mult;
-		gati_clock.schedAbs(gati_clock.nextBar, {gati_clock.beatsPerBar_(gati_total)});
-		gati_amps = gati_amps.extend(gati_total, 1);
-	}
 	
 	gati_mult_ {|new_mult|
 		gati_mult = new_mult;
 		this.pr_gati_update;
 	}
 
+	//Internal method
+	pr_gati_update {
+		gati_total = gati * gati_mult;
+		gati_clock.schedAbs(gati_clock.nextBar, {
+			var beats = gati_beats_overridden ?? gati_total;
+			gati_clock.beatsPerBar_(beats)
+		});
+		gati_amps = gati_amps.extend(gati_total, 1);
+	}
+	
+	gati_beats_overridden_ {|val|
+		gati_beats_overridden = val;
+		this.pr_gati_update;
+	}
+	
 	set_gati_amp {|index, value|
 		if(index<gati_amps.size) {
 			gati_amps[index] = value;
