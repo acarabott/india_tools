@@ -1,3 +1,7 @@
+/*
+	TODO MIDI output
+	TODO Clean up createRoutine method
+*/
 Jati {
 	
 	var <jatis;			//	The number of syllables
@@ -53,7 +57,7 @@ Jati {
 	}
 	
 	syllables_ {|string|
-		syllables = string;
+		syllables = string.asList.removeEvery( [ $(, $), $  ] ).reduce('++');
 		jatis = syllables.size;
 	}
 	
@@ -66,7 +70,6 @@ Jati {
 			var note;
 			var octave = 0;
 			syllables.do { |item, i|
-				"item: ".post; (item).postln;
 				//	Set the buffer
 				switch (item)
 					{$x}	{perc = true; bufferIndex=1; play = true}
@@ -84,27 +87,24 @@ Jati {
 					{$D}	{perc = false; note = 9; play = true}
 					{$n}	{perc = false; note = 10; play = true}
 					{$N}	{perc = false; note = 11 ; play = true}
+					{$0}	{
+								octave = 0; 
+								play = false;
+							}
 					{$+}	{
-						if(syllables[i-1]!=$+) {
-							octave = 0;
-							1.postln;
-							"octave: ".post; (octave).postln;
-						};
-						octave = octave +1; play = false;
-						"octave: ".post; (octave).postln;
-						
-					}		
+								if(syllables[i-1]!=$+) {
+									octave = 0;
+								};
+								octave = octave +1;
+								play = false;						
+							}		
 					{$-}	{ 
-						if(syllables[i-1]!=$-) {
-							octave = 0;
-							2.postln;
-							"octave: ".post; (octave).postln;
-							
-						};
-						octave = octave - 1; play = false};
-						"octave: ".post; (octave).postln;
-						
-					
+								if(syllables[i-1]!=$-) {
+									octave = 0;							
+								};
+								octave = octave - 1;
+								play = false
+							};						
 				if(play) {
 					if(perc) {
 						if(item!=$o) {
@@ -112,9 +112,6 @@ Jati {
 						};
 					} {
 						note = octave*12 + note + 60;
-						"octave: ".post; (octave).postln;
-						"note: ".post; (note).postln;
-						Post << "\n";
 						Synth(\beep, [\freq, note.midicps]);
 					};
 					((1/gati)*karve).wait;				

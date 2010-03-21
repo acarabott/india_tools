@@ -5,45 +5,45 @@ TalaGUI {
 	
 	classvar <extent;
 	classvar <margin;		
-	classvar <side_extent;
-	classvar <label_width;
-	classvar <line_extent;
-	classvar <volume_extent;
+	classvar <sideExtent;
+	classvar <labelWidth;
+	classvar <lineExtent;
+	classvar <volumeExtent;
 	                     
 	//values
 	var <position;
 	var <bounds;
-	var one_char_bounds;
-	var ctf_font;
-	var regular_font;
-	var label_bg_col;
-	var label_s_col;
-	var left_num_lines;
+	var oneCharBounds;
+	var ctfFont;
+	var regularFont;
+	var labelBgCol;
+	var labelStrCol;
+	var leftNumLines;
 
 	//GUI elements
 	var <win;
 	var <parent;
 	var <view;
-	var left_side;
-	var left_dec;
-	var right_side;
-	var right_dec;
-	var <tala_image;
-	var <play_stop_button;
+	var leftSide;
+	var leftDec;
+	var rightSide;
+	var rightDec;
+	var <talaImage;
+	var <playStopButotn;
 	var visible;
 	
 	//Other shit
-	var <play_stop_rout;
+	var <playStopRout;
 	
 	var tala;	// Tala instance to control
 	
 	*initClass {
-		side_extent = 350@310;
-		volume_extent = 40@side_extent.y;
-		extent = (side_extent.x*2)+volume_extent.x@side_extent.y;
+		sideExtent = 350@310;
+		volumeExtent = 40@sideExtent.y;
+		extent = (sideExtent.x*2)+volumeExtent.x@sideExtent.y;
         margin = 5@5;
-		label_width = side_extent.x/2 - (margin.x*2);		
-		line_extent = side_extent.x-(margin.x*2)@20;
+		labelWidth = sideExtent.x/2 - (margin.x*2);		
+		lineExtent = sideExtent.x-(margin.x*2)@20;
 	}
 	
 	*new {|tala, parent, position|
@@ -55,7 +55,7 @@ TalaGUI {
 	}
 	
 	initWindow {|aTala|
-		this.create_window;
+		this.createWindow;
 		position = 0@0;
 		this.init(aTala);
 	}
@@ -68,71 +68,71 @@ TalaGUI {
 	}
 	
 	init {|aTala|
-		ctf_font		= Font("Monaco", 12);
-		one_char_bounds = GUI.stringBounds("a", ctf_font);
-		regular_font	= Font("Cochin",12);
-		label_bg_col	= Color.grey;
-		label_s_col		= Color.white;
-		left_num_lines	= 0;
+		ctfFont		= Font("Monaco", 12);
+		oneCharBounds = GUI.stringBounds("a", ctfFont);
+		regularFont	= Font("Cochin",12);
+		labelBgCol	= Color.grey;
+		labelStrCol		= Color.white;
+		leftNumLines	= 0;
 		
 		tala = aTala;
 		view = CompositeView(parent, Rect(position.x, position.y, extent.x, extent.y));
 		view.addFlowLayout(0@0,0@0);
 		
-		this.create_left_side;
-		this.create_volume;
-		this.create_right_side;		
+		this.createLeftSide;
+		this.createVolume;
+		this.createRightSide;		
 		
 	}
 	
-	create_window {
-		var s_bounds = Window.screenBounds;
-		bounds	= Rect(	s_bounds.width/2 - (extent.x), 
-							s_bounds.height/2 - (extent.y/2), 
+	createWindow {
+		var sBounds = Window.screenBounds;
+		bounds	= Rect(	sBounds.width/2 - (extent.x), 
+							sBounds.height/2 - (extent.y/2), 
 							extent.x, 
 							extent.y
 		);		
 		parent = Window("Carnatic Tala Meter", bounds, true).front;
 	}
 		
-	create_left_side {
-		left_side 		= CompositeView(view, side_extent);
-		left_dec 		= left_side.addFlowLayout(margin, margin);
-		left_dec.nextLine;
+	createLeftSide {
+		leftSide 		= CompositeView(view, sideExtent);
+		leftDec 		= leftSide.addFlowLayout(margin, margin);
+		leftDec.nextLine;
 		
-		this.create_tempo_box;
-		left_num_lines = left_num_lines + 1;
-		left_dec.nextLine;
-		this.create_gati_pop;
-		left_num_lines = left_num_lines + 1;
-		left_dec.nextLine;
-		this.create_tala_pop;
-		left_num_lines = left_num_lines + 1;
-		left_dec.nextLine;
-		// this.create_ct;
-		// left_dec.nextLine;
-		// left_num_lines = left_num_lines + 1;
-		this.create_play_stop_but;		
+		this.createTempoBox;
+		leftNumLines = leftNumLines + 1;
+		leftDec.nextLine;
+		this.createGatiPop;
+		leftNumLines = leftNumLines + 1;
+		leftDec.nextLine;
+		this.createTalaPop;
+		leftNumLines = leftNumLines + 1;
+		leftDec.nextLine;
+		// this.createCt;
+		// leftDec.nextLine;
+		// leftNumLines = leftNumLines + 1;
+		this.createPlayStopBut;		
 	}
 	
-	create_tempo_box {
+	createTempoBox {
 		EZNumber(
-			left_side, 
-			line_extent,
+			leftSide, 
+			lineExtent,
 			" Tempo ",
 			ControlSpec(1,999,\lin,1,120,"bpm"),
 			action:{|ezn| (tala.tempo_(ezn.value))},
 			initVal:60,
-			labelWidth:label_width,
+			labelWidth:labelWidth,
 			gap:margin
-		).setColors(label_bg_col, label_s_col);		
+		).setColors(labelBgCol, labelStrCol);		
 	}
 
 	//Not yet working
-	create_gati_pop {
+	createGatiPop {
 		EZPopUpMenu(
-			left_side,
-			line_extent,
+			leftSide,
+			lineExtent,
 			 " Gati ",
 			[
 				'3 - Tisra'		->	{|a| tala.gati_(3)},
@@ -143,15 +143,15 @@ TalaGUI {
 			],
 			initVal:1,
 			initAction:false,
-			labelWidth:label_width,
+			labelWidth:labelWidth,
 			gap:margin
-		).setColors(label_bg_col, label_s_col);
+		).setColors(labelBgCol, labelStrCol);
 	}
 	
-	create_tala_pop {
+	createTalaPop {
 		EZPopUpMenu( 
-			left_side,
-			line_extent,
+			leftSide,
+			lineExtent,
 			 " Tala Presets ",
 			[
 				'Adi' 				-> {|a| tala.adi},
@@ -163,38 +163,38 @@ TalaGUI {
 			],
 			initVal: 0,
 			initAction: false,
-			labelWidth: label_width,
+			labelWidth: labelWidth,
 			gap:margin
-		).setColors(label_bg_col, label_s_col);
+		).setColors(labelBgCol, labelStrCol);
 		
 	}
 	
 	//Not yet functioning
-/*	create_ct {
-		var ct_comp;
-		var ct_field_bounds = item_extent.x @ (one_char_bounds.height*5-5);
+/*	createCt {
+		var ctComp;
+		var ctFieldBounds = itemExtent.x @ (oneCharBounds.height*5-5);
 		
-		ct_comp = CompositeView( left_side, item_and_label_extent.x@ct_field_bounds.y);
-		ct_comp.addFlowLayout.margin_(0@0).gap_(margin@0).left_(ct_comp.decorator.bounds.width).top_(0);
+		ctComp = CompositeView( leftSide, itemAndLabelExtent.x@ctFieldBounds.y);
+		ctComp.addFlowLayout.margin_(0@0).gap_(margin@0).left_(ctComp.decorator.bounds.width).top_(0);
 		
-		StaticText(ct_comp, item_extent)
+		StaticText(ctComp, itemExtent)
 			.string_(" Custom Tala ")
-			.stringColor_(label_s_col)
-			.background_(label_bg_col)
+			.stringColor_(labelStrCol)
+			.background_(labelBgCol)
 			.align_(\right);
 
-		TextView(ct_comp, ct_field_bounds)
-			.font_(ctf_font)
+		TextView(ctComp, ctFieldBounds)
+			.font_(ctfFont)
 			.usesTabToFocusNextView_(false)
 			.enterInterpretsSelection_(false)
 			.hasVerticalScroller_(true)
 			.autohidesScrollers_(true);
 	}
 */	
-	create_play_stop_but {
-		var button_height;
+	createPlayStopBut {
+		var buttonHeight;
 		
-		play_stop_rout = Routine {
+		playStopRout = Routine {
 			inf.do {
 				tala.play;
 				0.yield;
@@ -203,38 +203,38 @@ TalaGUI {
 			};
 		};
 
-		button_height = extent.y;
-		button_height = button_height - (margin.x*4);
-		button_height = button_height - (left_num_lines*(line_extent.y+left_dec.gap.y));
-		// play_stop_button = Button(left_side, 340@ extent.y - (margin.x*2) - (left_num_lines*(line_extent.y+left_dec.gap.y))- (margin.y*2))
-		play_stop_button = Button(left_side, 340@button_height)
+		buttonHeight = extent.y;
+		buttonHeight = buttonHeight - (margin.x*4);
+		buttonHeight = buttonHeight - (leftNumLines*(lineExtent.y+leftDec.gap.y));
+		// playStopButotn = Button(leftSide, 340@ extent.y - (margin.x*2) - (leftNumLines*(lineExtent.y+leftDec.gap.y))- (margin.y*2))
+		playStopButotn = Button(leftSide, 340@buttonHeight)
 			.states_([
 				["Start Tala", Color.black, Color.green],
 				["Stop Tala", Color.white, Color.red]
 			])
 			.action_({|button|
-				play_stop_rout.();
+				playStopRout.();
 			})
-			.font_(regular_font.copy.size_(60)
+			.font_(regularFont.copy.size_(60)
 		);
 	}
 	
-	create_right_side {
-		right_side 		= CompositeView(view, side_extent);
-		right_dec 		= right_side.addFlowLayout(margin, margin);
+	createRightSide {
+		rightSide 		= CompositeView(view, sideExtent);
+		rightDec 		= rightSide.addFlowLayout(margin, margin);
 		
-		tala_image = TalaImage.new(right_side, side_extent-(margin*2));
+		talaImage = TalaImage.new(rightSide, sideExtent-(margin*2));
 	}
 	
-	create_volume {
-		var vol_view = CompositeView(view, volume_extent);
-		var vol_view_dec = vol_view.addFlowLayout(margin, margin);
-		var button_extent = (volume_extent.x-(margin.x*2)).asPoint;
-		var slider_extent = button_extent.x @ (volume_extent.y - (margin.y*2) - button_extent.y - vol_view_dec.gap.x);
+	createVolume {
+		var volView = CompositeView(view, volumeExtent);
+		var volViewDec = volView.addFlowLayout(margin, margin);
+		var buttonExtent = (volumeExtent.x-(margin.x*2)).asPoint;
+		var sliderExtent = buttonExtent.x @ (volumeExtent.y - (margin.y*2) - buttonExtent.y - volViewDec.gap.x);
 		
 		EZSlider(
-			vol_view, 
-			slider_extent,
+			volView, 
+			sliderExtent,
 			" Vol", 
 			ControlSpec(-inf, 12, 'db', 0.01, -inf, " dB"),
 			{|ez| tala.amp = ez.value.dbamp},
@@ -246,7 +246,7 @@ TalaGUI {
 			Color.white, Color.white,nil,nil, Color.grey(0.7))
 		.font_(Font("Helvetica",10));
 		
-		Button(vol_view, button_extent)
+		Button(volView, buttonExtent)
 			.states_([
 				["M", Color.white, Color.blue(1.5)],
 				["M", Color.white, Color.blue(0.8)]
@@ -260,9 +260,9 @@ TalaGUI {
 	
 	prAction {|index, xMul, yMul|
 		fork {
-			tala_image.prAction(index, xMul, yMul);	
-/*			(tala.wait_time*0.4).wait;*/
-/*			tala_image.prAction(TalaImage.images.size-1);*/
+			talaImage.prAction(index, xMul, yMul);	
+/*			(tala.waitTime*0.4).wait;*/
+/*			talaImage.prAction(TalaImage.images.size-1);*/
 		}
 		
 	}
@@ -305,7 +305,7 @@ TalaImage {
 	var <label;
 	var <parent;
 	
-	var <label_extent;
+	var <labelExtent;
 	
 	*initClass {
 /*		images = PathName.new(String.scDir+/+"SCClassLibrary/tala/images/").files.collect({|item, i| SCImage.new(item.fullPath) });*/
@@ -321,17 +321,17 @@ TalaImage {
 	init {|aParent, aBounds|
 		var parent			= aParent;
 		var bounds			= if(aBounds.class==Rect) {aBounds} {Rect(0,0,aBounds.x,aBounds.y)};
-		var font_size		= bounds.height*0.14;
-		var font			= if(Font.availableFonts.any{|item, i| item.asSymbol=='Cochin'}) {Font.new("Cochin", font_size) } {Font("Times", font_size)};
-		var s_bounds		= {|string| GUI.stringBounds(string, font)};
+		var fontSize		= bounds.height*0.14;
+		var font			= if(Font.availableFonts.any{|item, i| item.asSymbol=='Cochin'}) {Font.new("Cochin", fontSize) } {Font("Times", fontSize)};
+		var sBounds		= {|string| GUI.stringBounds(string, font)};
 		
-		label_extent	= s_bounds.(strings[strings.collect({|item, i| s_bounds.(item).width}).maxIndex]).extent;
+		labelExtent	= sBounds.(strings[strings.collect({|item, i| sBounds.(item).width}).maxIndex]).extent;
 
 		comp 		= CompositeView(aParent, bounds ?? (aParent.bounds.width@aParent.bounds.height)).backgroundImage_(images.last,11);
 		
 /*		comp 		= CompositeView(aParent, bounds ?? (10@10)).background_(Color.grey);*/
 
-		label 		= StaticText(comp, label_extent).font_(font).stringColor_(Color.yellow);
+		label 		= StaticText(comp, labelExtent).font_(font).stringColor_(Color.yellow);
 								
 	}
 	
@@ -347,19 +347,19 @@ TalaImage {
 		label.font = aFont;
 	}
 	
-	font_size {
+	fontSize {
 		^label.font.size
 	}
 	
-	font_size_ {|aSize|
+	fontSize_ {|aSize|
 		label.font = label.font.size = aSize
 	}
 	
-	label_color {
+	labelColor {
 		^label.stringColor
 	}
 	
-	label_color_ {|aColor|
+	labelColor_ {|aColor|
 		label.stringColor = aColor;
 	}
 	
@@ -367,12 +367,12 @@ TalaImage {
 		^comp.bounds;
 	}
 	
-	label_origin {
+	labelOrigin {
 		^label.bounds.origin;
 	}
 	
-	label_origin_ {|aPoint|
-		label.bounds = Rect(aPoint.x, aPoint.y,label_extent.x, label_extent.y)
+	labelOrigin_ {|aPoint|
+		label.bounds = Rect(aPoint.x, aPoint.y,labelExtent.x, labelExtent.y)
 	}
 	
 	//actions
@@ -381,7 +381,7 @@ TalaImage {
 		defer {
 			comp.backgroundImage_(images[index], 11);
 			label.string_(strings[index]);
-			this.label_origin_((this.bounds.width*xMul)@(this.bounds.height*yMul))			
+			this.labelOrigin_((this.bounds.width*xMul)@(this.bounds.height*yMul))			
 		}
 		
 	}		

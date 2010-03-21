@@ -1,52 +1,13 @@
-s.waitForBoot{a = Jati.new(4,3,1)}
-
-
-a.syllables = "Xoxo"
-a.syllables = "+SrGmPdN++S+NdPmGrS"
+s.waitForBoot{a = Jati.new(4,4,1)}
+s.waitForBoot{a = PatternPlayer.new}
+a.syllables = "0(SRGmPDN) (SRGmPDN) ++S +NDPmGR +S 0NDPmGRS"
 a.play
 
-Synth(\beep, [\freq, 60.midicps]);
+x = "0(SRGmPDN)-(SRGmPDN)++S+NDPmGR+S0NDPm   GRS"
 
-Synth(\beep, [\freq, 440]);
-
-a.createRoutine;
-
-
-a.play;
-a.stop;
-
-r = Routine {
-
-	inf.do {|i|
-		a.play;
-		1.wait;
-	};
-};
-
-r.play;
-r.stop
-a.play
-a.stop;
-r.stop
-
-
-x = List[];
-~str = ",srgmpdn's";
-~str.do { |item, i|
-	if(item==$, || (item==39.asAscii) ) {
-		~nonPuncIndex = ~str[1..].detectIndex({ |item, i| [44.asAscii, 39.asAscii].includes(item).not });
-	};
-};
-
-
-
-44.asAscii
-
-
-3 * 12 
-
-
-
+x = x.asList.removeAll([ $( ])
+x.asList.asArray.removeEvery( [ $(, $), $  ] ).reduce('++')
+removeEvery
 
 "++srgmpdns"
 
@@ -86,6 +47,3 @@ r		0
 --g		-2
 --r		-2
 ---s	-3	
-
-
-0*12 + 11 + 60;

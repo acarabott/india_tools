@@ -1,7 +1,7 @@
 PatternPlayerGUI {
 	
-	classvar <p_width;
-	classvar <p_height;
+	classvar <pWidth;
+	classvar <pHeight;
 	classvar <extent;
 	classvar <margin;
 	
@@ -15,17 +15,17 @@ PatternPlayerGUI {
 	var <height;
 	
 	var <window;
-	var <pattern_view;
-	var <pattern_field;
-	var <sound_popup;
-	var <amp_slider;
-	var <tala_label;
-	var <tala_gui;
+	var <patternView;
+	var <patternField;
+	var <soundPopup;
+	var <ampSlider;
+	var <talaLabel;
+	var <talaGui;
 	
 	*initClass {
-		p_width = 700;
-		p_height = 75;
-		extent = (p_width)@(310 + p_height);
+		pWidth = 700;
+		pHeight = 75;
+		extent = (pWidth)@(310 + pHeight);
 		margin = 5.asPoint;
 	}
 	
@@ -38,7 +38,7 @@ PatternPlayerGUI {
 	}
 	
 	initWindow {|aPlayer|
-		this.create_window;
+		this.createWindow;
 		position=0@0;
 		this.init(aPlayer);
 	}
@@ -51,14 +51,14 @@ PatternPlayerGUI {
 	
 	init {|aPlayer|
 		player = aPlayer;
-		this.create_gui;				
+		this.createGui;				
 	}
 	
-	create_window {
-		var s_bounds = Window.screenBounds;
+	createWindow {
+		var sBounds = Window.screenBounds;
 		parent = Window.new("Pattern Player",
-			Rect(	((s_bounds.width/2)-(extent.x/2)).floor,
-					((s_bounds.height/2)-(extent.y/2)).floor,
+			Rect(	((sBounds.width/2)-(extent.x/2)).floor,
+					((sBounds.height/2)-(extent.y/2)).floor,
 					extent.x,
 					extent.y
 			),
@@ -68,12 +68,12 @@ PatternPlayerGUI {
 		
 	}
 	
-	create_gui {
+	createGui {
 		view = SCCompositeView(parent, Rect(position.x, position.y, extent.x, extent.y));
 		view.decorator = FlowLayout(view.bounds, 0@0, 0@0);
-		pattern_view = CompositeView(view, Rect(0,0, p_width, p_height));
-		pattern_view.decorator = FlowLayout(pattern_view.bounds).margin_(margin).gap_(margin/2);
-		pattern_field = TextField(pattern_view, Rect(5,5,p_width-20,20))
+		patternView = CompositeView(view, Rect(0,0, pWidth, pHeight));
+		patternView.decorator = FlowLayout(patternView.bounds).margin_(margin).gap_(margin/2);
+		patternField = TextField(patternView, Rect(5,5,pWidth-20,20))
 			.string_(player.pattern)
 			.action_({|field|
 				//	Set the pattern, unless there is an uneven number of underscores
@@ -85,7 +85,7 @@ PatternPlayerGUI {
 					} {
 						mult = underscores
 					};
-					player.tala.gati_mult = mult;
+					player.tala.gatiMult = mult;
 					player.pattern_(field.value);				
 					field.stringColor = Color.black;
 				} {
@@ -102,14 +102,14 @@ PatternPlayerGUI {
 			});
 		
 		
-		sound_popup = EZPopUpMenu(
-			pattern_view, 
+		soundPopup = EZPopUpMenu(
+			patternView, 
 			340@20, 
 			" Sound ",
 			[
-				\Kanjira 	->{|a| player.sounds = player.kanjira_sounds; player.load_buffers},
-				\Konakkol 	->{|a| player.sounds = player.konakkol_sounds; player.load_buffers}
-				/*, \Custom 	->{|a| sounds = custom_sounds;}*/
+				\Kanjira 	->{|a| player.sounds = player.kanjiraSounds; player.loadBuffers},
+				\Konakkol 	->{|a| player.sounds = player.konakkolSounds; player.loadBuffers}
+				/*, \Custom 	->{|a| sounds = customSounds;}*/
 			],
 			initVal: 0,
 			initAction: false,
@@ -117,7 +117,7 @@ PatternPlayerGUI {
 			gap: margin
 		).setColors(Color.grey, Color.white);
 		
-		Button(pattern_view, 20@20)
+		Button(patternView, 20@20)
 			.states_([
 				["M", Color.white, Color.blue(1.5)],
 				["M", Color.white, Color.blue(0.8)]
@@ -126,8 +126,8 @@ PatternPlayerGUI {
 				player.mute = (button.value-1).abs
 			});
 		
-		amp_slider = EZSlider(
-			pattern_view, 
+		ampSlider = EZSlider(
+			patternView, 
 			(340-20)@20, //magic number
 			" Vol  ", 
 			ControlSpec(-inf, 6, 'db', 0.01, -inf, " dB"),
@@ -140,13 +140,13 @@ PatternPlayerGUI {
 			Color.white, Color.white,nil,nil, Color.grey(0.7))
 		.font_(Font("Helvetica",10));
 		
-		pattern_view.decorator.nextLine;
+		patternView.decorator.nextLine;
 		
-		tala_label = StaticText(pattern_view, p_width@20)
+		talaLabel = StaticText(patternView, pWidth@20)
 			.string_("Tala Controls")
 			.align_(\center)
 			.font_(Font("Lucida Grande",13));
 		
-		tala_gui = TalaGUI.new(player.tala, view, 0@p_height+10);	
+		talaGui = TalaGUI.new(player.tala, view, 0@pHeight+10);	
 	}
 }
