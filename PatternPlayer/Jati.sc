@@ -1,18 +1,20 @@
 Jati {
 	
-	var <jatis;		//	The number of syllables
-	var <gati;		//	The beat subdivision
-	var <karve;		//	The gati multipler
-	var <syllables; //	The syllables themselves
+	var <jatis;			//	The number of syllables
+	var <gati;			//	The beat subdivision
+	var <karve;			//	The gati multipler
+	var <syllables; 	//	The syllables themselves
 	
-	var s;			//	Server.default
-	var buffers;	//	Buffers for playback of audio
+	var <duration;		//	The duration of playback
+	
+	var s;				//	Server.default
+	var buffers;		//	Buffers for playback of audio
 	var bufferIndex;	//	Index of the buffer to use
 	var sounds;			//	The sounds to use for playback
 	var kanjiraSounds;	//	Default Kanjira sounds
 	
-	var routine;	//	Routine for playback
-	var beenStopped;
+	var routine;		//	Routine for playback
+	var beenStopped;	//	Boolean, if the stop method has been called (requiring reset before playback);
 	
 	*new { |jatis, gati, karve|
 		^super.new.init(jatis, gati, karve);
@@ -50,21 +52,73 @@ Jati {
 		};
 	}
 	
-	addSyllables {|string|
+	syllables_ {|string|
 		syllables = string;
 		jatis = syllables.size;
 	}
 	
 	createRoutine {
 		beenStopped = false;
+
 		routine = Routine {
+			var play;
+			var perc = false;
+			var note;
+			var octave = 0;
 			syllables.do { |item, i|
+				"item: ".post; (item).postln;
 				//	Set the buffer
 				switch (item)
-					{$x}	{bufferIndex=1}
-					{$X}	{bufferIndex=0};
-				Synth(\simplePlay, [\bufnum, bufferIndex]);
-				((1/gati)*karve).wait;				
+					{$x}	{perc = true; bufferIndex=1; play = true}
+					{$X }	{perc = true; bufferIndex=0; play = true}
+					{$o}	{perc = true; play = true}
+					{$S}	{perc = false; note = 0; play = true}
+					{$r}	{perc = false; note = 1; play = true}
+					{$R}	{perc = false; note = 2; play = true}
+					{$g}	{perc = false; note = 3; play = true}
+					{$G}	{perc = false; note = 4; play = true}
+					{$m}	{perc = false; note = 5; play = true}
+					{$M}	{perc = false; note = 6; play = true}
+					{$P}	{perc = false; note = 7; play = true}
+					{$d}	{perc = false; note = 8; play = true}
+					{$D}	{perc = false; note = 9; play = true}
+					{$n}	{perc = false; note = 10; play = true}
+					{$N}	{perc = false; note = 11 ; play = true}
+					{$+}	{
+						if(syllables[i-1]!=$+) {
+							octave = 0;
+							1.postln;
+							"octave: ".post; (octave).postln;
+						};
+						octave = octave +1; play = false;
+						"octave: ".post; (octave).postln;
+						
+					}		
+					{$-}	{ 
+						if(syllables[i-1]!=$-) {
+							octave = 0;
+							2.postln;
+							"octave: ".post; (octave).postln;
+							
+						};
+						octave = octave - 1; play = false};
+						"octave: ".post; (octave).postln;
+						
+					
+				if(play) {
+					if(perc) {
+						if(item!=$o) {
+							Synth(\simplePlay, [\bufnum, bufferIndex]);
+						};
+					} {
+						note = octave*12 + note + 60;
+						"octave: ".post; (octave).postln;
+						"note: ".post; (note).postln;
+						Post << "\n";
+						Synth(\beep, [\freq, note.midicps]);
+					};
+					((1/gati)*karve).wait;				
+				};
 			};
 			routine.yieldAndReset;
 		};
