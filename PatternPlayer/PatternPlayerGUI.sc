@@ -17,7 +17,6 @@ PatternPlayerGUI {
 	var <window;
 	var <patternView;
 	var <patternField;
-	var <soundPopup;
 	var <ampSlider;
 	var <talaLabel;
 	var <tGUI;
@@ -100,23 +99,7 @@ PatternPlayerGUI {
 					view.stringColor = Color.black;
 				};
 			});
-		
-		
-		soundPopup = EZPopUpMenu(
-			patternView, 
-			340@20, 
-			" Sound ",
-			[
-				\Kanjira 	->{|a| player.sounds = player.kanjiraSounds; player.loadBuffers},
-				\Konakkol 	->{|a| player.sounds = player.konakkolSounds; player.loadBuffers}
-				/*, \Custom 	->{|a| sounds = customSounds;}*/
-			],
-			initVal: 0,
-			initAction: false,
-			labelWidth: 165, //magic number...
-			gap: margin
-		).setColors(Color.grey, Color.white);
-		
+				
 		Button(patternView, 20@20)
 			.states_([
 				["M", Color.white, Color.blue(1.5)],
