@@ -12,8 +12,6 @@ PatternPlayer {
 	var <kanjiraSounds;
 	var <customSounds;
 	var <>sounds;
-	var <tempo;
-	var <>gati;
 	var <>s;
 	var <>buffers;
 	var <tala;
@@ -34,10 +32,8 @@ PatternPlayer {
 		sounds 			= kanjiraSounds;
 		amp				= 1;
 		mute			= 1;
-		tempo 			= 60;
-		gati			= 4;
 		s 				= Server.default;
-		tala 			= Tala.new(tempo, gati, false);
+		tala 			= Tala.new(60, 4, false);
 		jatis			= List[];
 		pattern			= "Xxxx";
 		
@@ -87,15 +83,37 @@ PatternPlayer {
 	
 	pattern_ {|newPattern|
 		tala.tGUI.playStopButton.valueAction_(0);
+		pattern = newPattern;
 		
-		jatis = List[];
+		this.createJatis;
+	}
+	
+	createJatis {
 		
-		if(newPattern.includesAny([$,, $(, $), $_, $[, $]]).not) {
-			pattern = newPattern;
-			jatis.add(Jati(pattern.size, gati, 1));
-			jatis.last.syllables = pattern;
-		};
+		jatis.clear;
+				
+		//Split up the string into the various jatis
+		pattern.split($ ).do { |item, i|
+			var syllables;
+			var split;
+			var jati;
+			var gati = tala.gati;
+			var karve = 1;
+			split = item.split($:);
+			if(split.size>1) {
+				//Get the multiplier (number of __)
+				karve = 1/(2 ** split[0].count({|item, i| item==$_}));
+				gati = split[0].findRegexp("[0-9]")[0] ?? tala.gati;
+				if(gati!=tala.gati) { gati = gati[1].asInteger };
+			};
+			syllables = split.last;	
+
+			jati = Jati(syllables.size, gati, karve ).syllables_(syllables);
+			jatis.add(jati);
+		};	
+		
 		this.createJatisRoutine;
+		
 	}
 	
 	play {
