@@ -1,5 +1,7 @@
 s.waitForBoot{a = PatternPlayer.new}
 
+a.jatis[0].play
+a.jatisRoutine.stop
 a.play
 a.stop
 x = List[];

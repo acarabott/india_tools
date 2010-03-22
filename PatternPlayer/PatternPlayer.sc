@@ -18,7 +18,7 @@ PatternPlayer {
 	var <>buffers;
 	var <tala;
 	var <jatis;
-	var jatisRoutine;
+	var <jatisRoutine;
 	var <>pGUI;
 	var <>amp;
 	var <>mute;
@@ -70,7 +70,7 @@ PatternPlayer {
 	createJatisRoutine {
 		jatisRoutine = Routine {
 			jatis.do {|item, i|
-				item.play(tala.clock, 1);
+				item.play(tala.clock);
 				item.duration.wait;
 			};
 		};
