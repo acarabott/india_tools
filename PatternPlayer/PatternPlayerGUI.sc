@@ -72,24 +72,12 @@ PatternPlayerGUI {
 		view.decorator = FlowLayout(view.bounds, 0@0, 0@0);
 		patternView = CompositeView(view, Rect(0,0, pWidth, pHeight));
 		patternView.decorator = FlowLayout(patternView.bounds).margin_(margin).gap_(margin/2);
+		
 		patternField = TextField(patternView, Rect(5,5,pWidth-20,20))
 			.string_(player.pattern)
 			.action_({|field|
-				//	Set the pattern, unless there is an uneven number of underscores
-				var underscores = field.value.occurrencesOf($_);
-				var mult;
-				if(underscores.even) {
-					if(underscores==0) {
-						mult = 1;
-					} {
-						mult = underscores
-					};
-					player.tala.gatiMult = mult;
-					player.pattern_(field.value);				
-					field.stringColor = Color.black;
-				} {
-					field.stringColor = Color.red;					
-				};
+				player.pattern_(field.value);				
+				field.stringColor = Color.black;
 			})
 			.keyDownAction_({|view, char, mod, uni|
 				view.stringColor = Color.red;

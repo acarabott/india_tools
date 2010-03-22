@@ -3,6 +3,8 @@
 	TODO Extend pattern box when end is reached
 	TODO Draw graph showing pattern against Tala
 	TODO Enter key creates new line, click button to set?	
+	
+	FIXME Comma breks things
 */
 
 PatternPlayer {
@@ -69,7 +71,8 @@ PatternPlayer {
 				gati = split[0].findRegexp("[0-9]")[0] ?? tala.gati;
 				if(gati!=tala.gati) { gati = gati[1].asInteger };
 			};
-			syllables = split.last;	
+			syllables = split.last;
+			
 			jati = Jati(syllables.size, gati, karve ).syllables_(syllables);
 			jatis.add(jati);
 		};	
