@@ -17,6 +17,8 @@ PatternPlayer {
 	var <>s;
 	var <>buffers;
 	var <tala;
+	var <jatis;
+	var jatisRoutine;
 	var <>pGUI;
 	var <>amp;
 	var <>mute;
@@ -36,8 +38,9 @@ PatternPlayer {
 		gati			= 4;
 		s 				= Server.default;
 		tala 			= Tala.new(tempo, gati, false);
+		jatis			= List[];
 		
-		this.pattern_("xxxx");
+		this.pattern_("Xxxx");
 		
 		{
 			this.loadBuffers;
@@ -64,16 +67,36 @@ PatternPlayer {
 		};
 	}
 	
+	createJatisRoutine {
+		jatisRoutine = Routine {
+			jatis.do {|item, i|
+				item.play(tala.clock, 1);
+				item.duration.wait;
+			};
+		};
+		jatisRoutine = jatisRoutine.loop;
+	}
+	
 	pattern_ {|newPattern|
+		jatis = List[];
 		
+		if(newPattern.includesAny([$,, $(, $), $_, $[, $]]).not) {
+			pattern = newPattern;
+			jatis.add(Jati(pattern.size, gati, 1));
+			jatis.last.syllables = pattern;
+		};
+		this.createJatisRoutine;
 	}
 	
 	play {
 		tala.play;
+		jatisRoutine.play(tala.clock, 1);
 	}
 	
 	stop {
 		tala.stop;
+		jatisRoutine.stop;
+		this.createJatisRoutine;
 	}
 	
 	isPlaying {
