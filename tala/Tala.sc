@@ -145,7 +145,7 @@ Tala {
 		clock.clear;
 		gatiTotal = gati * gatiMult;
 		gatiAmps = gatiAmps.extend(gatiTotal, 1);
-		this.createGatiToutine;
+		this.createGatiRoutine;
 		if(this.isPlaying) {
 			talaRoutine.play(clock, 1); 
 			gatiRoutine.play(clock, 1);
