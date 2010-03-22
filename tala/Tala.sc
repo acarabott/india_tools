@@ -6,7 +6,9 @@
 
 /*
 	1.1
-
+	
+	TODO Instead of setting a function, be able to add to one (+) to allow multiple functions
+	
 	TODO Calculatable Tempo field
 	TODO Try passing in time and greying out
 	TODO Volume slider
