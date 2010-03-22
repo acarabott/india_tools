@@ -29,7 +29,7 @@ TalaGUI {
 	var rightSide;
 	var rightDec;
 	var <talaImage;
-	var <playStopButotn;
+	var <playStopButton;
 	var visible;
 	
 	//Other shit
@@ -206,8 +206,8 @@ TalaGUI {
 		buttonHeight = extent.y;
 		buttonHeight = buttonHeight - (margin.x*4);
 		buttonHeight = buttonHeight - (leftNumLines*(lineExtent.y+leftDec.gap.y));
-		// playStopButotn = Button(leftSide, 340@ extent.y - (margin.x*2) - (leftNumLines*(lineExtent.y+leftDec.gap.y))- (margin.y*2))
-		playStopButotn = Button(leftSide, 340@buttonHeight)
+		// playStopButton = Button(leftSide, 340@ extent.y - (margin.x*2) - (leftNumLines*(lineExtent.y+leftDec.gap.y))- (margin.y*2))
+		playStopButton = Button(leftSide, 340@buttonHeight)
 			.states_([
 				["Start Tala", Color.black, Color.green],
 				["Stop Tala", Color.white, Color.red]
