@@ -39,8 +39,7 @@ PatternPlayer {
 		s 				= Server.default;
 		tala 			= Tala.new(tempo, gati, false);
 		jatis			= List[];
-		
-		this.pattern_("Xxxx");
+		pattern			= "Xxxx";
 		
 		{
 			this.loadBuffers;
@@ -49,7 +48,13 @@ PatternPlayer {
 		}.fork;
 		
 		pGUI 		= PatternPlayerGUI.new(this);
-		tala.tGUI	= pGUI.talaGui;
+		tala.tGUI	= pGUI.tGUI;
+		
+		this.pattern_("Xxxx");
+		
+		tala.stopFunc = { this.stop };
+		
+		
 	}
 	
 	loadSynthDef {
@@ -75,9 +80,14 @@ PatternPlayer {
 			};
 		};
 		jatisRoutine = jatisRoutine.loop;
+		
+		tala.syncRoutines.clear;
+		tala.syncRoutines.add(jatisRoutine);
 	}
 	
 	pattern_ {|newPattern|
+		tala.tGUI.playStopButton.valueAction_(0);
+		
 		jatis = List[];
 		
 		if(newPattern.includesAny([$,, $(, $), $_, $[, $]]).not) {
@@ -89,13 +99,16 @@ PatternPlayer {
 	}
 	
 	play {
-		tala.play;
+		// tala.play;
 		jatisRoutine.play(tala.clock, 1);
 	}
 	
 	stop {
-		tala.stop;
+		// tala.stop;
 		jatisRoutine.stop;
+		jatis.do { |item, i|
+			item.stop;
+		};
 		this.createJatisRoutine;
 	}
 	

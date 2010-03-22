@@ -56,10 +56,13 @@ Tala {
 	
 	var <gati;				//	Gati (Sub-division)
 	var <gatiMult;			//	Gati multiplier, e.g. to change from 3 per beat to 6 etc
-	var <gatiTotal;		//	Total sub-divisions (gati * gatiMult)
+	var <gatiTotal;			//	Total sub-divisions (gati * gatiMult)
 	var <gatiRoutine;		//	Gati playback routine;
 	var <gatiAmps;			//	Amplitudes for the sub-divisions
-	var <>gatiFunc;		//	Function to be called on each sub-division playback
+	var <>gatiFunc;			//	Function to be called on each sub-division playback
+	var <syncRoutines;		//	List of routines to play when the tala starts
+	var <>stopFunc;			//	Function to call when playback is stopped
+	// var <>playFunc;		//	Function to be called when starting playback;
 		
 	var <>tGUI;					//	GUI :)
 	
@@ -85,7 +88,11 @@ Tala {
 		gatiMult	= 1;
 		gatiTotal	= gati*gatiMult;
 		gatiAmps 	= 0 ! gatiTotal;
-		gatiFunc	= {|i| i};
+		gatiFunc	= {|i| };
+		
+		syncRoutines = List[];
+		// playFunc	= {};
+		stopFunc = {};
 			
 		parts		= adi;
 		
@@ -202,14 +209,22 @@ Tala {
 		if(talaRoutine.isPlaying.not) {
 			talaRoutine.play(clock, 1);
 			gatiRoutine.play(clock, 1);				
+			syncRoutines.do { |item, i|
+				item.play(clock, 1)
+			};
+			// playFunc.();
 		};	
 	}
 	
 	stop {
 		talaRoutine.stop;
 		gatiRoutine.stop;
+		syncRoutines.do { |item, i|
+			item.stop;
+		};
 		this.createTalaRoutine;
 		this.createGatiRoutine;
+		stopFunc.();
 	}
 	
 	addRoutTime {|time|

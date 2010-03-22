@@ -1,4 +1,22 @@
 s.waitForBoot{a = PatternPlayer.new}
+a = Tala.new
+
+a.jatis[0].play
+a.jatisRoutine
+a.tala.syncRoutines.add(a.jatisRoutine)
+a.tala.stopFunc = { a.stop; a.tala.syncRoutines.clear; a.tala.syncRoutines.add(a.jatisRoutine)}
+
+a.stop
+
+
+
+SCButton
+
+
+a.tala.playFunc = {
+	a.play;
+}
+a.stop
 
 a.jatis[0].play
 a.jatisRoutine.stop
@@ -11,6 +29,8 @@ x = List[];
 	x.add(Jati(jgati, jgati, karve))
 };
 
+x.clear
+x
 x.last.syllables = "Xxxx"
 x.last.play
 r = Routine {
