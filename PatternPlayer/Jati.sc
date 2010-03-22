@@ -9,6 +9,9 @@ Jati {
 	var <karve;			//	The gati multipler
 	var <syllables; 	//	The syllables themselves
 	
+	var <sylDuration;	//	Duration of one syllable
+	var <totalDuration;	//	The relative duration of the routine.
+	
 	var <duration;		//	The duration of playback
 	
 	var s;				//	Server.default
@@ -28,6 +31,8 @@ Jati {
 		jatis = aJatis;
 		gati = aGati;
 		karve = aKarve;
+		sylDuration = ((1/gati)*karve);
+		duration = jatis * sylDuration;
 		
 		s = Server.default;
 		kanjiraSounds = ["sounds/KJDIM.wav", "sounds/KJBELL.wav"];
@@ -35,6 +40,7 @@ Jati {
 		
 		//set default as all percussion hits
 		syllables = ("x" ! jatis).reduce('++');
+		syllables[0] = $X;
 	
 		this.loadBuffers;
 		this.loadSynthDefs;
@@ -114,16 +120,16 @@ Jati {
 						note = octave*12 + note + 60;
 						Synth(\beep, [\freq, note.midicps]);
 					};
-					((1/gati)*karve).wait;				
+					sylDuration.wait;				
 				};
 			};
 			routine.yieldAndReset;
 		};
 	}
 	
-	play {|clock|
+	play {|clock, quant|
 		if(beenStopped) { routine.reset	};
-		routine.play(clock);
+		routine.play(clock, quant);
 	}
 	
 	stop {
