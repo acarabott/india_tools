@@ -81,6 +81,7 @@ Jati {
 					{$x}	{perc = true; bufferIndex=1; play = true}
 					{$X }	{perc = true; bufferIndex=0; play = true}
 					{$o}	{perc = true; play = true}
+					{$O}	{perc = true; play = true}					
 					{$S}	{perc = false; note = 0; play = true}
 					{$r}	{perc = false; note = 1; play = true}
 					{$R}	{perc = false; note = 2; play = true}
