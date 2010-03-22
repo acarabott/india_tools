@@ -61,7 +61,8 @@ Jati {
 	
 	syllables_ {|string|
 		syllables = string;
-		jatis = syllables.size;
+		jatis = syllables.count({|item, i| "srgmpdnsxo,".includes(item.toLower)});
+		duration = jatis * sylDuration;
 	}
 	
 	createRoutine {
@@ -69,49 +70,64 @@ Jati {
 
 		routine = Routine {
 			var play;
-			var perc = false;
+			var rest;
 			var note;
+			var perc = false;
 			var octave = 0;
 			syllables.do { |item, i|
 				//	Set the buffer
+				if([$o, $O, $,,].includes(item)) {
+					rest = true;
+					perc = true;
+				} {
+					rest = false;
+				};
+				if([$x, $X].includes(item)) {
+					perc = true;
+				} {
+					perc = false;
+				};
+				if([$+,$-,$0].includes(item)) {
+					"item: ".post; (item).postln;
+					play = false;
+					"play: ".post; (play).postln;
+				} {
+					
+					"item: ".post; (item).postln;
+					play = true;
+					"play: ".post; (play).postln;
+				};
 				switch (item)
-					{$x}	{perc = true; bufferIndex=1; play = true}
-					{$X }	{perc = true; bufferIndex=0; play = true}
-					{$o}	{perc = true; play = true}
-					{$O}	{perc = true; play = true}					
-					{$S}	{perc = false; note = 0; play = true}
-					{$r}	{perc = false; note = 1; play = true}
-					{$R}	{perc = false; note = 2; play = true}
-					{$g}	{perc = false; note = 3; play = true}
-					{$G}	{perc = false; note = 4; play = true}
-					{$m}	{perc = false; note = 5; play = true}
-					{$M}	{perc = false; note = 6; play = true}
-					{$P}	{perc = false; note = 7; play = true}
-					{$d}	{perc = false; note = 8; play = true}
-					{$D}	{perc = false; note = 9; play = true}
-					{$n}	{perc = false; note = 10; play = true}
-					{$N}	{perc = false; note = 11 ; play = true}
-					{$0}	{
-								octave = 0; 
-								play = false;
-							}
+					{$x}	{ bufferIndex=1 }
+					{$X }	{ bufferIndex=0 }
+					{$S}	{ note = 0 }
+					{$r}	{ note = 1 }
+					{$R}	{ note = 2 }
+					{$g}	{ note = 3 }
+					{$G}	{ note = 4 }
+					{$m}	{ note = 5 }
+					{$M}	{ note = 6 }
+					{$P}	{ note = 7 }
+					{$d}	{ note = 8 }
+					{$D}	{ note = 9 }
+					{$n}	{ note = 10 }
+					{$N}	{ note = 11 }
+					{$0}	{  octave = 0 }
 					{$+}	{
 								if(syllables[i-1]!=$+) {
 									octave = 0;
 								};
 								octave = octave +1;
-								play = false;						
 							}		
 					{$-}	{ 
 								if(syllables[i-1]!=$-) {
 									octave = 0;							
 								};
 								octave = octave - 1;
-								play = false
 							};						
 				if(play) {
 					if(perc) {
-						if(item!=$o) {
+						if(rest.not) {
 							Synth(\simplePlay, [\bufnum, bufferIndex]);
 						};
 					} {
