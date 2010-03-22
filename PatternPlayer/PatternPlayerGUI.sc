@@ -20,7 +20,7 @@ PatternPlayerGUI {
 	var <soundPopup;
 	var <ampSlider;
 	var <talaLabel;
-	var <talaGui;
+	var <tGUI;
 	
 	*initClass {
 		pWidth = 700;
@@ -147,6 +147,6 @@ PatternPlayerGUI {
 			.align_(\center)
 			.font_(Font("Lucida Grande",13));
 		
-		talaGui = TalaGUI.new(player.tala, view, 0@pHeight+10);	
+		tGUI = TalaGUI.new(player.tala, view, 0@pHeight+10);	
 	}
 }
