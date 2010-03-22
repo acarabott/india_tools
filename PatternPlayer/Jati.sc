@@ -38,10 +38,7 @@ Jati {
 		kanjiraSounds = ["sounds/KJDIM.wav", "sounds/KJBELL.wav"];
 		sounds = kanjiraSounds;
 		
-		//set default as all percussion hits
-		syllables = ("x" ! jatis).reduce('++');
-		syllables[0] = $X;
-	
+		this.syllables = "Xxxx";
 		this.loadBuffers;
 		this.loadSynthDefs;
 		this.createRoutine;
@@ -63,7 +60,7 @@ Jati {
 	}
 	
 	syllables_ {|string|
-		syllables = string.asList.removeEvery( [ $(, $), $  ] ).reduce('++');
+		syllables = string;
 		jatis = syllables.size;
 	}
 	
@@ -242,7 +239,6 @@ Jati {
 // 						{i==0}	{amp=0.4};
 // 
 // 						tani.s.bind{Synth(konaSynth, [\amp, (amp+(accent/10)).min(1)])};
-// 						word[i].postln;
 // 						speed.wait;
 // 					};
 // 					yieldAndReset(nil);
@@ -275,7 +271,6 @@ Jati {
 // 							speed.wait
 // 						};
 // 					};
-// 					"".postln;
 // 					yieldAndReset(nil);
 // 				};
 // 
@@ -343,7 +338,6 @@ Jati {
 // 							speed.wait
 // 						};
 // 					};
-// 					" ".postln;
 // 					yieldAndReset(nil);
 // 				};
 // 
@@ -397,13 +391,10 @@ Jati {
 // 		};
 // 
 // 		if(argW) {
-// 			words.postln;
 // 		};
 // 		if(argD) {
-// 			decimals.postln;
 // 		};
 // 		if(argF) {
-// 			fractions.postln;
 // 		};
 // 
 // 		^[words, decimals, fractions];

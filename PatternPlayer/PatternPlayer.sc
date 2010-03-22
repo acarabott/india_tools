@@ -58,11 +58,11 @@ PatternPlayer {
 		//Split up the string into the various jatis
 		pattern.split($ ).do { |item, i|
 			var syllables;
-			var split;
 			var jati;
 			var gati = tala.gati;
 			var karve = 1;
-			split = item.split($:);
+			var split = item.split($:);
+			
 			if(split.size>1) {
 				//Get the multiplier (number of __)
 				karve = 1/(2 ** split[0].count({|item, i| item==$_}));
@@ -70,7 +70,6 @@ PatternPlayer {
 				if(gati!=tala.gati) { gati = gati[1].asInteger };
 			};
 			syllables = split.last;	
-
 			jati = Jati(syllables.size, gati, karve ).syllables_(syllables);
 			jatis.add(jati);
 		};	

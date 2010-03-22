@@ -1,12 +1,16 @@
 s.waitForBoot{a = PatternPlayer.new}
 a = Tala.new
-
-a.jatis
-a.jatis.last.play
+a.jatis[0]
+a.jatis[0].syllables
+a.jatis[0].syllables
 a.jatis[0].play
 a.jatisRoutine
 a.tala.syncRoutines.add(a.jatisRoutine)
 a.tala.stopFunc = { a.stop; a.tala.syncRoutines.clear; a.tala.syncRoutines.add(a.jatisRoutine)}
+
+
+syllables = string.asList.removeEvery( [ $(, $), $  ] ).reduce('++');
+
 
 a.stop
 
