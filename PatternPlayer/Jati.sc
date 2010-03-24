@@ -1,5 +1,9 @@
 /*
 	TODO MIDI output
+	TODO Provide interface for selecting MIDI output possibilities
+	TODO Better clapping sound
+	TODO Better synth sound
+	TODO Balance sounds
 */
 Jati {
 	
@@ -18,7 +22,10 @@ Jati {
 	var bufferIndex;	//	Index of the buffer to use
 	var sounds;			//	The sounds to use for playback
 	var kanjiraSounds;	//	Default Kanjira sounds
-	var <>midiPlayback;	//	Boolean for MIDI playback
+	
+	var <>synthPlayback;//	Boolean for synth playback
+	var <midiPlayback;	//	Boolean for MIDI playback
+	var midiOut;		//	MIDIOut instance
 	
 	var routine;		//	Routine for playback
 	var beenStopped;	//	Boolean, if the stop method has been called (requiring reset before playback);
@@ -37,6 +44,9 @@ Jati {
 		s = Server.default;
 		kanjiraSounds = ["sounds/KJDIM.wav", "sounds/KJBELL.wav"];
 		sounds = kanjiraSounds;
+		
+		synthPlayback = true;
+		midiPlayback = false;
 		
 		this.syllables = "Xxxx";
 		this.loadBuffers;
@@ -123,13 +133,31 @@ Jati {
 				if(play) {
 					if(perc) {
 						if(rest.not) {
-							Synth(\simplePlay, [\bufnum, bufferIndex]);
+							if(synthPlayback) {
+								Synth(\simplePlay, [\bufnum, bufferIndex]);
+							};
+							if(midiPlayback) {
+								switch (bufferIndex)
+									{1}	{note = 40}
+									{0}	{note = 36};
+									
+								midiOut.noteOn(0, note, 100);
+							};
 						};
 					} {
 						note = octave*12 + note + 60;
-						Synth(\beep, [\freq, note.midicps]);
+						
+						if(synthPlayback) {
+							Synth(\beep, [\freq, note.midicps]);
+						};
+						if(midiPlayback) {
+							midiOut.noteOn(0, note, 100);
+						};
 					};
 					sylDuration.wait;				
+					if(midiPlayback) {
+						midiOut.noteOff(0, note, 100);
+					};
 				};
 			};
 			routine.yieldAndReset;
@@ -144,5 +172,14 @@ Jati {
 	stop {
 		routine.stop;			
 		beenStopped = true;
+	}
+	
+	midiPlayback_ {|boolean|
+		midiPlayback = boolean;
+		if(midiPlayback) {
+			MIDIClient.init;
+			midiOut = MIDIOut.newByName("IAC Driver", "Bus 1");
+			midiOut.latency = 0;
+		};
 	}
 }
