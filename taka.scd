@@ -26,3 +26,5 @@ if(true) {
 } {
 	false
 };
+
+MIDIClient.init

@@ -84,52 +84,60 @@ Jati {
 			var note;
 			var perc = false;
 			var octave = 0;
+			
 			syllables.do { |item, i|
-				//	Set the buffer
+				// If the syllable is a rest
 				if([$o, $O, $,,].includes(item)) {
 					rest = true;
 					perc = true;
 				} {
 					rest = false;
 				};
+				//	If the syllable is a percussive hit
 				if([$x, $X].includes(item)) {
 					perc = true;
 				} {
 					perc = false;
 				};
+				//	If the syllable is an octave indicator
 				if([$+,$-,$0].includes(item)) {
 					play = false;
 				} {
 					play = true;
 				};
+				
+				//	Set correct midi note/buffer
 				switch (item)
-					{$x}	{ bufferIndex=1 }
-					{$X }	{ bufferIndex=0 }
-					{$S}	{ note = 0 }
-					{$r}	{ note = 1 }
-					{$R}	{ note = 2 }
-					{$g}	{ note = 3 }
-					{$G}	{ note = 4 }
-					{$m}	{ note = 5 }
-					{$M}	{ note = 6 }
-					{$P}	{ note = 7 }
-					{$d}	{ note = 8 }
-					{$D}	{ note = 9 }
-					{$n}	{ note = 10 }
-					{$N}	{ note = 11 }
-					{$0}	{  octave = 0 }
-					{$+}	{
+					{$X }	{ bufferIndex=0 }		//	Percussion 1
+					{$x}	{ bufferIndex=1 }		//	Percussion 2
+					
+					{$S}	{ note = 0 }			//	Sa 			- Root
+					{$r}	{ note = 1 }			//	Little ri 	- b2
+					{$R}	{ note = 2 }			//	Big Ri		- 2
+					{$g}	{ note = 3 }			//	Little ga	- b3
+					{$G}	{ note = 4 }			//	Big Ga		- 3
+					{$m}	{ note = 5 }            //	Little ma	- 4
+					{$M}	{ note = 6 }            //	Big Ma		- #4
+					{$P}	{ note = 7 }            //	Pa			- 5
+					{$d}	{ note = 8 }            //	Little da 	- b6
+					{$D}	{ note = 9 }            //	Big Da		- 6
+					{$n}	{ note = 10 }           //	Little ni	- b7
+					{$N}	{ note = 11 }           //	Big Ni		- 7
+					
+					{$0}	{  octave = 0 }					//	Middle Octave
+					{$+}	{ 								//	Up an Octave
 								if(syllables[i-1]!=$+) {
 									octave = 0;
 								};
 								octave = octave +1;
 							}		
-					{$-}	{ 
+					{$-}	{ 								//	Down an Octave
 								if(syllables[i-1]!=$-) {
 									octave = 0;							
 								};
 								octave = octave - 1;
 							};						
+				//	Playback
 				if(play) {
 					if(perc) {
 						if(rest.not) {
@@ -146,7 +154,6 @@ Jati {
 						};
 					} {
 						note = octave*12 + note + 60;
-						
 						if(synthPlayback) {
 							Synth(\beep, [\freq, note.midicps]);
 						};
@@ -154,6 +161,8 @@ Jati {
 							midiOut.noteOn(0, note, 100);
 						};
 					};
+					
+					//	Waiting
 					sylDuration.wait;				
 					if(midiPlayback) {
 						midiOut.noteOff(0, note, 100);
