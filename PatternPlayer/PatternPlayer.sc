@@ -3,8 +3,11 @@
 	TODO Extend pattern box when end is reached
 	TODO Draw graph showing pattern against Tala
 	TODO Enter key creates new line, click button to set?	
+	TODO Setting playback method iterates over all jatis and changes
 	
-	FIXME Comma breks things
+	FIXME Stopping needs to do midiOffs
+	FIXME Comma breaks things
+	
 */
 
 PatternPlayer {

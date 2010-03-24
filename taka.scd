@@ -4,6 +4,7 @@ s.waitForBoot{a = PatternPlayer.new}
 
 a.jatis.do { |item, i|
 	item.midiPlayback_(true);
+	item.synthPlayback(false);
 };
 
 a.jatis[0].play
