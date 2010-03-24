@@ -1,6 +1,5 @@
 /*
 	TODO MIDI output
-	TODO Clean up createRoutine method
 */
 Jati {
 	
@@ -88,14 +87,9 @@ Jati {
 					perc = false;
 				};
 				if([$+,$-,$0].includes(item)) {
-					"item: ".post; (item).postln;
 					play = false;
-					"play: ".post; (play).postln;
 				} {
-					
-					"item: ".post; (item).postln;
 					play = true;
-					"play: ".post; (play).postln;
 				};
 				switch (item)
 					{$x}	{ bufferIndex=1 }
