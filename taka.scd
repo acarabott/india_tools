@@ -28,3 +28,25 @@ if(true) {
 };
 
 MIDIClient.init
+
+~sruti = "C.";
+~sruti.toLower.asSymbol;
+switch (~sruti.toLower.asSymbol)
+	{1}	{}
+	{2}	{}
+	{3}	{}
+	{\d.}	{}
+	{\e}	{}
+	{\f}	{}
+	{\f.}	{}
+	{\g}	{}
+	{\}	{}
+	{\}	{}
+	{\}	{}
+	{\}	{};
+	
+	MIDIKeyboard
+	
+	
+//	MIDI Patch that sends vol swell for every note
+	

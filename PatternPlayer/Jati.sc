@@ -1,5 +1,5 @@
 /*
-	TODO MIDI output
+	TODO Sruti setting
 	TODO Provide interface for selecting MIDI output possibilities
 	TODO Better clapping sound
 	TODO Better synth sound
@@ -22,6 +22,7 @@ Jati {
 	var bufferIndex;	//	Index of the buffer to use
 	var sounds;			//	The sounds to use for playback
 	var kanjiraSounds;	//	Default Kanjira sounds
+	var <>sruti;		//	Root note 
 	
 	var <>synthPlayback;//	Boolean for synth playback
 	var <midiPlayback;	//	Boolean for MIDI playback
@@ -45,6 +46,7 @@ Jati {
 		kanjiraSounds = ["sounds/KJDIM.wav", "sounds/KJBELL.wav"];
 		sounds = kanjiraSounds;
 		
+		// sruti = 1;
 		synthPlayback = true;
 		midiPlayback = false;
 		
