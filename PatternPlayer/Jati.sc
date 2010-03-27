@@ -1,11 +1,13 @@
 /*
-	TODO Sruti setting
 	TODO Provide interface for selecting MIDI output possibilities
 	TODO Better clapping sound
 	TODO Better synth sound
 	TODO Balance sounds
+	TODO Volume control
 */
+
 Jati {
+	classvar <srutiBase;	//	The base sruti note to add/subtract from
 	
 	var <jatis;			//	The number of syllables
 	var <gati;			//	The beat subdivision
@@ -31,6 +33,10 @@ Jati {
 	var routine;		//	Routine for playback
 	var beenStopped;	//	Boolean, if the stop method has been called (requiring reset before playback);
 	
+	*initClass {
+		srutiBase = 60;	//	C
+	}
+	
 	*new { |jatis, gati, karve|
 		^super.new.init(jatis, gati, karve);
 	}
@@ -46,7 +52,7 @@ Jati {
 		kanjiraSounds = ["sounds/KJDIM.wav", "sounds/KJBELL.wav"];
 		sounds = kanjiraSounds;
 		
-		// sruti = 1;
+		sruti = 3;
 		synthPlayback = true;
 		midiPlayback = false;
 		
@@ -155,7 +161,7 @@ Jati {
 							};
 						};
 					} {
-						note = octave*12 + note + 60;
+						note = octave*12 + note + srutiBase + sruti;
 						if(synthPlayback) {
 							Synth(\beep, [\freq, note.midicps]);
 						};

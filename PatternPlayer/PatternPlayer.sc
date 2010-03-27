@@ -1,11 +1,11 @@
 /*
-	TODO Parsing groups of xs to make takadimi takita etc
+	TODO Parsing groups of xs to make takadimi takita etc. Or just allow 'Takadimi' etc.
 	TODO Extend pattern box when end is reached
 	TODO Draw graph showing pattern against Tala
 	TODO Enter key creates new line, click button to set?	
 	TODO Setting playback method iterates over all jatis and changes
 	
-	FIXME Stopping needs to do midiOffs
+	FIXME Stopping needs to do midiOffs 
 	FIXME Comma breaks things
 	
 */
