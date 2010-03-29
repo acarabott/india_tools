@@ -4,6 +4,8 @@
 	TODO Better synth sound
 	TODO Balance sounds
 	TODO Volume control
+	
+	FIXME Tisrsa MIDI note doesn't play on first S SrGm SrGm SrGm SrGm        SrGm SrGm SrGm PmGrS
 */
 
 Jati {
@@ -38,7 +40,24 @@ Jati {
 	}
 	
 	*new { |jatis, gati, karve|
-		^super.new.init(jatis, gati, karve);
+		var args = [jatis, gati, karve];
+		
+		if(args.every({ |item, i| item>0 })) {
+			^super.new.init(jatis, gati, karve);
+		} {			
+			args.do { |item, i|
+				var varName;
+				if(item<1) {
+					switch (i)
+						{0}	{varName = "jatis"}
+						{1}	{varName = "gati"}
+						{2}	{varName = "karve"};
+				
+					(varName + "needs to be at least 1").postln;
+				};
+			};
+			^nil;
+		}
 	}
 
 	init { |aJatis, aGati, aKarve|
@@ -56,7 +75,7 @@ Jati {
 		synthPlayback = true;
 		midiPlayback = false;
 		
-		this.syllables = "Xxxx";
+		this.syllables = (("x" ! jatis)[0]=$X).reduce('++');
 		this.loadBuffers;
 		this.loadSynthDefs;
 		this.createRoutine;
