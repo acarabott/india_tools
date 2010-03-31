@@ -82,7 +82,7 @@
 		loading_rout.play(AppClock);		
 
 		Server.default.waitForBoot({
-			PatternPlayer.new;
+			KonaPlayer.new;
 			loading_win.close;
 			loading_rout.stop;			
 		});

@@ -100,6 +100,7 @@ Jati {
 		syllables = string;
 		jatis = syllables.count({|item, i| "srgmpdnsxo,".includes(item.toLower)});
 		duration = jatis * sylDuration;
+		this.createRoutine;
 	}
 	
 	createRoutine {
@@ -113,15 +114,18 @@ Jati {
 			var octave = 0;
 			
 			syllables.do { |item, i|
+				
+				"item: ".post; (item).postln;
+				
 				// If the syllable is a rest
-				if([$o, $O, $,,].includes(item)) {
+				if([$o, $,,].includes(item.toLower)) {
 					rest = true;
 					perc = true;
 				} {
 					rest = false;
 				};
 				//	If the syllable is a percussive hit
-				if([$x, $X].includes(item)) {
+				if([$x, $o].includes(item.toLower)) {
 					perc = true;
 				} {
 					perc = false;
@@ -133,6 +137,9 @@ Jati {
 					play = true;
 				};
 				
+				"play: ".post; (play).postln;
+				"rest: ".post; (rest).postln;
+				"perc: ".post; (perc).postln;
 				//	Set correct midi note/buffer
 				switch (item)
 					{$X }	{ bufferIndex=0 }		//	Percussion 1
@@ -166,12 +173,17 @@ Jati {
 							};						
 				//	Playback
 				if(play) {
+					1.postln;
 					if(perc) {
+						2.postln;
 						if(rest.not) {
+							2.1.postln;
 							if(synthPlayback) {
+								2.11.postln;
 								Synth(\simplePlay, [\bufnum, bufferIndex]);
 							};
 							if(midiPlayback) {
+								2.21.postln;
 								switch (bufferIndex)
 									{1}	{note = 40}
 									{0}	{note = 36};
@@ -180,11 +192,14 @@ Jati {
 							};
 						};
 					} {
+						3.postln;
 						note = octave*12 + note + srutiBase + sruti;
 						if(synthPlayback) {
+							3.1.postln;
 							Synth(\beep, [\freq, note.midicps]);
 						};
 						if(midiPlayback) {
+							3.2.postln;
 							midiOut.noteOn(0, note, 100);
 						};
 					};

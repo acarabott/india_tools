@@ -1,4 +1,4 @@
-s.waitForBoot{a = PatternPlayer.new}
+s.waitForBoot{a = KonaPlayer.new}
 a.jatis
 x = JatiControl(a.jatis)
 
@@ -13,10 +13,14 @@ a.jatis.do { |item, i|
 	m.noteOff(0, i, 120);
 };
 
-x = Jati.new(3,4,1)
-x.play
-s.boot
+s.waitForBoot {x = Jati.new(3,4,1).syllables_("xoo")}
 
+x.syllables
+x.stop
+x.play
+
+
+j.play
 j.play
 
 j.syllables
