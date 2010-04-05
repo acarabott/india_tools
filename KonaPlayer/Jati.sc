@@ -29,7 +29,7 @@ Jati {
 	var sounds;			//	The sounds to use for playback
 	var kanjiraSounds;	//	Default Kanjira sounds
 	var <>sruti;		//	Root note 
-	var <originalOctave;//	The octave of the first syllables
+	var <>originalOctave;//	The octave of the first syllables
 	var <>octave;		//	Octave shift
 	
 	var <>synthPlayback;//	Boolean for synth playback

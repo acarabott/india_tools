@@ -80,7 +80,9 @@ KonaPlayer {
 			
 			jati = Jati(syllables.size, gati, karve)
 				.syllables_(syllables)
+				.originalOctave_(octave)
 				.octave_(octave);
+				
 			jatis.add(jati);
 			
 			[$+,$-].do { |jtem, j|
