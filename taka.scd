@@ -1,14 +1,15 @@
-s.waitForBoot{a = KonaPlayer.new}
-a.jatis
+s.waitForBoot{a = KonaPlayer.new};
 
-a.jatis.do { |item, i|
-	item.midiPlayback = true;
-	item.synthPlayback = false;
-};
+"SrGmPdN+SrGmPdN S".count({ |item, i| item == $S})
 
-m = MIDIOut.newByName("")
-127.do { | i|
-	m.noteOff(i,i,i)
-};
-m.noteOff(0,50,125)
-"hello ".split($ ).reject({ |item, i| item.size == 0})
+"S".count({ |item, i| item == $S})
+
+Jati(1,4,1)
+
+
+("xx" ! 1)[0]=$X).reduce('++');
+
+(("x" ! 1)[0]=$X).reduce('++')
+x = "x".reduce('++') ?? "X"
+
+SequenceableCollection

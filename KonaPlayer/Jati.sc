@@ -27,6 +27,7 @@ Jati {
 	var sounds;			//	The sounds to use for playback
 	var kanjiraSounds;	//	Default Kanjira sounds
 	var <>sruti;		//	Root note 
+	var <>octave;		//	Octave shift
 	
 	var <>synthPlayback;//	Boolean for synth playback
 	var <midiPlayback;	//	Boolean for MIDI playback
@@ -72,10 +73,11 @@ Jati {
 		sounds = kanjiraSounds;
 		
 		sruti = 3;
+		octave = 0;
 		synthPlayback = true;
 		midiPlayback = false;
 		
-		this.syllables = (("x" ! jatis)[0]=$X).reduce('++');
+		this.syllables = (("x" ! jatis)[0]=$X).reduce('++') ?? "X";
 		this.loadBuffers;
 		this.loadSynthDefs;
 		this.createRoutine;
@@ -97,10 +99,16 @@ Jati {
 	}
 	
 	syllables_ {|string|
+		"string: ".post; (string).postln;
 		syllables = string;
+		"syllables: ".post; (syllables).postln;
 		jatis = syllables.count({|item, i| "srgmpdnsxo,".includes(item.toLower)});
 		duration = jatis * sylDuration;
 		this.createRoutine;
+	}
+	
+	altOctave { |value|
+		octave = octave + value;
 	}
 	
 	createRoutine {
@@ -111,7 +119,6 @@ Jati {
 			var rest;
 			var note;
 			var perc = false;
-			var octave = 0;
 			
 			syllables.do { |item, i|
 				
@@ -155,17 +162,17 @@ Jati {
 					{$n}	{ note = 10 }           //	Little ni	- b7
 					{$N}	{ note = 11 }           //	Big Ni		- 7
 					
-					{$0}	{  octave = 0 }					//	Middle Octave
+					// {$0}	{  octave = 0 }					//	Middle Octave
 					{$+}	{ 								//	Up an Octave
-								if(syllables[i-1]!=$+) {
-									octave = 0;
-								};
+								// if(syllables[i-1]!=$+) {
+								// 	octave = 0;
+								// };
 								octave = octave +1;
 							}		
 					{$-}	{ 								//	Down an Octave
-								if(syllables[i-1]!=$-) {
-									octave = 0;							
-								};
+								// if(syllables[i-1]!=$-) {
+								// 	octave = 0;							
+								// };
 								octave = octave - 1;
 							};						
 				//	Playback
