@@ -70,28 +70,17 @@ KonaPlayer {
 			var karve = 1;
 			var split = item.split($:);
 			
-			item.postln;
-			split.postln;
-			"split.size: ".post; (split.size).postln;
 			if(split.size>1) {
-				"split.size>1".postln;
 				//Get the multiplier (number of __)
 				karve = 1/(2 ** split[0].count({|item, i| item==$_}));
 				gati = split[0].findRegexp("[1-9]")[0] ?? tala.gati;
 				if(gati!=tala.gati) { gati = gati[1].asInteger };
 			};
 			syllables = split.last;
-			"syllables: ".post; (syllables).postln;
-			"syllables.size: ".post; (syllables.size).postln;
-			"gati: ".post; (gati).postln;
-			"karve: ".post; (karve).postln;
 			
-			jati = Jati(syllables.size, gati, karve );
-			"jati: ".post; (jati).postln;
-			jati.syllables_(syllables);
-			"jati2".postln;
-			jati.octave_(octave);
-			"jati3".postln;
+			jati = Jati(syllables.size, gati, karve)
+				.syllables_(syllables)
+				.octave_(octave);
 			jatis.add(jati);
 			
 			[$+,$-].do { |jtem, j|

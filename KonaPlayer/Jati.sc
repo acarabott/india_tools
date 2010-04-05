@@ -1,4 +1,6 @@
 /*
+
+	TODO Input "SrGm or Xxx" instead of number of jatis
 	TODO Provide interface for selecting MIDI output possibilities
 	TODO Better clapping sound
 	TODO Better synth sound
@@ -27,6 +29,7 @@ Jati {
 	var sounds;			//	The sounds to use for playback
 	var kanjiraSounds;	//	Default Kanjira sounds
 	var <>sruti;		//	Root note 
+	var <originalOctave;//	The octave of the first syllables
 	var <>octave;		//	Octave shift
 	
 	var <>synthPlayback;//	Boolean for synth playback
@@ -74,6 +77,8 @@ Jati {
 		
 		sruti = 3;
 		octave = 0;
+		originalOctave = octave;
+		
 		synthPlayback = true;
 		midiPlayback = false;
 		
@@ -207,6 +212,7 @@ Jati {
 					};
 				};
 			};
+			octave = originalOctave;
 			routine.yieldAndReset;
 		};
 	}
