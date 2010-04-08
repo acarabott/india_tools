@@ -1,6 +1,7 @@
 s.boot;
 x = Jati("SrGmSrGm",3,1);
 x.play;
+x.play;
 
 a.jatis.do { |item, i|
 	item.midiPlayback_(true);
@@ -10,11 +11,12 @@ a.jatis.do { |item, i|
 x.karve = 0.5
 
 s.waitForBoot{a = KonaPlayer.new};
-x = Jati("+SrGmSrGmSrGmSrGmSrGmSrGmSrGmPmGrS",3,1)
+x = Jati("-srgmpdn+s",3,1)
 	.midiPlayback_(true)
 	.synthPlayback_(false);
 
-x.play
+y = x.gati_(5)
+y.play
 
 Synth(\beep, [\freq, 60.midicps]);
 

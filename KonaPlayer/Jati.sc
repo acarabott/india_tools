@@ -1,12 +1,11 @@
 /*
-	TODO Input "SrGm or Xxx" instead of number of jatis
 	TODO Provide interface for selecting MIDI output possibilities
 	TODO Better clapping sound
 	TODO Better synth sound
 	TODO Balance sounds
 	TODO Volume control
 	
-	FIXME Tisrsa MIDI note doesn't play on first S SrGm SrGm SrGm SrGm        SrGm SrGm SrGm PmGrS
+	FIXME Tisrsa MIDI note doesn't play on first S SrGm SrGm SrGm SrGm        SrGm SrGm SrGm PmGrS ??? 
 */
 
 Jati {
