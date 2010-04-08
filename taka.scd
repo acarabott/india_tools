@@ -1,6 +1,34 @@
-s.waitForBoot{a = KonaPlayer.new};
 s.boot;
-x = Jati("XoXo",4,1)
+x = Jati("SrGmSrGm",3,1);
+x.play;
+
+a.jatis.do { |item, i|
+	item.midiPlayback_(true);
+	item.synthPlayback_(false);
+};
+
+x.karve = 0.5
+
+s.waitForBoot{a = KonaPlayer.new};
+x = Jati("+SrGmSrGmSrGmSrGmSrGmSrGmSrGmPmGrS",3,1)
+	.midiPlayback_(true)
+	.synthPlayback_(false);
+
+x.play
+
+Synth(\beep, [\freq, 60.midicps]);
+
+SynthDef(\beep) { |out=0, freq=440, amp=0.1, pan=0|
+	var saw = LFSaw.ar(freq, 0, amp/3);
+	var sin = SinOsc.ar(freq, 0, amp);
+	var env = EnvGen.ar(Env.new([0,1,0,],[0.01,0.2]), doneAction:2);
+	var sig = Mix.new([saw, sin]);
+	
+	Out.ar(out,
+		Pan2.ar(sig*env, pan);
+	);
+}.load(s);
+
 
 
 "S".count({ |itemo i| item == $S})

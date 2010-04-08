@@ -148,6 +148,7 @@ Jati {
 					{$x}	{ bufferIndex=1 }		//	Percussion 2
 					
 					{$S}	{ note = 0 }			//	Sa 			- Root
+					{$s}	{ note = 0 }			//	Sa 			- Root
 					{$r}	{ note = 1 }			//	Little ri 	- b2
 					{$R}	{ note = 2 }			//	Big Ri		- 2
 					{$g}	{ note = 3 }			//	Little ga	- b3
@@ -155,6 +156,7 @@ Jati {
 					{$m}	{ note = 5 }            //	Little ma	- 4
 					{$M}	{ note = 6 }            //	Big Ma		- #4
 					{$P}	{ note = 7 }            //	Pa			- 5
+					{$p}	{ note = 7 }			//	Pa			- 5
 					{$d}	{ note = 8 }            //	Little da 	- b6
 					{$D}	{ note = 9 }            //	Big Da		- 6
 					{$n}	{ note = 10 }           //	Little ni	- b7
@@ -220,5 +222,13 @@ Jati {
 			midiOut = MIDIOut.newByName("IAC Driver", "Bus 1");
 			midiOut.latency = 0;
 		};
+	}
+	
+	gati_ {|aGati|
+		^Jati(this.syllables, aGati, this.karve)
+	}
+	
+	karve_ { |aKarve| 
+		^Jati(this.syllables, this.gati, aKarve)
 	}
 }
