@@ -1,10 +1,10 @@
 /*
-	TODO Provide interface for selecting MIDI output possibilities
+	TODO GUI for JatiController
+	TODO Migrate Jatiroutine etc to JatiController?
+
 	TODO Better clapping sound
 	TODO Better synth sound
 	TODO Balance sounds
-	TODO Volume control
-	
 	FIXME Tisrsa MIDI note doesn't play on first S SrGm SrGm SrGm SrGm        SrGm SrGm SrGm PmGrS ??? 
 */
 
