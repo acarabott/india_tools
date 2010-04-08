@@ -42,13 +42,12 @@ Jati {
 		srutiBase = 60;	//	C
 	}
 	
-	*new { |jatis, gati, karve|
-		var args = [jatis, gati, karve];
-		
-		if(args.every({ |item, i| item>0 })) {
+	*new { |jatis, gati, karve|		
+		var argVals = [jatis.size, gati, karve];
+		if(argVals.every({ |item, i| item>0 })) {
 			^super.new.init(jatis, gati, karve);
 		} {			
-			args.do { |item, i|
+			argVals.do { |item, i|
 				var varName;
 				if(item<1) {
 					switch (i)
@@ -64,7 +63,7 @@ Jati {
 	}
 
 	init { |aJatis, aGati, aKarve|
-		jatis = aJatis;
+		jatis = aJatis.size;
 		gati = aGati;
 		karve = aKarve;
 		sylDuration = ((1/gati)*karve);
@@ -81,7 +80,7 @@ Jati {
 		synthPlayback = true;
 		midiPlayback = false;
 		
-		this.syllables = (("x" ! jatis)[0]=$X).reduce('++') ?? "X";
+		this.syllables = aJatis;
 		this.loadBuffers;
 		this.loadSynthDefs;
 		this.createRoutine;
@@ -103,9 +102,7 @@ Jati {
 	}
 	
 	syllables_ {|string|
-		"string: ".post; (string).postln;
 		syllables = string;
-		"syllables: ".post; (syllables).postln;
 		jatis = syllables.count({|item, i| "srgmpdnsxo,".includes(item.toLower)});
 		duration = jatis * sylDuration;
 		this.createRoutine;
@@ -125,14 +122,14 @@ Jati {
 			var perc = false;
 			
 			syllables.do { |item, i|
-				
-				"item: ".post; (item).postln;
-				
+								
 				//	If the syllable is a percussive hit (which includes rests)
 				if([$x, $o, $,].includes(item.toLower)) {
 					perc = true;
-					if(item == $o || (item == $,)) {
+					if(item.toLower != $x) {
 						rest = true;
+					} {
+						rest = false
 					};
 				} {
 					rest = false;
@@ -163,33 +160,20 @@ Jati {
 					{$n}	{ note = 10 }           //	Little ni	- b7
 					{$N}	{ note = 11 }           //	Big Ni		- 7
 					
-					// {$0}	{  octave = 0 }					//	Middle Octave
 					{$+}	{ 								//	Up an Octave
-								// if(syllables[i-1]!=$+) {
-								// 	octave = 0;
-								// };
 								octave = octave +1;
 							}		
 					{$-}	{ 								//	Down an Octave
-								// if(syllables[i-1]!=$-) {
-								// 	octave = 0;							
-								// };
 								octave = octave - 1;
 							};						
 				//	Playback
 				if(play) {
-					1.postln;
 					if(perc) {
-						2.postln;
-						"rest: ".post; (rest).postln;
-						"rest.not: ".post; (rest.not).postln;
 						if(rest.not) {
-							3.postln;
 							if(synthPlayback) {
 								Synth(\simplePlay, [\bufnum, bufferIndex]);
 							};
 							if(midiPlayback) {
-								4.postln;
 								switch (bufferIndex)
 									{1}	{note = 40}
 									{0}	{note = 36};
@@ -198,23 +182,18 @@ Jati {
 							};
 						};
 					} {
-						5.postln;
 						note = octave*12 + note + srutiBase + sruti;
 						if(synthPlayback) {
-							6.postln;
 							Synth(\beep, [\freq, note.midicps]);
 						};
 						if(midiPlayback) {
-							7.postln;
 							midiOut.noteOn(0, note, 100);
 						};
 					};
 					
 					//	Waiting
-					8.postln;
 					sylDuration.wait;				
 					if(midiPlayback) {
-						9.postln;
 						midiOut.noteOff(0, note, 100);
 					};
 				};

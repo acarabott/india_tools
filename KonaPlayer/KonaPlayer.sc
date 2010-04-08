@@ -80,8 +80,7 @@ KonaPlayer {
 			};
 			syllables = split.last;
 			
-			jati = Jati(syllables.size, gati, karve)
-				.syllables_(syllables)
+			jati = Jati(syllables, gati, karve)
 				.originalOctave_(octave)
 				.octave_(octave);
 				
