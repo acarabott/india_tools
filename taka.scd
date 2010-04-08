@@ -1,9 +1,14 @@
 s.boot;
-x = Jati("SrGmSrGm",3,1);
-x.play;
-x.play;
 
-a.jatis.do { |item, i|
+x = Jati("SrGm",4,1);
+
+x.play;
+x.amp_(1)
+x.play
+x.midiPlay
+x.play
+
+[x].do { |item, i|
 	item.midiPlayback_(true);
 	item.synthPlayback_(false);
 };
@@ -15,6 +20,13 @@ x = Jati("-srgmpdn+s",3,1)
 	.midiPlayback_(true)
 	.synthPlayback_(false);
 
+y = JatiController.new
+y.jatis
+y.add(x)
+y.midiPlayback = false
+y.synthPlayback_(false)
+y
+y.midiPlayback_(true)
 y = x.gati_(5)
 y.play
 
@@ -79,3 +91,12 @@ fork {
 	
 }.fork
 
+z
+
+x = List[].addAll(z);
+x
+
+
+x = ControlSpec.new(0, 127, \lin, 1);
+
+x.map(0.8)

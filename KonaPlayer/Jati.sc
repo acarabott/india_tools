@@ -10,35 +10,39 @@
 
 Jati {
 	classvar <srutiBase;	//	The base sruti note to add/subtract from
+	classvar ampSpec;			//	ControlSpec for amp
 	
-	var <jatis;			//	The number of syllables
-	var <gati;			//	The beat subdivision
-	var <karve;			//	The gati multipler
-	var <syllables; 	//	The syllables themselves
+	var <jatis;				//	The number of syllables
+	var <gati;				//	The beat subdivision
+	var <karve;				//	The gati multipler
+	var <syllables; 		//	The syllables themselves
 	
-	var <sylDuration;	//	Duration of one syllable
-	var <totalDuration;	//	The relative duration of the routine.
+	var <sylDuration;		//	Duration of one syllable
+	var <totalDuration;		//	The relative duration of the routine.
 	
-	var <duration;		//	The duration of playback
+	var <duration;			//	The duration of playback
 	
-	var s;				//	Server.default
-	var buffers;		//	Buffers for playback of audio
-	var bufferIndex;	//	Index of the buffer to use
-	var sounds;			//	The sounds to use for playback
-	var kanjiraSounds;	//	Default Kanjira sounds
-	var <>sruti;		//	Root note 
-	var <>originalOctave;//	The octave of the first syllables
-	var <>octave;		//	Octave shift
+	var s;					//	Server.default
+	var buffers;			//	Buffers for playback of audio
+	var bufferIndex;		//	Index of the buffer to use
+	var sounds;				//	The sounds to use for playback
+	var kanjiraSounds;		//	Default Kanjira sounds
+	var <>sruti;			//	Root note 
+	var <>originalOctave;	//	The octave of the first syllables
+	var <>octave;			//	Octave shift
 	
-	var <>synthPlayback;//	Boolean for synth playback
-	var <midiPlayback;	//	Boolean for MIDI playback
-	var midiOut;		//	MIDIOut instance
+	var <>synthPlayback;	//	Boolean for synth playback
+	var <midiPlayback;		//	Boolean for MIDI playback
+	var midiOut;			//	MIDIOut instance
 	
-	var routine;		//	Routine for playback
-	var beenStopped;	//	Boolean, if the stop method has been called (requiring reset before playback);
+	var routine;			//	Routine for playback
+	var beenStopped;		//	Boolean, if the stop method has been called (requiring reset before playback);
+	
+	var <>amp;				//	Amplitude
 	
 	*initClass {
-		srutiBase = 60;	//	C
+		srutiBase = 60;		//	C
+		ampSpec = ControlSpec.new(0, 127, \lin, 1);
 	}
 	
 	*new { |jatis, gati, karve|		
@@ -78,6 +82,8 @@ Jati {
 		
 		synthPlayback = true;
 		midiPlayback = false;
+		
+		amp = 0.5;
 		
 		this.syllables = aJatis;
 		this.loadBuffers;
@@ -172,30 +178,30 @@ Jati {
 					if(perc) {
 						if(rest.not) {
 							if(synthPlayback) {
-								Synth(\simplePlay, [\bufnum, bufferIndex]);
+								Synth(\simplePlay, [\bufnum, bufferIndex, \amp, amp]);
 							};
 							if(midiPlayback) {
 								switch (bufferIndex)
 									{1}	{note = 40}
 									{0}	{note = 36};
 									
-								midiOut.noteOn(0, note, 100);
+								midiOut.noteOn(0, note, ampSpec.map(amp));
 							};
 						};
 					} {
 						note = octave*12 + note + srutiBase + sruti;
 						if(synthPlayback) {
-							Synth(\beep, [\freq, note.midicps]);
+							Synth(\beep, [\freq, note.midicps, \amp, amp]);
 						};
 						if(midiPlayback) {
-							midiOut.noteOn(0, note, 100);
+							midiOut.noteOn(0, note, ampSpec.map(amp));
 						};
 					};
 					
 					//	Waiting
 					sylDuration.wait;				
 					if(midiPlayback) {
-						midiOut.noteOff(0, note, 100);
+						midiOut.noteOff(0, note, ampSpec.map(amp));
 					};
 				};
 			};
@@ -230,4 +236,50 @@ Jati {
 	karve_ { |aKarve| 
 		^Jati(this.syllables, this.gati, aKarve)
 	}
+}
+
+JatiController {
+	var <>jatis;			//	The collection of jatis to control
+	var <midiPlayback;		//	Boolean 
+	var <synthPlayback;		//	Boolean
+	var <amp;				//	Amplitude 
+	
+	*new { |aCollection|
+		^super.new.init(aCollection);
+	}
+
+	init { |aCollection|		
+		jatis = List[].addAll(aCollection);
+	}
+	
+	add { |aJati|
+		jatis.add(aJati)
+	}
+	
+	addAll { |aCollection| 
+		jatis.addAll(aCollection);
+	}
+	
+	clear {
+		jatis.clear;
+	}
+	
+	midiPlayback_ { |aBoolean| 
+		jatis.do { |item, i| 
+			item.midiPlayback_(aBoolean);
+		}
+	}
+
+	synthPlayback_ { |aBoolean| 
+		jatis.do { |item, i| 
+			item.synthPlayback_(aBoolean);
+		}
+	}
+	
+	amp_ { |aAmp|
+		jatis.do { |item, i| 
+			item.amp_(aAmp);
+		};
+	}
+	
 }
