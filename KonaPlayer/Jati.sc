@@ -1,5 +1,4 @@
 /*
-
 	TODO Input "SrGm or Xxx" instead of number of jatis
 	TODO Provide interface for selecting MIDI output possibilities
 	TODO Better clapping sound
@@ -129,19 +128,16 @@ Jati {
 				
 				"item: ".post; (item).postln;
 				
-				// If the syllable is a rest
-				if([$o, $,,].includes(item.toLower)) {
-					rest = true;
+				//	If the syllable is a percussive hit (which includes rests)
+				if([$x, $o, $,].includes(item.toLower)) {
 					perc = true;
+					if(item == $o || (item == $,)) {
+						rest = true;
+					};
 				} {
 					rest = false;
 				};
-				//	If the syllable is a percussive hit
-				if([$x, $o].includes(item.toLower)) {
-					perc = true;
-				} {
-					perc = false;
-				};
+								
 				//	If the syllable is an octave indicator
 				if([$+,$-,$0].includes(item)) {
 					play = false;
@@ -182,12 +178,18 @@ Jati {
 							};						
 				//	Playback
 				if(play) {
+					1.postln;
 					if(perc) {
+						2.postln;
+						"rest: ".post; (rest).postln;
+						"rest.not: ".post; (rest.not).postln;
 						if(rest.not) {
+							3.postln;
 							if(synthPlayback) {
 								Synth(\simplePlay, [\bufnum, bufferIndex]);
 							};
 							if(midiPlayback) {
+								4.postln;
 								switch (bufferIndex)
 									{1}	{note = 40}
 									{0}	{note = 36};
@@ -196,18 +198,23 @@ Jati {
 							};
 						};
 					} {
+						5.postln;
 						note = octave*12 + note + srutiBase + sruti;
 						if(synthPlayback) {
+							6.postln;
 							Synth(\beep, [\freq, note.midicps]);
 						};
 						if(midiPlayback) {
+							7.postln;
 							midiOut.noteOn(0, note, 100);
 						};
 					};
 					
 					//	Waiting
+					8.postln;
 					sylDuration.wait;				
 					if(midiPlayback) {
+						9.postln;
 						midiOut.noteOff(0, note, 100);
 					};
 				};

@@ -5,9 +5,7 @@
 	TODO Enter key creates new line, click button to set?	
 	TODO Setting playback method iterates over all jatis and changes
 	
-	FIXME Stopping needs to do midiOffs 
-	FIXME Comma breaks things
-	
+	FIXME Stopping needs to do midiOffs 	
 */
 
 KonaPlayer {
@@ -60,7 +58,11 @@ KonaPlayer {
 		var octave = 0;
 		
 		jatis.clear;
-				
+		
+		//convert lower case s and p to upper case
+		pattern = pattern.collect({ |item, i| if(item==$s || (item==$p)) {item.toUpper} {item} });
+		pGUI.patternField.string_(pattern);
+			
 		//Split up the string into the various jatis, removing trailing spaces
 		// pattern.split($ ).do { |item, i|
 		pattern.split($ ).reject({ |item, i| item.size == 0}).do { |item, i| 
