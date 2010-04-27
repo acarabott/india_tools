@@ -9,10 +9,10 @@ TalaView {
 	classvar <labelWidth;
 	classvar <lineExtent;
 	classvar <volumeExtent;
+	classvar <bounds;
 	                     
 	//values
 	var <position;
-	var <bounds;
 	var oneCharBounds;
 	var ctfFont;
 	var regularFont;
@@ -44,6 +44,7 @@ TalaView {
         margin = 5@5;
 		labelWidth = sideExtent.x/2 - (margin.x*2);		
 		lineExtent = sideExtent.x-(margin.x*2)@20;
+		bounds = Rect(0,0,740,310);
 	}
 	
 	*new {|tala, parent, position|
@@ -64,7 +65,7 @@ TalaView {
 		parent = aParent;
 		position = aPosition ? (0@0);
 		this.init(aTala);
-		bounds = view.bounds;
+		// bounds = view.bounds;
 	}
 	
 	init {|aTala|
@@ -75,7 +76,7 @@ TalaView {
 		labelStrCol		= Color.white;
 		leftNumLines	= 0;
 		
-		tala = aTala;
+		tala = aTala ?? Tala.new(60,4,false);
 		view = CompositeView(parent, Rect(position.x, position.y, extent.x, extent.y));
 		view.addFlowLayout(0@0,0@0);
 		
@@ -87,11 +88,11 @@ TalaView {
 	
 	createWindow {
 		var sBounds = Window.screenBounds;
-		bounds	= Rect(	sBounds.width/2 - (extent.x), 
-							sBounds.height/2 - (extent.y/2), 
-							extent.x, 
-							extent.y
-		);		
+		// bounds	= Rect(	sBounds.width/2 - (extent.x), 
+		// 					sBounds.height/2 - (extent.y/2), 
+		// 					extent.x, 
+		// 					extent.y
+		// );		
 		parent = Window("Carnatic Tala Meter", bounds, true).front;
 	}
 		
