@@ -49,7 +49,7 @@ KonaPlayerView {
 	}
 	
 	init {|aPlayer|
-		player = aPlayer;
+		player = aPlayer ?? KonaPlayer.new;
 		this.createGUI;				
 	}
 	

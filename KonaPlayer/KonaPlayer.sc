@@ -18,19 +18,21 @@ KonaPlayer {
 	var <jatisRoutine;
 	var <>pView;
 	
-	*new { 
-		^super.new.init;
+	*new {|gui=true|
+		^super.new.init(gui);
 	}
 
-	init { 
+	init {|gui|
 		tala 			= Tala.new(60, 4, false);
 		jatis			= List[];
 		pattern			= "Xxxx";
 		
 		jatiController = JatiController.new;
-				
-		pView 		= KonaPlayerView.new(this);
-		tala.tView	= pView.tView;
+		
+		if(gui) {
+			pView 		= KonaPlayerView.new(this);
+			tala.tView	= pView.tView;
+		};	
 		
 		this.pattern_("Xxxx");
 		
@@ -53,7 +55,7 @@ KonaPlayer {
 	}
 	
 	pattern_ {|newPattern|
-		tala.tView.playStopButton.valueAction_(0);
+		tala.tView !? {tala.tView.playStopButton.valueAction_(0)};
 		pattern = newPattern;
 		
 		this.createJatis;
@@ -66,7 +68,7 @@ KonaPlayer {
 		
 		//convert lower case s and p to upper case
 		pattern = pattern.collect({ |item, i| if(item==$s || (item==$p)) {item.toUpper} {item} });
-		pView.patternField.string_(pattern);
+		pView !? {pView.patternField.string_(pattern)};
 			
 		//Split up the string into the various jatis, removing trailing spaces
 		// pattern.split($ ).do { |item, i|

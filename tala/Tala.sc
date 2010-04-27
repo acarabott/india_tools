@@ -237,7 +237,7 @@ Tala {
 	checkStopTala {|newTala|
 		if(newTala!=parts) {
 			this.stop;
-			tView.playStopButton.valueAction_(0);
+			tView !? {tView.playStopButton.valueAction_(0)};
 		};
 	}
 	
