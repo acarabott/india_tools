@@ -1,102 +1,110 @@
-s.boot;
+w = Window("jati", Rect(40,40,400,400)).front;
+~view = CompositeView(w, 400@400);
+~view.addFlowLayout;
+~controlsView = CompositeView(~view, 250@304);
+// ~controlsView.addFlowLayout;
+// ~controlsView.decorator.margin_(0@0).gap_(0@0);
+~controlsView.background_(Color(0.7,0.7,0.7));
+~keyboardView = CompositeView(~controlsView, Rect(4,4,193,102));
+// ~keyboardView.addFlowLayout(10@0,0@10);
+~keyboardView.background_(Color(0.9,0.9,0.9));
+// ~keyboardView.decorator.margin_(0@0);
+~keyboardLabel = StaticText(~keyboardView, Rect(1,1,190,20)).string_("Sruti").align_(\center).background_(Color.grey).stringColor_(Color.white);
+// ~keyboardView.decorator.nextLine;
+// ~keyboardLabel.background_(Color.green);
+~srutiKeyboard = MIDIKeyboard(~keyboardView, Rect(10,31,150,75), 1, 60);
+~octave = 0;
+~note = 60;
+~srutiFunc = {(~note + (~octave*12)).postln};
 
-x = Jati("SrGm",4,1);
+~srutiKeyboard.keyDownAction_({|note| 
+	if(~note!=nil) {
+		~srutiKeyboard.removeColor(~note);
+	};
+	~note = note;
+	~srutiFunc.();
+	~srutiKeyboard.setColor(note, Color.grey);	
+	// ~jatiSetSrutiFunction
+});
+~keyboardButtonView = CompositeView(~keyboardView, Rect(158,22,32,75));
+// ~keyboardButtonView.background_(Color.red);
+~octaveUpButton = Button(~keyboardButtonView, Rect(6,6,20,20))
+	.states_([
+		["+", Color.white, Color.grey]
+	])
+	.action_({|but|
+		~octave = ~octave + 1;
+		~srutiFunc.();
+	});
+~octaveDownButton = Button(~keyboardButtonView, Rect(6,49,20,20))
+	.states_([
+		["-", Color.white, Color.grey]
+	])
+	.action_({|but|
+		~octave = ~octave - 1;
+		~srutiFunc.();
+	});
 
-x.play;
-x.amp_(1)
-x.play
-x.midiPlay
-x.play
-
-[x].do { |item, i|
-	item.midiPlayback_(true);
-	item.synthPlayback_(false);
+MIDIClient.init;
+~midiDeviceArray = List[];
+MIDIClient.destinations.do { |item, i|	
+	~midiDeviceArray.add(item.device + item.name);
 };
 
-x.karve = 0.5
+// ~controlsView.decorator.nextLine;
+~playbackView = CompositeView(~controlsView, Rect(4, 150, 193, 115));
+~playbackView.addFlowLayout(1@1);
+~playbackView.background_(Color(0.9,0.9,0.9));
+~playbackLabel = StaticText(~playbackView, 190@20).string_("Playback Controls").align_(\center).background_(Color.grey).stringColor_(Color.white);
 
-s.waitForBoot{a = KonaPlayer.new};
-x = Jati("-srgmpdn+s",3,1)
-	.midiPlayback_(true)
-	.synthPlayback_(false);
+~synthOnOffButton = Button(~playbackView, 93@40)
+	.states_([
+		["Turn synth off", Color.white, Color.black],
+		["Turn synth on", Color.black, Color.white]
+	])
+	.action_({|butt|
+		butt.value.postln;	
+	});
 
-y = JatiController.new
-y.jatis
-y.add(x)
-y.midiPlayback = false
-y.synthPlayback_(false)
-y
-y.midiPlayback_(true)
-y = x.gati_(5)
-y.play
+~midiOnOffButton = Button(~playbackView, 93@40)
+	.states_([
+		["Turn MIDI on", Color.black, Color.white],
+		["Turn MIDI off", Color.white, Color.black]
+	])
+	.action_({|butt|
+		butt.value.postln;	
+	});
+~midiPopLabel = StaticText(~playbackView, 190@20).string_("MIDI Device: ").align_(\center).background_(Color.grey).stringColor_(Color.white);
+~midiPopUp = PopUpMenu(~playbackView, 190@20);
+// ~midiPopUp.background_(Color.white);
+~midiPopUp.items = ~midiDeviceArray.asArray;
+~midiPopUp.action = {|menu| [menu.value, menu.item].postln /*MIDIOut.newByName("IAC Driver", "Bus 1");*/};
 
-Synth(\beep, [\freq, 60.midicps]);
-
-SynthDef(\beep) { |out=0, freq=440, amp=0.1, pan=0|
-	var saw = LFSaw.ar(freq, 0, amp/3);
-	var sin = SinOsc.ar(freq, 0, amp);
-	var env = EnvGen.ar(Env.new([0,1,0,],[0.01,0.2]), doneAction:2);
-	var sig = Mix.new([saw, sin]);
-	
-	Out.ar(out,
-		Pan2.ar(sig*env, pan);
-	);
-}.load(s);
-
-
-
-"S".count({ |itemo i| item == $S})
-
-Jati(1,4,1)
-
-
-("xx" ! 1)[0]=$X).reduce('++');
-
-(("x" ! 1)[0]=$X).reduce('++')
-x = "x".reduce('++') ?? "X"
-
-SrGmPdN+S
-
-Synth(\beep, [\freq, 440, \amp, 0.2, \pan, 0, \out, 0]);
-s.boot;
-
-SoPm Pooo dooo +Sooo Sooo rooo rooo Sooo-dooo Pooo mooo Pooo rooo mooo Pooo dooo mooo Pooo dooo Pooo mooo Gooo rooo Sooo
-
-SoPm Pooo dooo+SoooSooorooo rooo Sooo-dooo Pooo mooo Pooo rooo mooo Pooo dooo mooo Pooo dooo Pooo mooo Gooo rooo Sooo
-
-f = {|note, time, cut|
-	fork {
-		x.set(\amp, 0.2, \freq, note.midicps, \lagTime, time);
-		(time*0.9).wait;
-		if(cut) {
-			x.set(\amp, 0);
-		};
-		(time*0.1).wait;		
-	}
-}
-
-Scale.major.degrees
-fork {
-	10.do { |i|
-		f.(60 + Scale.major.degrees.choose, 0.5, [false, true].choose);
-		0.5.wait;	
-	};	
-}
-
-{
-	f.(67, 0.5);
-	f.(72, 2);
-	f.(73, 0.25)
-	f.(72, 0.25)
-	
-}.fork
-
-z
-
-x = List[].addAll(z);
-x
+~volumeView = CompositeView(~controlsView, Rect(200,4,47,300));
+// ~volumeView.background_(Color.red);
+~volumeSlider = EZSlider(
+	~volumeView, 
+	Rect(8,0,30,265),
+	" Vol", 
+	ControlSpec(-inf, 12, 'db', 0.01, -inf, " dB"),
+	{|ez| ez.value.postln;},
+	initVal:1,
+	unitWidth:30, 
+	numberWidth:60,
+	layout:\vert
+).setColors(Color.grey,Color.white, Color.grey(0.7),Color.grey, 
+	Color.white, Color.white,nil,nil, Color.grey(0.7))
+.font_(Font("Helvetica",10));
 
 
-x = ControlSpec.new(0, 127, \lin, 1);
+Button(~volumeView, Rect(8,270,30,30))
+	.states_([
+		["M", Color.white, Color.blue(1.5)],
+		["M", Color.white, Color.blue(0.8)]
+	])
+	.action_({|button|
+		"mute!".postln;
+	});
 
-x.map(0.8)
+w = Window("hi", Rect(0,0,800,800)).front
+x = KonaPlayerView.new(w)

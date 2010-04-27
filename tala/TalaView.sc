@@ -1,4 +1,4 @@
-TalaGUI {
+TalaView {
 	//Could refactor some of these, check if they are actually needed throughout the class or just by one widget
 	//	In which case they can be method variables.
 	
@@ -20,7 +20,7 @@ TalaGUI {
 	var labelStrCol;
 	var leftNumLines;
 
-	//GUI elements
+	//View elements
 	var <win;
 	var <parent;
 	var <view;
@@ -209,8 +209,8 @@ TalaGUI {
 		// playStopButton = Button(leftSide, 340@ extent.y - (margin.x*2) - (leftNumLines*(lineExtent.y+leftDec.gap.y))- (margin.y*2))
 		playStopButton = Button(leftSide, 340@buttonHeight)
 			.states_([
-				["Start Tala", Color.black, Color.green],
-				["Stop Tala", Color.white, Color.red]
+				["Start", Color.black, Color.green],
+				["Stop", Color.white, Color.red]
 			])
 			.action_({|button|
 				playStopRout.();

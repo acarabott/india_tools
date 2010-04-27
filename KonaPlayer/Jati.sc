@@ -1,11 +1,11 @@
 /*
 	TODO GUI for JatiController
 	TODO Migrate Jatiroutine etc to JatiController?
+	TODO Move midi stuff to jaticontroller
 
 	TODO Better clapping sound
 	TODO Better synth sound
 	TODO Balance sounds
-	FIXME Tisrsa MIDI note doesn't play on first S SrGm SrGm SrGm SrGm        SrGm SrGm SrGm PmGrS ??? 
 */
 
 Jati {
@@ -236,50 +236,4 @@ Jati {
 	karve_ { |aKarve| 
 		^Jati(this.syllables, this.gati, aKarve)
 	}
-}
-
-JatiController {
-	var <>jatis;			//	The collection of jatis to control
-	var <midiPlayback;		//	Boolean 
-	var <synthPlayback;		//	Boolean
-	var <amp;				//	Amplitude 
-	
-	*new { |aCollection|
-		^super.new.init(aCollection);
-	}
-
-	init { |aCollection|		
-		jatis = List[].addAll(aCollection);
-	}
-	
-	add { |aJati|
-		jatis.add(aJati)
-	}
-	
-	addAll { |aCollection| 
-		jatis.addAll(aCollection);
-	}
-	
-	clear {
-		jatis.clear;
-	}
-	
-	midiPlayback_ { |aBoolean| 
-		jatis.do { |item, i| 
-			item.midiPlayback_(aBoolean);
-		}
-	}
-
-	synthPlayback_ { |aBoolean| 
-		jatis.do { |item, i| 
-			item.synthPlayback_(aBoolean);
-		}
-	}
-	
-	amp_ { |aAmp|
-		jatis.do { |item, i| 
-			item.amp_(aAmp);
-		};
-	}
-	
 }

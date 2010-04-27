@@ -67,7 +67,7 @@ Tala {
 	var <>stopFunc;			//	Function to call when playback is stopped
 	// var <>playFunc;		//	Function to be called when starting playback;
 		
-	var <>tGUI;					//	GUI :)
+	var <>tView;					//	View :)
 	
 	*initClass {
 		adi 		= ["I4", "O", "O"];
@@ -81,7 +81,7 @@ Tala {
 		^super.new.init(tempo, gati, gui);
 	}
 
-	init {|aTempo, aGati, aGUI|
+	init {|aTempo, aGati, aView|
 		amp 		= 1;
 		mute		= 1;
 		
@@ -107,8 +107,8 @@ Tala {
 		s = Server.default;
 		this.loadSynthDefs;		
 								
-		if(aGUI) {
-			tGUI = TalaGUI.new(this);
+		if(aView) {
+			tView = TalaView.new(this);
 		};
 		
 	}
@@ -237,7 +237,7 @@ Tala {
 	checkStopTala {|newTala|
 		if(newTala!=parts) {
 			this.stop;
-			tGUI.playStopButton.valueAction_(0);
+			tView.playStopButton.valueAction_(0);
 		};
 	}
 	
@@ -302,24 +302,24 @@ Tala {
 	
 	//	Gestures
 	clap {
-		tGUI !? {tGUI.clap};
+		tView !? {tView.clap};
 		this.genericClap(0.8, 0.9, 2000, 2500, 0.9);
 		this.genericClap(0.7, 0.8, 700, 1200, 0.9);
 		
 	}
 			
 	clapB {
-		tGUI !? {tGUI.wave};
+		tView !? {tView.wave};
 		this.genericClap(0.1, 0.2, 400, 600, 0.9);
 	}
 
 	finger {|number|
 		var a =	case
-				{[2,7].includes(number)}	{tGUI !? {tGUI.lf(number)}}
-				{[3,8].includes(number)}	{tGUI !? {tGUI.rf(number)}}
-				{[4,9].includes(number)}	{tGUI !? {tGUI.mf(number)}}
-				{number==5}					{tGUI !? {tGUI.pf(number)}}
-				{number==6}					{tGUI !? {tGUI.tf(number)}};
+				{[2,7].includes(number)}	{tView !? {tView.lf(number)}}
+				{[3,8].includes(number)}	{tView !? {tView.rf(number)}}
+				{[4,9].includes(number)}	{tView !? {tView.mf(number)}}
+				{number==5}					{tView !? {tView.pf(number)}}
+				{number==6}					{tView !? {tView.tf(number)}};
 		
 		this.genericClap(0.2, 0.3, 6000, 7000, 0.9);
 		

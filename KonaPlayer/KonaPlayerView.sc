@@ -1,4 +1,4 @@
-KonaPlayerGUI {
+KonaPlayerView {
 	
 	classvar <pWidth;
 	classvar <pHeight;
@@ -19,7 +19,7 @@ KonaPlayerGUI {
 	var <patternField;
 	var <ampSlider;
 	var <talaLabel;
-	var <tGUI;
+	var <tView;
 	
 	*initClass {
 		pWidth = 700;
@@ -118,6 +118,6 @@ KonaPlayerGUI {
 			.align_(\center)
 			.font_(Font("Lucida Grande",13));
 		
-		tGUI = TalaGUI.new(player.tala, view, 0@pHeight+10);	
+		tView = TalaView.new(player.tala, view, 0@pHeight+10);	
 	}
 }

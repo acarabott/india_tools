@@ -1,8 +1,10 @@
 /*
 	TODO Parsing groups of xs to make takadimi takita etc. Or just allow 'Takadimi' etc.
 	TODO Extend pattern box when end is reached
+
 	TODO Draw graph showing pattern against Tala
 	TODO Enter key creates new line, click button to set?	
+
 	TODO Setting playback method iterates over all jatis and changes
 	
 	FIXME Stopping needs to do midiOffs 	
@@ -12,8 +14,9 @@ KonaPlayer {
 	var <pattern;
 	var <tala;
 	var <jatis;
+	var <jatiController;
 	var <jatisRoutine;
-	var <>pGUI;
+	var <>pView;
 	
 	*new { 
 		^super.new.init;
@@ -23,9 +26,11 @@ KonaPlayer {
 		tala 			= Tala.new(60, 4, false);
 		jatis			= List[];
 		pattern			= "Xxxx";
+		
+		jatiController = JatiController.new;
 				
-		pGUI 		= KonaPlayerGUI.new(this);
-		tala.tGUI	= pGUI.tGUI;
+		pView 		= KonaPlayerView.new(this);
+		tala.tView	= pView.tView;
 		
 		this.pattern_("Xxxx");
 		
@@ -48,7 +53,7 @@ KonaPlayer {
 	}
 	
 	pattern_ {|newPattern|
-		tala.tGUI.playStopButton.valueAction_(0);
+		tala.tView.playStopButton.valueAction_(0);
 		pattern = newPattern;
 		
 		this.createJatis;
@@ -61,7 +66,7 @@ KonaPlayer {
 		
 		//convert lower case s and p to upper case
 		pattern = pattern.collect({ |item, i| if(item==$s || (item==$p)) {item.toUpper} {item} });
-		pGUI.patternField.string_(pattern);
+		pView.patternField.string_(pattern);
 			
 		//Split up the string into the various jatis, removing trailing spaces
 		// pattern.split($ ).do { |item, i|
