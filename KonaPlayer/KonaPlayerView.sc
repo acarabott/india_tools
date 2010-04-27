@@ -50,7 +50,7 @@ KonaPlayerView {
 	
 	init {|aPlayer|
 		player = aPlayer;
-		this.createGui;				
+		this.createGUI;				
 	}
 	
 	createWindow {
@@ -67,7 +67,7 @@ KonaPlayerView {
 		
 	}
 	
-	createGui {
+	createGUI {
 		view = SCCompositeView(parent, Rect(position.x, position.y, extent.x, extent.y));
 		view.decorator = FlowLayout(view.bounds, 0@0, 0@0);
 		patternView = CompositeView(view, Rect(0,0, pWidth, pHeight));
