@@ -107,4 +107,7 @@ Button(~volumeView, Rect(8,270,30,30))
 	});
 
 w = Window("hi", Rect(0,0,800,800)).front
-x = KonaPlayerView.new(w)
+x = KonaPlayerView.new(w, 0@0)
+
+a = TalaView.new(nil,w)
+b = KonaPlayerView.new(w)
