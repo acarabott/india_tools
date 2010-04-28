@@ -11,6 +11,9 @@ JatiController {
 	var <midiPlayback;		//	Boolean 
 	var <synthPlayback;		//	Boolean
 	var <amp;				//	Amplitude 
+	var <>mute;
+	var <sruti;
+	var <octave;
 	
 	*new { |aCollection|
 		^super.new.init(aCollection);
@@ -18,6 +21,8 @@ JatiController {
 
 	init { |aCollection|		
 		jatis = List[].addAll(aCollection);
+		amp = 0.5;
+		mute = 1;
 	}
 	
 	add { |aJati|
@@ -45,24 +50,9 @@ JatiController {
 	}
 	
 	amp_ { |aAmp|
+		amp = aAmp;
 		jatis.do { |item, i| 
-			item.amp_(aAmp);
+			item.amp_(aAmp*mute);
 		};
-	}
-	
-}
-
-JatiControllerView {
-	var <view;				//	CompositeView for all elements
-	
-	var <>srutiKeyboard;	//	MIDIKeyboard instance (ixiQuarks) for setting the Sruti
-	
-	*new { |parent, bounds|
-		^super.new.init(parent, bounds);
-	}
-
-	init { |parent, bounds|
-		view = CompositeView(parent, bounds);
-		srutiKeyboard = MIDIKeyboard(view, Rect(150,75), 1, 60);
 	}
 }
