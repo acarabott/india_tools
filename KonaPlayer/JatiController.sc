@@ -13,16 +13,24 @@ JatiController {
 	var <amp;				//	Amplitude 
 	var <>mute;
 	var <sruti;
-	var <octave;
+	var <>view;
+	var <midiOut;
+	var <>midiDeviceString;
+	var <>midiNameString;
 	
-	*new { |aCollection|
-		^super.new.init(aCollection);
+	*new { |aCollection, aGuiBool=true|
+		^super.new.init(aCollection, aGuiBool);
 	}
 
-	init { |aCollection|		
+	init { |aCollection, aGuiBool|		
+		if(aGuiBool) {
+			view = JatiControllerView.new;
+			view.controller_(this);
+		};
 		jatis = List[].addAll(aCollection);
 		amp = 0.5;
 		mute = 1;
+		
 	}
 	
 	add { |aJati|
@@ -38,21 +46,56 @@ JatiController {
 	}
 	
 	midiPlayback_ { |aBoolean| 
+		midiPlayback = aBoolean;
+		if(midiPlayback && (midiOut==nil)) {
+			this.initMIDI;
+		};
+		
 		jatis.do { |item, i| 
-			item.midiPlayback_(aBoolean);
+			item.midiPlayback_(midiPlayback);
 		}
 	}
-
+	
 	synthPlayback_ { |aBoolean| 
+		synthPlayback = aBoolean;
+		
 		jatis.do { |item, i| 
-			item.synthPlayback_(aBoolean);
+			item.synthPlayback_(synthPlayback);
 		}
 	}
 	
 	amp_ { |aAmp|
 		amp = aAmp;
 		jatis.do { |item, i| 
-			item.amp_(aAmp*mute);
+			item.amp_(amp*mute);
 		};
 	}
+	
+	sruti_ {|aSruti|
+		sruti = aSruti;
+		jatis.do { |item, i|
+			item.sruti_(sruti);
+		};
+	}
+	
+	initMIDI {
+		var newDeviceArray = List[];
+		
+		MIDIClient.init;
+		if(view!=nil) {			
+			MIDIClient.destinations.do { |item, i|	
+				newDeviceArray.add([item.device, item.name]);
+			};
+			view.midiDeviceArray = newDeviceArray;
+			view.refreshMidiDevices;
+		};	
+	}
+	
+	setMidiOut{|device, name|
+		midiDeviceString = device;
+		midiNameString = name;
+		midiOut = MIDIOut.newByName(midiDeviceString, midiNameString);
+		midiOut.latency = 0;
+	}
+	
 }

@@ -1,10 +1,7 @@
 # KonaPlayer To Do
 
 ## Playback controls
-*	Make Sruti keyboard work
-*	Make octave buttons work
 *	Make driver select work
-*	Have controller and view create eachother
 
 ## Document GUI
 *	File saving

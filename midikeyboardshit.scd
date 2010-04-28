@@ -163,3 +163,7 @@ i = 0;
 ~pix
 pix = [ 0, 0.1, 0.17, 0.27, 0.33, 0.5, 0.6, 0.67, 0.77, 0.83, 0.93, 1 ]; // as above but normalized
 
+
+w = Window("MIDIKeyboard", Rect(100,100,400,200)).front;
+c = CompositeView(w, Rect(10,10, 380, 180)).background_(Color.red);
+m = MIDIKeyboard(c, Rect(20,20, 300, 120), 1);

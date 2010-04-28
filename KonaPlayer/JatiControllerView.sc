@@ -7,6 +7,8 @@ JatiControllerView {
 	var <>origin;
 	var <parent;
 	var window;
+	var <>midiDeviceArray;
+	var <midiPopUp;
 	
 	*new { |parent, origin|
 		if(parent==nil) {
@@ -27,7 +29,8 @@ JatiControllerView {
 		parent = aParent;
 		view = CompositeView(parent, Rect(origin.x, origin.y, 245, 355))
 			.background_(Color(0.7,0.7,0.7));
-
+		
+		midiDeviceArray = List[];
 		// octave = 0;
 		// note = 60;
 			
@@ -58,13 +61,13 @@ JatiControllerView {
 		keyboardView.background_(Color(0.9,0.9,0.9));
 		keyboardLabel = StaticText(keyboardView, Rect(1,1,190,20)).string_("Sruti").align_(\center).background_(Color.grey).stringColor_(Color.white);
 		srutiKeyboard = MIDIKeyboard(keyboardView, Rect(2,24,150,75), 1, 60)
-			.keyDownAction_({|note| 
+			.keyDownAction_({|key| 
 				if(note!=nil) {
 					srutiKeyboard.removeColor(note);
 				};
-				note = note;
-				this.setSruti('NEED A FUCKING VALUE', 'AND ANOTHER');
-				srutiKeyboard.setColor(note, Color.grey);	
+				note = key;
+				controller.sruti_(note);
+				srutiKeyboard.setColor(key, Color.grey);	
 			});
 
 		keyboardButtonView = CompositeView(keyboardView, Rect(158,22,32,75));
@@ -74,39 +77,24 @@ JatiControllerView {
 				["+", Color.white, Color.grey]
 			])
 			.action_({|but|
-				octave = octave + 1;
-				this.setSruti('need fucking values', 'ore some shites')
+				controller.sruti_(controller.sruti+12);
 			});
 		octaveDownButton = Button(keyboardButtonView, Rect(6,49,20,20))
 			.states_([
 				["-", Color.white, Color.grey]
 			])
 			.action_({|but|
-				octave = octave - 1;
-				this.setSruti('need fucking values', 'ore some shites')
+				controller.sruti_(controller.sruti-12);
 			});
 		
 	}
 	
-	setSruti {|note, octave|
-		(note + (octave*12)).postln;
-	}
-	
 	createPlaybackControls {
-		var midiDeviceArray;
 		var playbackView;
 		var playbackLabel;
 		var synthOnOffButton;
 		var midiOnOffButton;
 		var midiPopLabel;
-		var midiPopUp;
-
-		MIDIClient.init;
-		
-		midiDeviceArray = List[];
-		MIDIClient.destinations.do { |item, i|	
-			midiDeviceArray.add(item.device + item.name);
-		};
 
 		playbackView = CompositeView(view, Rect(5, 205, 193, 115));
 		playbackView.addFlowLayout(1@1);
@@ -145,9 +133,20 @@ JatiControllerView {
 			
 		midiPopLabel = StaticText(playbackView, 190@20).string_("MIDI Device: ").align_(\center).background_(Color.grey).stringColor_(Color.white);
 		midiPopUp = PopUpMenu(playbackView, 190@20);
-		midiPopUp.items = midiDeviceArray.asArray;
-		midiPopUp.action = {|menu| [menu.value, menu.item].postln /*MIDIOut.newByName("IAC Driver", "Bus 1");*/};
+		this.refreshMidiDevices;
+		midiPopUp.action = {|menu|
+			var device = midiDeviceArray[menu.value];
+			controller.setMidiOut(device[0], device[1]);
+			"ding dong".postln;
+			// [menu.value, menu.item].postln /*MIDIOut.newByName("IAC Driver", "Bus 1");*/
+		};
 
+	}
+	
+	refreshMidiDevices {
+		midiPopUp.items = midiDeviceArray.collect { |item, i| item.reduce('+')};
+		midiPopUp.value_(-1);
+		midiPopUp.valueAction_(0);
 	}
 	
 	createVolumeControls {

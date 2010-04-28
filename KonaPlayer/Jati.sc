@@ -9,7 +9,7 @@
 */
 
 Jati {
-	classvar <srutiBase;	//	The base sruti note to add/subtract from
+	// classvar <srutiBase;	//	The base sruti note to add/subtract from
 	classvar ampSpec;			//	ControlSpec for amp
 	
 	var <jatis;				//	The number of syllables
@@ -41,7 +41,7 @@ Jati {
 	var <>amp;				//	Amplitude
 	
 	*initClass {
-		srutiBase = 60;		//	C
+		// srutiBase = 60;		//	C
 		ampSpec = ControlSpec.new(0, 127, \lin, 1);
 	}
 	
@@ -76,7 +76,7 @@ Jati {
 		kanjiraSounds = ["sounds/KJDIM.wav", "sounds/KJBELL.wav"];
 		sounds = kanjiraSounds;
 		
-		sruti = 3;
+		sruti = 60;
 		octave = 0;
 		originalOctave = octave;
 		
@@ -189,7 +189,7 @@ Jati {
 							};
 						};
 					} {
-						note = octave*12 + note + srutiBase + sruti;
+						note = octave*12 + note + sruti;
 						if(synthPlayback) {
 							Synth(\beep, [\freq, note.midicps, \amp, amp]);
 						};
