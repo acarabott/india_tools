@@ -40,6 +40,9 @@ Jati {
 	
 	var <>amp;				//	Amplitude
 	
+	var <>hasController;	//	Boolean, if the instance has been added to a JatiController
+	var <>controller;		//	JatiController instance
+	
 	*initClass {
 		// srutiBase = 60;		//	C
 		ampSpec = ControlSpec.new(0, 127, \lin, 1);
@@ -71,6 +74,7 @@ Jati {
 		karve = aKarve;
 		sylDuration = ((1/gati)*karve);
 		duration = jatis * sylDuration;
+		hasController = false;
 		
 		s = Server.default;
 		kanjiraSounds = ["sounds/KJDIM.wav", "sounds/KJBELL.wav"];
@@ -194,14 +198,14 @@ Jati {
 							Synth(\beep, [\freq, note.midicps, \amp, amp]);
 						};
 						if(midiPlayback) {
-							midiOut.noteOn(0, note, ampSpec.map(amp));
+							midiOut.noteOn(0, note, ampSpec.map(amp/2));
 						};
 					};
 					
 					//	Waiting
 					sylDuration.wait;				
 					if(midiPlayback) {
-						midiOut.noteOff(0, note, ampSpec.map(amp));
+						midiOut.noteOff(0, note, ampSpec.map(amp/2));
 					};
 				};
 			};
@@ -222,10 +226,12 @@ Jati {
 	
 	midiPlayback_ {|boolean|
 		midiPlayback = boolean;
-		if(midiPlayback) {
+		if(midiPlayback && hasController.not) {
 			MIDIClient.init;
 			midiOut = MIDIOut.newByName("IAC Driver", "Bus 1");
 			midiOut.latency = 0;
+		} {
+			midiOut = controller.midiOut;
 		};
 	}
 	

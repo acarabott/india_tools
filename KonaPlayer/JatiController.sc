@@ -11,7 +11,7 @@ JatiController {
 	var <midiPlayback;		//	Boolean 
 	var <synthPlayback;		//	Boolean
 	var <amp;				//	Amplitude 
-	var <>mute;
+	var <mute;
 	var <sruti;
 	var <>view;
 	var <midiOut;
@@ -34,11 +34,13 @@ JatiController {
 	}
 	
 	add { |aJati|
-		jatis.add(aJati)
+		jatis.add(aJati);
+		jatis.last.controller_(this);
 	}
 	
 	addAll { |aCollection| 
 		jatis.addAll(aCollection);
+		this.setController;
 	}
 	
 	clear {
@@ -71,6 +73,11 @@ JatiController {
 		};
 	}
 	
+	mute_{|aMute|
+		mute = aMute;
+		this.amp_(amp);
+	}
+	
 	sruti_ {|aSruti|
 		sruti = aSruti;
 		jatis.do { |item, i|
@@ -96,6 +103,12 @@ JatiController {
 		midiNameString = name;
 		midiOut = MIDIOut.newByName(midiDeviceString, midiNameString);
 		midiOut.latency = 0;
+	}
+	
+	setController {
+		jatis.do { |item, i|
+			item.controller = this;
+		};
 	}
 	
 }

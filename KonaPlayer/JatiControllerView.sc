@@ -14,7 +14,6 @@ JatiControllerView {
 		if(parent==nil) {
 			^super.new.initWindow(origin);
 		} {
-			origin.postln;
 			^super.new.init(parent, origin)
 		};
 	}
@@ -31,8 +30,7 @@ JatiControllerView {
 			.background_(Color(0.7,0.7,0.7));
 		
 		midiDeviceArray = List[];
-		// octave = 0;
-		// note = 60;
+		note = 60;
 			
 		this.createLabel;
 		this.createSrutiControls;
@@ -69,7 +67,7 @@ JatiControllerView {
 				controller.sruti_(note);
 				srutiKeyboard.setColor(key, Color.grey);	
 			});
-
+		srutiKeyboard.setColor(note, Color.grey);
 		keyboardButtonView = CompositeView(keyboardView, Rect(158,22,32,75));
 		
 		octaveUpButton = Button(keyboardButtonView, Rect(6,6,20,20))
@@ -137,7 +135,6 @@ JatiControllerView {
 		midiPopUp.action = {|menu|
 			var device = midiDeviceArray[menu.value];
 			controller.setMidiOut(device[0], device[1]);
-			"ding dong".postln;
 			// [menu.value, menu.item].postln /*MIDIOut.newByName("IAC Driver", "Bus 1");*/
 		};
 
@@ -159,7 +156,7 @@ JatiControllerView {
 			volumeView, 
 			Rect(8,0,30,265),
 			" Vol", 
-			ControlSpec(-inf, 12, 'db', 0.01, -inf, " dB"),
+			ControlSpec(-inf, 6, 'db', 0.01, -inf, " dB"),
 			{|ez| controller.amp_(ez.value.dbamp)},
 			initVal:1,
 			unitWidth:30, 
@@ -175,7 +172,6 @@ JatiControllerView {
 				["M", Color.white, Color.blue(0.8)]
 			])
 			.action_({|button|
-				"button.value: ".post; (button.value-1).abs.postln;
 				controller.mute_((button.value-1).abs);
 			});
 		

@@ -1,7 +1,7 @@
 # KonaPlayer To Do
 
 ## Playback controls
-*	Make driver select work
+* Volume Control out of whack
 
 ## Document GUI
 *	File saving
@@ -9,7 +9,6 @@
 *	File Opening
 
 ## Backend shit
-*	Jatis not to make MIDIclient if associated with a controller
 *	Karve support in notation
 
 ## Standalone
