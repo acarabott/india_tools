@@ -73,8 +73,8 @@ KonaPlayerView {
 		patternView = CompositeView(view, Rect(0,0, pWidth, pHeight)).background_(Color.grey);
 		patternView.decorator = FlowLayout(patternView.bounds).margin_(margin).gap_(margin/2);
 		
-		patternField = TextView(patternView, Rect(5,5,890,390))
-		// patternField = TextField(patternView, Rect(5,5,pWidth-20,20))
+		// patternField = TextView(patternView, Rect(5,5,890,390))
+		patternField = TextField(patternView, Rect(5,5,890,390))
 			.string_(player.pattern)
 			.action_({|field|
 				player.pattern_(field.value);				
@@ -89,28 +89,7 @@ KonaPlayerView {
 				};
 			});
 				
-		Button(patternView, 20@20)
-			.states_([
-				["M", Color.white, Color.blue(1.5)],
-				["M", Color.white, Color.blue(0.8)]
-			])
-			.action_({|button|
-				player.mute = (button.value-1).abs
-			});
-		
-		ampSlider = EZSlider(
-			patternView, 
-			(340-20)@20, //magic number
-			" Vol  ", 
-			ControlSpec(-inf, 6, 'db', 0.01, -inf, " dB"),
-			{|ez| player.amp = ez.value.dbamp},
-			initVal:1,
-			// unitWidth:30, 
-			// numberWidth:60,
-			layout:\horz
-		).setColors(Color.grey,Color.white, Color.grey(0.7),Color.grey, 
-			Color.white, Color.white,nil,nil, Color.grey(0.7))
-		.font_(Font("Helvetica",10));
+	
 		
 		patternView.decorator.nextLine;
 			
@@ -119,8 +98,7 @@ KonaPlayerView {
 }
 
 
-// field = TextView(documentView, Rect(5,5,890,390));
-// documentButtonView = CompositeView(documentView, Rect(900,5,95,390));
+// 
 // 
 // saveButton = Button(documentButtonView, Rect(10,100,75,30))
 // 	.states_([
