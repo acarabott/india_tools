@@ -102,8 +102,9 @@ KonaPlayer {
 				};
 			};
 			
-		};	
+		};
 		
+		jatiController.addAll(jatis);
 		this.createJatisRoutine;
 		
 	}

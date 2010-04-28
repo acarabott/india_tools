@@ -30,17 +30,29 @@ JatiController {
 		jatis = List[].addAll(aCollection);
 		amp = 0.5;
 		mute = 1;
-		
+		midiPlayback = false;
+		synthPlayback = true;
+		sruti = 60;
+
 	}
 	
 	add { |aJati|
 		jatis.add(aJati);
-		jatis.last.controller_(this);
+		this.updateJatisl
 	}
 	
 	addAll { |aCollection| 
 		jatis.addAll(aCollection);
+		this.updateJatis;
+	}
+	
+	updateJatis {
 		this.setController;
+		this.midiPlayback_(midiPlayback);
+		this.synthPlayback_(synthPlayback);
+		this.amp_(amp);
+		this.mute_(mute);
+		this.sruti_(sruti);
 	}
 	
 	clear {
@@ -54,6 +66,7 @@ JatiController {
 		};
 		
 		jatis.do { |item, i| 
+			midiPlayback.postln;
 			item.midiPlayback_(midiPlayback);
 		}
 	}
