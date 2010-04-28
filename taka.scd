@@ -1,5 +1,5 @@
-w.close;
-w = Window("KonaPlayer", Rect(40,40,1000,750)).front;
+w !? {w.close};
+w = Window("KonaPlayer", Rect(40,40,1000,800)).front;
 ~documentView = CompositeView(w, Rect(0,0,1000, 400)).background_(Color.grey);
 ~field = TextView(~documentView, Rect(5,5,890,390));
 ~documentButtonView = CompositeView(~documentView, Rect(900,5,95,390));
@@ -27,13 +27,19 @@ w = Window("KonaPlayer", Rect(40,40,1000,750)).front;
 	});
 
 x = TalaView.new(nil,w, 5@410);
-~view = CompositeView(w, Rect(745,410,245,304));
-~view.addFlowLayout;
-~controlsView = CompositeView(~view, 245@304);
-// ~controlsView.addFlowLayout;
-// ~controlsView.decorator.margin_(0@0).gap_(0@0);
-~controlsView.background_(Color(0.7,0.7,0.7));
-~keyboardView = CompositeView(~controlsView, Rect(4,4,193,102));
+
+~view = CompositeView(w, Rect(750,410,245,355))
+	.background_(Color(0.7,0.7,0.7));
+~playbackLabel = StaticText(~view, Rect(5,5, ~view.bounds.width-10, 35))
+	.string_("Playback Controls")
+	.align_(\centre)
+	.background_(Color.grey)
+	.stringColor_(Color.white)
+	.font_(Font(Font.defaultSansFace,16));
+// ~view.addFlowLayout;
+// ~view.decorator.margin_(0@0).gap_(0@0);
+
+~keyboardView = CompositeView(~view, Rect(5,50,193,102));
 // ~keyboardView.addFlowLayout(10@0,0@10);
 ~keyboardView.background_(Color(0.9,0.9,0.9));
 // ~keyboardView.decorator.margin_(0@0);
@@ -79,8 +85,8 @@ MIDIClient.destinations.do { |item, i|
 	~midiDeviceArray.add(item.device + item.name);
 };
 
-// ~controlsView.decorator.nextLine;
-~playbackView = CompositeView(~controlsView, Rect(4, 150, 193, 115));
+// ~view.decorator.nextLine;
+~playbackView = CompositeView(~view, Rect(5, 205, 193, 115));
 ~playbackView.addFlowLayout(1@1);
 ~playbackView.background_(Color(0.9,0.9,0.9));
 ~playbackLabel = StaticText(~playbackView, 190@20).string_("Playback Controls").align_(\center).background_(Color.grey).stringColor_(Color.white);
@@ -108,7 +114,7 @@ MIDIClient.destinations.do { |item, i|
 ~midiPopUp.items = ~midiDeviceArray.asArray;
 ~midiPopUp.action = {|menu| [menu.value, menu.item].postln /*MIDIOut.newByName("IAC Driver", "Bus 1");*/};
 
-~volumeView = CompositeView(~controlsView, Rect(200,4,47,300));
+~volumeView = CompositeView(~view, Rect(200,50,47,300));
 // ~volumeView.background_(Color.red);
 ~volumeSlider = EZSlider(
 	~volumeView, 
@@ -125,7 +131,7 @@ MIDIClient.destinations.do { |item, i|
 .font_(Font("Helvetica",10));
 
 
-Button(~volumeView, Rect(8,270,30,30))
+~muteButton = Button(~volumeView, Rect(8,270,30,30))
 	.states_([
 		["M", Color.white, Color.blue(1.5)],
 		["M", Color.white, Color.blue(0.8)]
