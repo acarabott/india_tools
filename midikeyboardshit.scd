@@ -7,7 +7,7 @@ w = Window("myboard", Rect(100,100,400,400)).front;
 ~win = w;
 ~bounds = Rect(100,100,280,75);
 ~octaves = 2;
-~mouseTracker = UserView(~win, ~bounds).background_(Color.yellow); // thanks ron!
+~mouseTracker = UserView(~win, ~bounds); // thanks ron!
 ~bounds = ~mouseTracker.bounds;
 ~pen = Pen;
 ~startnote = ~argstartnote ? 48;
@@ -18,57 +18,30 @@ w = Window("myboard", Rect(100,100,400,400)).front;
 ~keys = List[];
 
 ~octaves.do({arg j;
-	// 7.do { |j|
-	// 	var whiteKeyWidth = (~bounds.width/~octaves)/7;
-	// 	~r = Rect(
-	// 			i+(j*whiteKeyWidth),
-	// 			0,
-	// 			whiteKeyWidth,
-	// 			~bounds.height
-	// 		);
-	// 	~keys[i+j] = MIDIKey.new(~startnote+(i*12)+j, ~r, Color.white);
-	// };
 	12.do({arg i;
+		var octaveWidth = ~bounds.width/~octaves;
+		var whiteKeyWidth = octaveWidth/7;
+		var blackKeyWidth = octaveWidth/10;
 		if((i == 1) || (i == 3) || (i == 6) || (i == 8) || (i == 10), {
-			var blackKeyWidth = (~bounds.width/~octaves)/10;
-			"i: ".post; (i).postln;
-			"j: ".post; (j).postln;
-			"~pix[i]: ".post; (~pix[i]).postln;
-			"~pix[i]*blackKeyWidth: ".post; (~pix[i]*blackKeyWidth).postln;
-			"j*(blackKeyWidth*10): ".post; (j*(blackKeyWidth*10)).postln;
 			~r = Rect(
-				~pix[i]*blackKeyWidth + (j*(blackKeyWidth*10)),
+				~pix[i]*(octaveWidth-whiteKeyWidth) + (j*octaveWidth),
 				0,
 				blackKeyWidth,
 				~bounds.height/1.7
 			);
-			// ~r = Rect(	((~pix[i]*((~bounds.width/~octaves) -
-			// 			(~bounds.width/~octaves/7))).round(1) + ((~bounds.width/~octaves)*j)).round(1)+0.5,
-			// 		0, 
-			// 		~bounds.width/~octaves/10, 
-			// 		~bounds.height/1.7);
-
 			~keys.add(MIDIKey.new(~startnote+i+(j*12), ~r, Color.black));
 		}, {
-			var whiteKeyWidth = ~bounds.width/~octaves;
-			"~pix[i]*whiteKeyWidth: ".post; (~pix[i]*whiteKeyWidth).postln;
 			~r = Rect(
-					~pix[i]*whiteKeyWidth + (j*(whiteKeyWidth*7)),
+					~pix[i]*(octaveWidth-whiteKeyWidth) + (j*octaveWidth),
 					0,
 					whiteKeyWidth,
 					~bounds.height
 				);
-			// ~r = Rect(((~pix[i]*((~bounds.width/~octaves) -
-			// 			(~bounds.width/~octaves/7))).round(1) + ((~bounds.width/~octaves)*j)).round(1)+0.5,
-			// 		0, 
-			// 		~bounds.width/~octaves/7, 
-			// 		~bounds.height);
 			~keys.add(MIDIKey.new(~startnote+i+(j*12), ~r, Color.white));
 		});
 	});
 });
 
-// ~keys.do{|item, i| if(item.color==Color.white){item.rect.postln;}}
 ~mouseTracker
 	.canFocus_(false)
 	// .relativeOrigin_(false)

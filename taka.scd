@@ -1,7 +1,11 @@
-w = Window("jati", Rect(40,40,400,400)).front;
-~view = CompositeView(w, 400@400);
+w.close;
+String
+w = Window("jati", Rect(40,40,1000,750)).front;
+~field = TextView(w, Rect(5,5,990,400));
+x = TalaView.new(nil,w, 5@410);
+~view = CompositeView(w, Rect(745,410,245,304));
 ~view.addFlowLayout;
-~controlsView = CompositeView(~view, 250@304);
+~controlsView = CompositeView(~view, 245@304);
 // ~controlsView.addFlowLayout;
 // ~controlsView.decorator.margin_(0@0).gap_(0@0);
 ~controlsView.background_(Color(0.7,0.7,0.7));
@@ -12,7 +16,7 @@ w = Window("jati", Rect(40,40,400,400)).front;
 ~keyboardLabel = StaticText(~keyboardView, Rect(1,1,190,20)).string_("Sruti").align_(\center).background_(Color.grey).stringColor_(Color.white);
 // ~keyboardView.decorator.nextLine;
 // ~keyboardLabel.background_(Color.green);
-~srutiKeyboard = MIDIKeyboard(~keyboardView, Rect(10,31,150,75), 1, 60);
+~srutiKeyboard = MIDIKeyboard(~keyboardView, Rect(2,24,150,75), 1, 60);
 ~octave = 0;
 ~note = 60;
 ~srutiFunc = {(~note + (~octave*12)).postln};
@@ -105,9 +109,3 @@ Button(~volumeView, Rect(8,270,30,30))
 	.action_({|button|
 		"mute!".postln;
 	});
-
-w = Window("hi", Rect(0,0,800,800)).front
-x = KonaPlayerView.new(nil,w, 0@0)
-x = KonaPlayerView.new
-a = TalaView.new(nil,w)
-b = KonaPlayerView.new(w)
