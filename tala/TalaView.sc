@@ -31,6 +31,8 @@ TalaView {
 	var <talaImage;
 	var <playStopButton;
 	var visible;
+	var <hasLabel;
+	var <label;
 	
 	//Other shit
 	var <playStopRout;
@@ -39,8 +41,8 @@ TalaView {
 	
 	*initClass {
 		sideExtent = 350@310;
-		volumeExtent = 40@sideExtent.y;
-		extent = (sideExtent.x*2)+volumeExtent.x@sideExtent.y;
+		volumeExtent = 40@(sideExtent.y);
+		extent = (sideExtent.x*2)+volumeExtent.x@(sideExtent.y+45);
         margin = 5@5;
 		labelWidth = sideExtent.x/2 - (margin.x*2);		
 		lineExtent = sideExtent.x-(margin.x*2)@20;
@@ -56,6 +58,7 @@ TalaView {
 	}
 	
 	initWindow {|aTala|
+		hasLabel = false;
 		this.createWindow;
 		position = 0@0;
 		this.init(aTala);
@@ -64,6 +67,7 @@ TalaView {
 	initView {|aTala, aParent, aPosition|
 		parent = aParent;
 		position = aPosition ? (0@0);
+		hasLabel = true;
 		this.init(aTala);
 		// bounds = view.bounds;
 	}
@@ -77,13 +81,19 @@ TalaView {
 		leftNumLines	= 0;
 		
 		tala = aTala ?? Tala.new(60,4,false);
-		view = CompositeView(parent, Rect(position.x, position.y, extent.x, extent.y));
-		view.addFlowLayout(0@0,0@0);
-		
+		view = CompositeView(parent, Rect(position.x, position.y, extent.x, extent.y))
+			.background_(Color(0.7,0.7,0.7));
+		// view.addFlowLayout(0@0,0@0);
+		label = StaticText(view, Rect(margin.x,5,730,35))
+			.string_("Tala Controls")
+			.stringColor_(labelStrCol)
+			.background_(labelBgCol)
+			.align_(\center)
+			.font_(SCFont(Font.defaultSansFace, 16));
+		// view.decorator.nextLine;
 		this.createLeftSide;
 		this.createVolume;
 		this.createRightSide;		
-		
 	}
 	
 	createWindow {
@@ -97,7 +107,7 @@ TalaView {
 	}
 		
 	createLeftSide {
-		leftSide 		= CompositeView(view, sideExtent);
+		leftSide 		= CompositeView(view, Rect(0,45,sideExtent.x, sideExtent.y));
 		leftDec 		= leftSide.addFlowLayout(margin, margin);
 		leftDec.nextLine;
 		
@@ -205,7 +215,8 @@ TalaView {
 		};
 
 		buttonHeight = extent.y;
-		buttonHeight = buttonHeight - (margin.x*4);
+		buttonHeight = buttonHeight - label.bounds.height;
+		buttonHeight = buttonHeight - (margin.x*5);
 		buttonHeight = buttonHeight - (leftNumLines*(lineExtent.y+leftDec.gap.y));
 		// playStopButton = Button(leftSide, 340@ extent.y - (margin.x*2) - (leftNumLines*(lineExtent.y+leftDec.gap.y))- (margin.y*2))
 		playStopButton = Button(leftSide, 340@buttonHeight)
@@ -221,14 +232,14 @@ TalaView {
 	}
 	
 	createRightSide {
-		rightSide 		= CompositeView(view, sideExtent);
+		rightSide 		= CompositeView(view, Rect(sideExtent.x+(margin.x*2)+volumeExtent.x, 45, sideExtent.x, sideExtent.y));
 		rightDec 		= rightSide.addFlowLayout(margin, margin);
 		
 		talaImage = TalaImage.new(rightSide, sideExtent-(margin*2));
 	}
 	
 	createVolume {
-		var volView = CompositeView(view, volumeExtent);
+		var volView = CompositeView(view, Rect(sideExtent.x+margin.x, 45, volumeExtent.x, volumeExtent.y));
 		var volViewDec = volView.addFlowLayout(margin, margin);
 		var buttonExtent = (volumeExtent.x-(margin.x*2)).asPoint;
 		var sliderExtent = buttonExtent.x @ (volumeExtent.y - (margin.y*2) - buttonExtent.y - volViewDec.gap.x);
