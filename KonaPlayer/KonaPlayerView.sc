@@ -18,16 +18,14 @@ KonaPlayerView {
 	var <patternView;
 	var <patternField;
 	var <ampSlider;
-	var <talaLabel;
 	var <tView;
 	
 	*initClass {
-		pWidth = 700;
-		pHeight = 75;
-		extent = (1000)@(800);
+		pWidth = 1000;
+		pHeight = 400;
+		extent = (pWidth)@(800);
 		margin = 5.asPoint;
 	}
-	// w = Window("KonaPlayer", Rect(40,40,1000,800)).front;
 	// documentView = CompositeView(w, Rect(0,0,1000, 400)).background_(Color.grey);
 	
 	*new {|player, parent, position|
@@ -114,12 +112,7 @@ KonaPlayerView {
 		.font_(Font("Helvetica",10));
 		
 		patternView.decorator.nextLine;
-		
-		talaLabel = StaticText(patternView, pWidth@20)
-			.string_("Tala Controls")
-			.align_(\center)
-			.font_(Font("Lucida Grande",13));
-		
+			
 		tView = TalaView.new(player.tala, view, 0@pHeight+10);	
 	}
 }
