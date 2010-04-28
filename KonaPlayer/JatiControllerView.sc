@@ -178,34 +178,3 @@ JatiControllerView {
 	}
 	
 }
-
-
-	// w = Window("KonaPlayer", Rect(40,40,1000,800)).front;
-	// documentView = CompositeView(w, Rect(0,0,1000, 400)).background_(Color.grey);
-	// field = TextView(documentView, Rect(5,5,890,390));
-	// documentButtonView = CompositeView(documentView, Rect(900,5,95,390));
-	// 
-	// saveButton = Button(documentButtonView, Rect(10,100,75,30))
-	// 	.states_([
-	// 		["Save", Color.black, Color.white],
-	// 	])
-	// 	.action_({|butt|
-	// 		butt.value.postln;	
-	// 	});
-	// saveAsButton = Button(documentButtonView, Rect(10,175,75,30))
-	// 	.states_([
-	// 		["Save As...", Color.black, Color.white],
-	// 	])
-	// 	.action_({|butt|
-	// 		butt.value.postln;	
-	// 	});
-	// openButton = Button(documentButtonView, Rect(10,25,75,30))
-	// 	.states_([
-	// 		["Open", Color.black, Color.white],
-	// 	])
-	// 	.action_({|butt|
-	// 		butt.value.postln;	
-	// 	});
-	// 
-	// x = TalaView.new(nil,w, 5@410);
-	// 
