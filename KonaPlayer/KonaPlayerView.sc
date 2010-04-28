@@ -18,7 +18,11 @@ KonaPlayerView {
 	var <patternView;
 	var <patternField;
 	var <documentButtonView;
+	var <saveButton;
+	var <saveAsButton;
+	var <openButton;
 	var <tView;
+	var <jcView;
 	
 	*initClass {
 		pWidth = 1000;
@@ -68,12 +72,12 @@ KonaPlayerView {
 	
 	createGUI {
 		view = SCCompositeView(parent, Rect(position.x, position.y, extent.x, extent.y));
-		view.decorator = FlowLayout(view.bounds, 0@0, 0@0);
+		// view.decorator = FlowLayout(view.bounds, 0@0, 0@0);
 		
 		patternView = CompositeView(view, Rect(0,0, pWidth, pHeight)).background_(Color.grey);
 		
-		// patternField = TextView(patternView, Rect(5,5,890,390))
-		patternField = TextField(patternView, Rect(5,5,890,390))
+		patternField = TextView(patternView, Rect(5,5,890,390))
+		// patternField = TextField(patternView, Rect(5,5,890,390))
 			.string_(player.pattern)
 			.action_({|field|
 				player.pattern_(field.value);				
@@ -88,38 +92,31 @@ KonaPlayerView {
 				};
 			});
 				
-		documentButtonView = CompositeView(patternView, Rect(900,5,95,390)).background_(Color.red);
+		documentButtonView = CompositeView(patternView, Rect(900,5,95,390));
+		saveButton = Button(documentButtonView, Rect(10,100,75,30))
+			.states_([
+				["Save", Color.black, Color.white],
+			])
+			.action_({|butt|
+				butt.value.postln;	
+			});
+		saveAsButton = Button(documentButtonView, Rect(10,175,75,30))
+			.states_([
+				["Save As...", Color.black, Color.white],
+			])
+			.action_({|butt|
+				butt.value.postln;	
+			});
+		openButton = Button(documentButtonView, Rect(10,25,75,30))
+			.states_([
+				["Open", Color.black, Color.white],
+			])
+			.action_({|butt|
+				butt.value.postln;	
+			});
+					
+		tView = TalaView.new(player.tala, view, (0@pHeight+10));	
 		
-		patternView.decorator.nextLine;
-			
-		tView = TalaView.new(player.tala, view, 0@pHeight+10);	
+		jcView = JatiControllerView.new(view, (755@410)).controller_(player.jatiController);
 	}
 }
-
-
-// 
-// 
-// saveButton = Button(documentButtonView, Rect(10,100,75,30))
-// 	.states_([
-// 		["Save", Color.black, Color.white],
-// 	])
-// 	.action_({|butt|
-// 		butt.value.postln;	
-// 	});
-// saveAsButton = Button(documentButtonView, Rect(10,175,75,30))
-// 	.states_([
-// 		["Save As...", Color.black, Color.white],
-// 	])
-// 	.action_({|butt|
-// 		butt.value.postln;	
-// 	});
-// openButton = Button(documentButtonView, Rect(10,25,75,30))
-// 	.states_([
-// 		["Open", Color.black, Color.white],
-// 	])
-// 	.action_({|butt|
-// 		butt.value.postln;	
-// 	});
-// 
-// x = TalaView.new(nil,w, 5@410);
-// 

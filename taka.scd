@@ -1,1 +1,3 @@
-x = KonaPlayerView.new
+x = KonaPlayer.new
+
+x.jatiController.view

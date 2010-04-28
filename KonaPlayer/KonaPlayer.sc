@@ -27,11 +27,12 @@ KonaPlayer {
 		jatis			= List[];
 		pattern			= "Xxxx";
 		
-		jatiController = JatiController.new;
+		jatiController = JatiController.new(jatis, false);
 		
 		if(gui) {
 			pView 		= KonaPlayerView.new(this);
 			tala.tView	= pView.tView;
+			jatiController.view_(pView.jcView);
 		};	
 		
 		this.pattern_("Xxxx");
