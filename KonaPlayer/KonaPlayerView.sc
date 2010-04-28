@@ -73,7 +73,8 @@ KonaPlayerView {
 		patternView = CompositeView(view, Rect(0,0, pWidth, pHeight)).background_(Color.grey);
 		patternView.decorator = FlowLayout(patternView.bounds).margin_(margin).gap_(margin/2);
 		
-		patternField = TextField(patternView, Rect(5,5,pWidth-20,20))
+		patternField = TextView(patternView, Rect(5,5,890,390))
+		// patternField = TextField(patternView, Rect(5,5,pWidth-20,20))
 			.string_(player.pattern)
 			.action_({|field|
 				player.pattern_(field.value);				
@@ -118,9 +119,6 @@ KonaPlayerView {
 }
 
 
-
-// w = Window("KonaPlayer", Rect(40,40,1000,800)).front;
-// documentView = CompositeView(w, Rect(0,0,1000, 400)).background_(Color.grey);
 // field = TextView(documentView, Rect(5,5,890,390));
 // documentButtonView = CompositeView(documentView, Rect(900,5,95,390));
 // 
