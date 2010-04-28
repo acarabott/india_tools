@@ -17,7 +17,7 @@ KonaPlayerView {
 	var <window;
 	var <patternView;
 	var <patternField;
-	var <ampSlider;
+	var <documentButtonView;
 	var <tView;
 	
 	*initClass {
@@ -71,7 +71,6 @@ KonaPlayerView {
 		view.decorator = FlowLayout(view.bounds, 0@0, 0@0);
 		
 		patternView = CompositeView(view, Rect(0,0, pWidth, pHeight)).background_(Color.grey);
-		patternView.decorator = FlowLayout(patternView.bounds).margin_(margin).gap_(margin/2);
 		
 		// patternField = TextView(patternView, Rect(5,5,890,390))
 		patternField = TextField(patternView, Rect(5,5,890,390))
@@ -89,7 +88,7 @@ KonaPlayerView {
 				};
 			});
 				
-	
+		documentButtonView = CompositeView(patternView, Rect(900,5,95,390)).background_(Color.red);
 		
 		patternView.decorator.nextLine;
 			
