@@ -12,7 +12,7 @@ w = Window("myboard", Rect(100,100,400,400)).front;
 ~pen = Pen;
 ~startnote = ~argstartnote ? 48;
 ~trackKey = 0;
-~pix = [0, 6, 10, 16, 20, 30, 36, 40, 46, 50, 56, 60].normalize;
+~pix = [0,0.65,1,1.65,2,3,3.65,4,4.65,5,5.65,6];
 // ~pix = [ 0, 0.1, 0.17, 0.27, 0.33, 0.5, 0.6, 0.67, 0.77, 0.83, 0.93, 1 ]; // as above but normalized
 // ~keys = Array.newClear(~octaves*12);
 ~keys = List[];
@@ -24,7 +24,7 @@ w = Window("myboard", Rect(100,100,400,400)).front;
 		var blackKeyWidth = octaveWidth/10;
 		if((i == 1) || (i == 3) || (i == 6) || (i == 8) || (i == 10), {
 			~r = Rect(
-				~pix[i]*(octaveWidth-whiteKeyWidth) + (j*octaveWidth),
+				~pix[i]*(whiteKeyWidth) + (j*octaveWidth),
 				0,
 				blackKeyWidth,
 				~bounds.height/1.7
@@ -32,7 +32,7 @@ w = Window("myboard", Rect(100,100,400,400)).front;
 			~keys.add(MIDIKey.new(~startnote+i+(j*12), ~r, Color.black));
 		}, {
 			~r = Rect(
-					~pix[i]*(octaveWidth-whiteKeyWidth) + (j*octaveWidth),
+					~pix[i]*(whiteKeyWidth) + (j*octaveWidth),
 					0,
 					whiteKeyWidth,
 					~bounds.height
@@ -136,3 +136,30 @@ w = Window("myboard", Rect(100,100,400,400)).front;
 	// 		})
 	// 	});
 )
+~bounds = ~bounds.width_(70)
+(~bounds.width/~octaves/7)
+~bounds.width/~octaves/10
+
+~octaveWidth = ~bounds.width/~octaves;
+~whiteKeyWidth = ~octaveWidth/7;
+~blackKeyWidth = ~octaveWidth/10;
+~blackKeyOffset = (~whiteKeyWidth) - (~blackKeyWidth/2);
+
+
+[0,0.65,1,1.65,2,3,3.65,4,4.65,5,5.65,6]
+
+
+~pix = List[];
+i = 0;
+12.do { |j|
+	if([1,3,6,8,10].includes(j)) {
+		~pix.add((i-1)+)
+	} {
+		~pix.add(i);
+		i = i+1;
+		i.postln;
+	};
+};
+~pix
+pix = [ 0, 0.1, 0.17, 0.27, 0.33, 0.5, 0.6, 0.67, 0.77, 0.83, 0.93, 1 ]; // as above but normalized
+
