@@ -3,12 +3,6 @@
 ## Playback controls
 * Volume Control out of whack for MIDI
 
-## Document GUI
-*	File saving
-*	Save As
-*	File Opening
-*	Action button?
-
 ## Backend shit
 *	Karve support in notation
 

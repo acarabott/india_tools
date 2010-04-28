@@ -24,6 +24,8 @@ KonaPlayerView {
 	var <tView;
 	var <jcView;
 	
+	var <filePath;
+	
 	*initClass {
 		pWidth = 1000;
 		pHeight = 400;
@@ -76,8 +78,8 @@ KonaPlayerView {
 		
 		patternView = CompositeView(view, Rect(0,0, pWidth, pHeight)).background_(Color.grey);
 		
-		patternField = TextView(patternView, Rect(5,5,890,390))
-		// patternField = TextField(patternView, Rect(5,5,890,390))
+		// patternField = TextView(patternView, Rect(5,5,890,390))
+		patternField = TextField(patternView, Rect(5,5,890,390))
 			.string_(player.pattern)
 			.action_({|field|
 				player.pattern_(field.value);				
@@ -98,25 +100,48 @@ KonaPlayerView {
 				["Save", Color.black, Color.white],
 			])
 			.action_({|butt|
-				butt.value.postln;	
+				if(filePath.isNil) {
+					this.saveAs;
+					"hi".postln;
+				} {
+					var f = File.new(filePath, "w");
+					f.write(patternField.string);
+					f.close;
+				};
 			});
 		saveAsButton = Button(documentButtonView, Rect(10,175,75,30))
 			.states_([
 				["Save As...", Color.black, Color.white],
 			])
 			.action_({|butt|
-				butt.value.postln;	
+				this.saveAs;
 			});
 		openButton = Button(documentButtonView, Rect(10,25,75,30))
 			.states_([
 				["Open", Color.black, Color.white],
 			])
 			.action_({|butt|
-				butt.value.postln;	
+				Dialog.getPaths({|paths|
+					var f = File.open(paths[0],"r");
+					filePath = paths[0];
+					patternField.string_(f.readAllString);
+					f.close;
+					},{},
+					false
+				);				
 			});
 					
 		tView = TalaView.new(player.tala, view, (0@pHeight+10));	
 		
 		jcView = JatiControllerView.new(view, (755@410)).controller_(player.jatiController);
+	}
+	
+	saveAs {
+		Dialog.savePanel({|path|
+			var f = File.new(path,"w");
+			filePath = path;
+			f.write(patternField.string);
+			f.close
+		});
 	}
 }
