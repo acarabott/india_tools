@@ -26,7 +26,6 @@ KonaPlayerView {
 		extent = (pWidth)@(800);
 		margin = 5.asPoint;
 	}
-	// documentView = CompositeView(w, Rect(0,0,1000, 400)).background_(Color.grey);
 	
 	*new {|player, parent, position|
 		if(parent==nil) {
@@ -70,7 +69,8 @@ KonaPlayerView {
 	createGUI {
 		view = SCCompositeView(parent, Rect(position.x, position.y, extent.x, extent.y));
 		view.decorator = FlowLayout(view.bounds, 0@0, 0@0);
-		patternView = CompositeView(view, Rect(0,0, pWidth, pHeight));
+		
+		patternView = CompositeView(view, Rect(0,0, pWidth, pHeight)).background_(Color.grey);
 		patternView.decorator = FlowLayout(patternView.bounds).margin_(margin).gap_(margin/2);
 		
 		patternField = TextField(patternView, Rect(5,5,pWidth-20,20))

@@ -1,7 +1,7 @@
 # KonaPlayer To Do
 
 ## Playback controls
-* Volume Control out of whack
+* Volume Control out of whack for MIDI
 
 ## Document GUI
 *	File saving
